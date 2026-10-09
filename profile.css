@@ -2115,3 +2115,45 @@ body.theme-green {
 body.theme-orange {
     --main-color: #f97316;
 }
+
+
+/* دکمه بازگشت به صفحه قبل */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 11px 20px;
+    border: 1px solid var(--main-color);
+    border-radius: 14px;
+
+    background: linear-gradient(
+        135deg,
+        var(--main-color),
+        var(--main-color-2)
+    );
+
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+.back-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.25);
+    filter: brightness(1.1);
+}
+
+.back-button:active {
+    transform: scale(0.96);
+}

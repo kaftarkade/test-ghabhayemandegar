@@ -58,13 +58,22 @@ const appwriteAccount = new Appwrite.Account(appwriteClient);
 // تنظیمات (prefs) حساب؛ عکس پروفایل اینجا ذخیره می‌شود
 let accountPrefs = {};
 
-async function saveAvatarToAccount(avatar) {
+// تغییر prefs با گرفتن آخرین مقدار (تا چیزی پاک نشود)
+async function updateMyPrefs(patch) {
 
-    const prefs = Object.assign({}, accountPrefs, { avatar: avatar });
+    const cur = await appwriteAccount.get();
+
+    const prefs = Object.assign({}, cur.prefs, patch);
 
     const acc = await appwriteAccount.updatePrefs({ prefs: prefs });
 
     accountPrefs = acc.prefs || prefs;
+
+}
+
+async function saveAvatarToAccount(avatar) {
+
+    await updateMyPrefs({ avatar: avatar });
 
 }
 
@@ -94,6 +103,17 @@ const favoriteCount =
 ========================================================= */
 
 function updateUserDisplay() {
+
+    const profileEmail =
+        document.getElementById("profileEmail");
+
+    if (profileEmail) {
+
+        profileEmail.textContent =
+            user.email || "ثبت نشده";
+
+    }
+
 
     if (userName) {
 
@@ -344,6 +364,18 @@ const saveEdit =
 
 let editingField = null;
 
+// فیلد رمز عبور (فقط برای ثبت ایمیل نمایش داده می‌شود)
+const editPassword = document.createElement("input");
+
+editPassword.type = "password";
+editPassword.className = editInput.className;
+editPassword.placeholder = "رمز عبور فعلی";
+editPassword.autocomplete = "current-password";
+editPassword.style.display = "none";
+editPassword.style.marginTop = "10px";
+
+editInput.insertAdjacentElement("afterend", editPassword);
+
 
 /* ---------- Open Edit ---------- */
 
@@ -378,6 +410,28 @@ document
                 }
 
 
+                if (editingField === "email") {
+
+                    editTitle.textContent =
+                        "ثبت ایمیل بازیابی";
+
+                    editHelp.textContent =
+                        "ایمیل واقعی‌ت و رمز فعلی رو وارد کن. بعد از ثبت، با همین ایمیل وارد می‌شی.";
+
+                    editInput.value =
+                        user.email || "";
+
+                    editInput.type =
+                        "email";
+
+                }
+
+                editPassword.value = "";
+
+                editPassword.style.display =
+                    editingField === "email" ? "block" : "none";
+
+
                 editModal.classList.add(
                     "active"
                 );
@@ -404,6 +458,70 @@ if (saveEdit) {
     saveEdit.addEventListener(
         "click",
         async function () {
+
+            if (editingField === "email") {
+
+                const email =
+                    editInput.value.trim().toLowerCase();
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert("ایمیل معتبر نیست.");
+                    return;
+                }
+
+                if (!editPassword.value) {
+                    alert("رمز عبور فعلی را وارد کن.");
+                    return;
+                }
+
+                saveEdit.disabled = true;
+
+                try {
+
+                    // شماره قبل از عوض شدن ایمیل در حساب ذخیره شود
+                    if (user.phone && accountPrefs.phone !== user.phone) {
+                        await updateMyPrefs({ phone: user.phone });
+                    }
+
+                    const acc =
+                        await appwriteAccount.updateEmail({
+                            email: email,
+                            password: editPassword.value
+                        });
+
+                    user.email = acc.email;
+
+                    localStorage.setItem(
+                        "memoryUser",
+                        JSON.stringify(user)
+                    );
+
+                    updateUserDisplay();
+
+                    editModal.classList.remove("active");
+
+                    editingField = null;
+
+                    alert("ایمیل ثبت شد. از این به بعد با همین ایمیل وارد شو.");
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "ثبت ایمیل انجام نشد: " +
+                        (error.message || "خطای نامشخص")
+                    );
+
+                } finally {
+
+                    saveEdit.disabled = false;
+
+                }
+
+                return;
+
+            }
 
             if (editingField !== "name") {
                 return;
@@ -1115,7 +1233,7 @@ if (saveCrop) {
                 canvas.toDataURL("image/jpeg", quality);
 
             // حجم باید کوچک بماند (محدودیت prefs در Appwrite)
-            while (finalImage.length > 50000 && quality > .3) {
+            while (finalImage.length > 40000 && quality > .3) {
                 quality -= .1;
                 finalImage =
                     canvas.toDataURL("image/jpeg", quality);
@@ -1542,6 +1660,19 @@ if (confirmLogout) {
         "click",
         async function () {
 
+            // قبل از خروج، علاقه‌مندی‌ها در حساب ذخیره شوند
+            try {
+
+                if (window.syncFavoritesNow) {
+                    await window.syncFavoritesNow();
+                }
+
+            } catch (e) {}
+
+            // از این لحظه تغییرات محلی دیگر به حساب ارسال نشود
+            window.syncFavorites = function () {};
+
+
             try {
 
                 const c = new Appwrite.Client()
@@ -1556,6 +1687,20 @@ if (confirmLogout) {
             localStorage.removeItem(
                 "loggedIn"
             );
+
+            // اطلاعات حساب روی این گوشی پاک شود
+            localStorage.removeItem("profileImage");
+            localStorage.removeItem("favoriteImages");
+            localStorage.removeItem("musicFavorites");
+
+            Object.keys(localStorage).forEach(function (key) {
+
+                if (key.indexOf("favorite-song-") === 0) {
+                    localStorage.removeItem(key);
+                }
+
+            });
+
 
 
             window.location.href =
@@ -1963,8 +2108,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         user.name = acc.name;
 
+        const realEmail =
+            !(acc.email || "").endsWith("@example.com");
+
+        user.email = realEmail ? acc.email : "";
+
         user.phone =
-            (acc.email || "").split("@")[0];
+            accountPrefs.phone ||
+            (realEmail ? "" : acc.email.split("@")[0]);
+
+        // حساب‌های قدیمی: شماره در حساب ذخیره شود
+        if (!accountPrefs.phone && user.phone) {
+
+            updateMyPrefs({ phone: user.phone })
+                .catch(console.error);
+
+        }
 
         localStorage.setItem(
             "memoryUser",
@@ -2006,3 +2165,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 })();
+
+
+
+function goBack() {
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = "index.html";
+    }
+}

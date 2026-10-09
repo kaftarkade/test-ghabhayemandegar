@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رمز جدید | قاب‌های ماندگار</title>
+<style>
+    @font-face {
+    font-family: "VazirmatnBold";
+
+    src: url("fonts/Vazirmatn-Bold.woff2")
+         format("woff2");
+
+    font-weight: 900;
+    font-style: normal;
+
+    font-display: swap;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#09090d;color:#fff;font-family:sans-serif;display:flex;justify-content:center;align-items:center;padding:16px}
+.card{width:100%;max-width:380px;background:#111116;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+h2{margin-bottom:6px}
+.sub{color:#a855f7;font-size:13px;margin-bottom:20px}
+input{width:100%;height:48px;margin-bottom:12px;padding:0 16px;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#09090d;color:#fff;font-family:inherit;font-size:14px;outline:none}
+input:focus{border-color:#a855f7}
+button{width:100%;height:48px;border:none;border-radius:14px;background:linear-gradient(135deg,#a855f7,#ec4899);color:#fff;font-family:inherit;font-size:15px;cursor:pointer}
+button:disabled{opacity:.6}
+.msg{min-height:22px;margin:6px 0 12px;font-size:13px}
+.msg.error{color:#f87171}
+.msg.success{color:#4ade80}
+a{color:#a855f7;text-decoration:none;font-size:13px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>رمز عبور جدید</h2>
+  <div class="sub">رمز تازه‌ات رو وارد کن</div>
+
+  <input id="password" type="password" placeholder="رمز جدید (حداقل ۸ کاراکتر)" autocomplete="new-password">
+  <input id="password2" type="password" placeholder="تکرار رمز جدید" autocomplete="new-password">
+
+  <div class="msg" id="msg"></div>
+  <button id="save" type="button">ثبت رمز جدید</button>
+
+  <p style="text-align:center;margin-top:16px"><a href="login.html">← بازگشت به ورود</a></p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
+<script>
+const client = new Appwrite.Client()
+  .setEndpoint("https://cloud.appwrite.io/v1")
+  .setProject("6ac3b38f000976364cad");
+const account = new Appwrite.Account(client);
+
+const params = new URLSearchParams(location.search);
+const userId = params.get("userId");
+const secret = params.get("secret");
+
+const $ = (id) => document.getElementById(id);
+
+function show(text, type) {
+  $("msg").textContent = text;
+  $("msg").className = "msg" + (type ? " " + type : "");
+}
+
+if (!userId || !secret) {
+  show("این لینک معتبر نیست. دوباره از صفحه‌ی ورود درخواست بازیابی بده.", "error");
+  $("save").disabled = true;
+}
+
+$("save").onclick = async function () {
+  const password = $("password").value;
+
+  if (password.length < 8) { show("رمز باید حداقل ۸ کاراکتر باشد.", "error"); return; }
+  if (password !== $("password2").value) { show("رمزها یکسان نیستند.", "error"); return; }
+
+  $("save").disabled = true;
+  show("");
+
+  try {
+    await account.updateRecovery({ userId: userId, secret: secret, password: password });
+    show("رمز با موفقیت عوض شد. در حال انتقال به صفحه‌ی ورود...", "success");
+    setTimeout(function () { location.href = "login.html"; }, 1800);
+  } catch (e) {
+    console.error(e);
+    show("خطا: " + (e.message || "لینک منقضی شده یا نامعتبر است."), "error");
+    $("save").disabled = false;
+  }
+};
+</script>
+</body>
+</html>

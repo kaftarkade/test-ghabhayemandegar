@@ -129,18 +129,15 @@
                     <div class="input-group">
 
                         <label for="loginPhone">
-                            شماره موبایل
+                            شماره موبایل یا ایمیل
                         </label>
 
                         <input
-                            type="tel"
+                            type="text"
                             id="loginPhone"
                             name="loginPhone"
-                            placeholder="09xxxxxxxxx"
-                            inputmode="numeric"
-                            maxlength="11"
-                            pattern="09[0-9]{9}"
-                            autocomplete="tel"
+                            placeholder="09xxxxxxxxx یا ایمیل"
+                            autocomplete="username"
                             required
                         >
 
@@ -198,6 +195,35 @@
                         class="message"
                         id="loginMessage"
                     ></p>
+
+                    <!-- فراموشی رمز -->
+
+                    <p style="text-align:center;margin-top:14px;font-size:13px;">
+                        <a href="#" id="forgotLink" style="color:#a855f7;text-decoration:none;">
+                            رمز عبورم رو فراموش کردم
+                        </a>
+                    </p>
+
+                    <div id="forgotBox" style="display:none;margin-top:10px;">
+
+                        <div class="input-group">
+                            <label for="forgotEmail">ایمیل بازیابی</label>
+                            <input
+                                type="email"
+                                id="forgotEmail"
+                                placeholder="ایمیلی که در پروفایل ثبت کردی"
+                                autocomplete="email"
+                            >
+                        </div>
+
+                        <button type="button" class="submit-btn" id="forgotSend">
+                            ارسال لینک بازیابی
+                        </button>
+
+                        <p class="message" id="forgotMessage"></p>
+
+                    </div>
+
 
 
                 </form>
@@ -379,7 +405,7 @@ console.log("LOGIN HTML OK");
 
     <script src="login.js"></script>
 
-    <script src="theme.js"></script>
+   <script src="theme.js"></script>
 
 </body>
 

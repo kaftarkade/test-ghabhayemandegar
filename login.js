@@ -3,7 +3,7 @@
 ========================================================= */
 
 if (typeof Appwrite === "undefined") {
-    alert("کتابخانه‌ی Appwrite لود نشد. اینترنت/VPN را بررسی کن و صفحه را رفرش کن.");
+    alert("شبکه در دسترس نیست، اینترنت / VPN را بررسی کنید.");
 }
 
 const appwriteClient = new Appwrite.Client()
@@ -118,10 +118,14 @@ function saveLocalUser(acc) {
 
     delete old.password;
 
+    const email = acc.email || "";
+    const isFakeEmail = email.endsWith("@" + PHONE_EMAIL_DOMAIN);
+
     const user = Object.assign(old, {
         userid: acc.$id,
         name: acc.name,
-        phone: (acc.email || "").split("@")[0],
+        phone: (acc.prefs && acc.prefs.phone) || (isFakeEmail ? email.split("@")[0] : ""),
+        email: isFakeEmail ? "" : email,
         joinDate: new Date(acc.$createdAt).toLocaleDateString("fa-IR")
     });
 
@@ -194,6 +198,12 @@ registerForm.addEventListener("submit", async function (event) {
             password: password
         });
 
+        try {
+            await appwriteAccount.updatePrefs({ prefs: { phone: phone } });
+        } catch (e) {
+            console.error(e);
+        }
+
         const acc = await appwriteAccount.get();
 
         saveLocalUser(acc);
@@ -223,15 +233,23 @@ loginForm.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
-    const phone = document.getElementById("loginPhone").value.trim();
+    const identifier = document.getElementById("loginPhone").value.trim();
     const password = document.getElementById("loginPassword").value;
     const message = document.getElementById("loginMessage");
     const button = loginForm.querySelector(".submit-btn");
 
     showMsg(message, "");
 
-    if (!/^09[0-9]{9}$/.test(phone)) {
-        showMsg(message, "شماره موبایل باید مثل 09123456789 باشد.", "error");
+    let loginEmail = "";
+
+    if (/^09[0-9]{9}$/.test(identifier)) {
+        loginEmail = phoneToEmail(identifier);
+    } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)) {
+        loginEmail = identifier.toLowerCase();
+    }
+
+    if (!loginEmail) {
+        showMsg(message, "شماره موبایل (مثل 09123456789) یا ایمیل را وارد کن.", "error");
         return;
     }
 
@@ -247,7 +265,7 @@ loginForm.addEventListener("submit", async function (event) {
         await clearOldSession();
 
         await appwriteAccount.createEmailPasswordSession({
-            email: phoneToEmail(phone),
+            email: loginEmail,
             password: password
         });
 
@@ -270,6 +288,84 @@ loginForm.addEventListener("submit", async function (event) {
     }
 
 });
+
+
+/* =========================================================
+   فراموشی رمز عبور (با ایمیل بازیابی ثبت‌شده در پروفایل)
+========================================================= */
+
+const forgotLink = document.getElementById("forgotLink");
+const forgotBox = document.getElementById("forgotBox");
+const forgotEmail = document.getElementById("forgotEmail");
+const forgotSend = document.getElementById("forgotSend");
+const forgotMessage = document.getElementById("forgotMessage");
+
+async function sendRecovery() {
+
+    const email = forgotEmail.value.trim().toLowerCase();
+
+    showMsg(forgotMessage, "");
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showMsg(forgotMessage, "ایمیل معتبر وارد کن.", "error");
+        return;
+    }
+
+    forgotSend.disabled = true;
+
+    try {
+
+        await appwriteAccount.createRecovery({
+            email: email,
+            url: window.location.origin + "/reset.html"
+        });
+
+        showMsg(
+            forgotMessage,
+            "لینک بازیابی ارسال شد. ایمیلت (و پوشه‌ی اسپم) را چک کن.",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        if (error.code === 404) {
+            showMsg(
+                forgotMessage,
+                "حسابی با این ایمیل پیدا نشد. فقط کسانی که ایمیل بازیابی را در پروفایل ثبت کرده‌اند می‌توانند رمز را بازیابی کنند.",
+                "error"
+            );
+        } else {
+            showMsg(forgotMessage, authErrorText(error), "error");
+        }
+
+    } finally {
+
+        forgotSend.disabled = false;
+
+    }
+
+}
+
+if (forgotLink && forgotBox) {
+
+    forgotLink.addEventListener("click", function (event) {
+        event.preventDefault();
+        forgotBox.style.display =
+            forgotBox.style.display === "none" ? "block" : "none";
+    });
+
+    forgotSend.addEventListener("click", sendRecovery);
+
+    forgotEmail.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendRecovery();
+        }
+    });
+
+}
 
 
 /* =========================================================

@@ -1,283 +1,796 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>پیام‌رسان | قاب‌های ماندگار</title>
-    
-    
 
-<link rel="stylesheet" href="style.css">
-    
-</head>
+    <link rel="stylesheet" href="style.css">
 
-<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
-    * {
-    margin: 0;
+        body {
+            --main-color: #a855f7;
+            --main-color-2: #ec4899;
+            --section-bg: #111116;
+            --text-color: #ffffff;
+            --text-muted: #9993a8;
+
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: #09090d;
+            color: var(--text-color);
+            font-family: sans-serif;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            transition: background 0.35s, color 0.35s;
+        }
+
+        /* رنگ‌بندی تم‌ها */
+
+        body.theme-purple {
+            --main-color: #a855f7;
+            --main-color-2: #ec4899;
+        }
+
+        body.theme-blue {
+            --main-color: #3b82f6;
+            --main-color-2: #06b6d4;
+        }
+
+        body.theme-pink {
+            --main-color: #ec4899;
+            --main-color-2: #f472b6;
+        }
+
+        body.theme-green {
+            --main-color: #10b981;
+            --main-color-2: #34d399;
+        }
+
+        body.theme-orange {
+            --main-color: #f97316;
+            --main-color-2: #fbbf24;
+        }
+
+        /* تم روشن */
+
+        body.light-mode {
+            --section-bg: #ffffff;
+            --text-color: #171721;
+            --text-muted: #888899;
+
+            background: #f3f4f8;
+            color: var(--text-color);
+        }
+
+        /* قاب اصلی پیام‌رسان */
+
+        .messenger {
+            width: 100%;
+            max-width: 600px;
+            height: 90vh;
+            height: 90dvh;
+            max-height: 800px;
+
+            background: var(--section-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            overflow: hidden;
+
+            display: flex;
+            flex-direction: column;
+
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+            transition: background 0.35s, border-color 0.35s;
+        }
+
+        body.light-mode .messenger {
+            border-color: rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        /* سربرگ */
+
+        .messenger-header {
+            padding: 16px 20px;
+
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        body.light-mode .messenger-header {
+            background: #f8f8fc;
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .messenger-header h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .messenger-header span {
+            color: var(--main-color);
+            font-size: 13px;
+        }
+
+        /* دکمه بازگشت */
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            padding: 8px 12px;
+            border-radius: 10px;
+
+            background: rgba(255, 255, 255, 0.07);
+            color: inherit;
+            text-decoration: none;
+            font-size: 13px;
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: 0.25s;
+        }
+
+        .back-button:hover {
+            border-color: var(--main-color);
+            background: rgba(168, 85, 247, 0.12);
+        }
+
+        body.light-mode .back-button {
+            background: #eeeef5;
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        /* دکمه تغییر تم */
+
+        .theme-toggle {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+
+            background: rgba(255, 255, 255, 0.08);
+            color: inherit;
+            cursor: pointer;
+
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.3s, transform 0.3s, border-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.06);
+            border-color: var(--main-color);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.92);
+        }
+
+        #themeIcon {
+            display: inline-block;
+            font-size: 26px;
+            line-height: 1;
+            transform-origin: center;
+            will-change: transform;
+        }
+
+        #themeIcon.rotate {
+            animation: themeSpin 0.55s ease-in-out;
+        }
+
+        @keyframes themeSpin {
+            0% {
+                transform: rotate(0deg) scale(0.75);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: rotate(180deg) scale(1.15);
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotate(360deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* محل نمایش پیام‌ها */
+
+        .chat-box {
+            flex: 1;
+            min-height: 0;
+            padding: 20px;
+
+            overflow-y: auto;
+
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            overscroll-behavior: contain;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 11px 16px;
+
+            border-radius: 18px;
+            line-height: 1.8;
+            font-size: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .message.sent {
+            align-self: flex-start;
+
+            background: linear-gradient(
+                135deg,
+                var(--main-color),
+                var(--main-color-2)
+            );
+
+            color: #ffffff;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.received {
+            align-self: flex-end;
+
+            background: #1e1e26;
+            color: #ffffff;
+            border-bottom-right-radius: 5px;
+        }
+
+        body.light-mode .message.received {
+            background: #ececf4;
+            color: #171721;
+        }
+
+        .empty-chat {
+            margin: auto;
+            color: var(--text-muted);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* ردیف نوشتن پیام */
+
+        .message-input {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+
+            padding: 15px;
+
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        body.light-mode .message-input {
+            background: #f8f8fc;
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        /* کادر نوشتن پیام */
+
+        #messageInput {
+            display: block;
+
+            flex: 1;
+            width: 0;
+            min-width: 0;
+            min-height: 48px;
+            max-height: 140px;
+
+            padding: 10px 14px;
+
+            background: var(--section-bg);
+            color: var(--text-color);
+
+            border: 1px solid var(--main-color);
+            border-radius: 14px;
+
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.8;
+
+            resize: none;
+            overflow-y: auto;
+            outline: none;
+
+            overflow-wrap: anywhere;
+            word-break: break-word;
+
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        #messageInput:focus {
+            border-color: var(--main-color-2);
+            box-shadow: 0 0 8px var(--main-color);
+        }
+
+        #messageInput::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* دکمه ارسال */
+
+        .message-input button {
+            height: 48px;
+            flex-shrink: 0;
+            white-space: nowrap;
+
+            padding: 0 20px;
+
+            border: none;
+            border-radius: 14px;
+
+            background: linear-gradient(
+                135deg,
+                var(--main-color),
+                var(--main-color-2)
+            );
+
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .message-input button:hover {
+            transform: translateY(-2px);
+        }
+
+        .message-input button:active {
+            transform: scale(0.96);
+        }
+
+        /* عکس پروفایل کنار پیام */
+
+        .message-avatar {
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+
+        .message-avatar:hover {
+            transform: scale(1.06);
+        }
+
+        /* نمایش بزرگ عکس */
+
+        .avatar-preview {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.88);
+            cursor: zoom-out;
+        }
+
+        .avatar-preview img {
+            max-width: 95%;
+            max-height: 85vh;
+            object-fit: contain;
+
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .avatar-preview-close {
+            position: absolute;
+            top: 18px;
+            left: 20px;
+
+            color: white;
+            background: transparent;
+            border: none;
+
+            font-size: 32px;
+            cursor: pointer;
+        }
+
+        /* نمایش موبایل */
+
+        @media (max-width: 650px) {
+            body {
+                align-items: stretch;
+            }
+
+            .messenger {
+                width: 100%;
+                height: 100vh;
+                height: 100dvh;
+                max-height: none;
+
+                border-radius: 0;
+                border: none;
+            }
+
+            .messenger-header {
+                padding: 14px 10px;
+                gap: 8px;
+            }
+
+            .messenger-header h2 {
+                font-size: 19px;
+            }
+
+            .chat-box {
+                padding: 15px;
+            }
+
+            .message {
+                max-width: 82%;
+            }
+
+            .message-input {
+                gap: 8px;
+                padding: 12px;
+            }
+
+            #messageInput {
+                min-height: 46px;
+                padding: 9px 11px;
+                font-size: 14px;
+            }
+
+            .message-input button {
+                height: 46px;
+                padding: 0 14px;
+                font-size: 13px;
+            }
+
+            .back-button {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .theme-toggle {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+            }
+
+            #themeIcon {
+                font-size: 24px;
+            }
+        }
+        
+        
+        
+       /* کادر مشترک دکمه‌های سربرگ */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px;
+
+    flex-shrink: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* دکمه پروفایل */
+.profile-button {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+    border: 1px solid transparent;
+
+    background: transparent;
+    color: inherit;
+    text-decoration: none;
+
+    font-size: 23px;
+
+    transition:
+        background 0.25s,
+        border-color 0.25s,
+        transform 0.25s;
+}
+
+.profile-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--main-color);
+    transform: scale(1.04);
+}
+
+/* هماهنگی دکمه تغییر تم با کادر جدید */
+.header-actions .theme-toggle {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+
+    border-radius: 12px;
+    border-color: transparent;
+    background: transparent;
+}
+
+.header-actions .theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--main-color);
+}
+
+body.light-mode .header-actions {
+    background: #eeeef5;
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .profile-button:hover,
+body.light-mode .header-actions .theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* دایره‌ای کردن دکمه‌های پروفایل و تغییر تم */
+.header-actions .profile-button,
+.header-actions .theme-toggle {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
     padding: 0;
-    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* افکت هنگام لمس یا قرار گرفتن ماوس */
+.header-actions .profile-button:hover,
+.header-actions .theme-toggle:hover {
+    background: var(--main-color);
+    border-color: var(--main-color);
+    transform: scale(1.06);
+}
+
+/* گرد کردن کادر مشترک دکمه‌ها */
+.header-actions {
+    border-radius: 50px;
+    padding: 5px;
+    gap: 6px;
+    overflow: hidden;
+}
+
+
+
+/* انیمیشن ورود صفحه پیام‌رسان */
+@keyframes messengerPageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 body {
-    min-height: 100vh;
-    background: #09090d;
-    color: #fff;
-    font-family: sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    animation: messengerPageEnter 0.65s ease-out both;
 }
 
-/* قاب اصلی پیام‌رسان */
-.messenger {
-    width: 100%;
-    max-width: 600px;
-    height: 90vh;
-    max-height: 800px;
-    background: #111116;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 22px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-}
-
-/* سربرگ */
-.messenger-header {
-    padding: 20px 24px;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.messenger-header h2 {
-    font-size: 22px;
-    margin-bottom: 5px;
-}
-
-.messenger-header span {
-    color: #a855f7;
-    font-size: 13px;
-}
-
-/* محل پیام‌ها */
-.chat-box {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* پیام */
-.message {
-    max-width: 75%;
-    padding: 11px 16px;
-    border-radius: 18px;
-    line-height: 1.8;
-    font-size: 15px;
-    word-wrap: break-word;
-}
-
-/* پیام ارسال‌شده */
-.message.sent {
-    align-self: flex-start;
-    background: linear-gradient(135deg, #a855f7, #ec4899);
-    border-bottom-left-radius: 5px;
-}
-
-/* پیام دریافتی */
-.message.received {
-    align-self: flex-end;
-    background: #1e1e26;
-    border-bottom-right-radius: 5px;
-}
-
-/* وقتی هنوز پیامی نیست */
-.empty-chat {
-    margin: auto;
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 14px;
-}
-
-/* قسمت نوشتن پیام */
+/* ورود نرم بخش‌های اصلی */
+.messenger-header,
+.chat-container,
 .message-input {
-    display: flex;
-    gap: 10px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    animation: messengerPageEnter 0.7s ease-out both;
 }
 
-.message-input input {
-    flex: 1;
-    height: 48px;
-    padding: 0 17px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    outline: none;
-    background: #09090d;
-    color: #fff;
-    font-family: inherit;
-    font-size: 14px;
-}
-
-.message-input input::placeholder {
-    color: rgba(255, 255, 255, 0.35);
-}
-
-.message-input input:focus {
-    border-color: #a855f7;
-}
-
-/* دکمه ارسال */
-.message-input button {
-    height: 48px;
-    padding: 0 22px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #a855f7, #ec4899);
-    color: #fff;
-    font-family: inherit;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.message-input button:hover {
-    transform: translateY(-2px);
-}
-
-.message-input button:active {
-    transform: scale(0.96);
-}
-
-/* موبایل */
-@media (max-width: 650px) {
-
-    body {
-        align-items: stretch;
-    }
-
-    .messenger {
-        height: 100vh;
-        max-height: none;
-        border-radius: 0;
-        border: none;
-    }
-
-    .messenger-header {
-        padding: 18px 20px;
-    }
-
-    .chat-box {
-        padding: 15px;
-    }
-
-    .message {
-        max-width: 82%;
-    }
-
-    .message-input {
-        padding: 12px;
-    }
-
-    .message-input button {
-        padding: 0 17px;
-    }
-}
 .messenger-header {
-    padding: 16px 20px;
-    background: rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    animation-delay: 0.05s;
 }
 
-.header-info {
-    flex: 1;
+.chat-container {
+    animation-delay: 0.12s;
 }
 
-.back-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 8px 12px;
-    border-radius: 10px;
-
-    background: rgba(255, 255, 255, 0.07);
-    color: #fff;
-
-    text-decoration: none;
-    font-size: 13px;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    transition: 0.2s;
+.message-input {
+    animation-delay: 0.2s;
 }
 
-.back-button:hover {
-    background: rgba(168, 85, 247, 0.2);
-} 
+/* رعایت تنظیمات کاهش حرکت دستگاه */
+@media (prefers-reduced-motion: reduce) {
+    body,
+    .messenger-header,
+    .chat-container,
+    .message-input {
+        animation: none !important;
+    }
+}
 
-.message.received {
-    align-self: flex-end;
-    background: #1e1e26;
-    border-bottom-right-radius: 5px;
-} 
 
-</style> 
+    </style>
+</head>
 
+<body>
 
     <div class="messenger">
 
         <header class="messenger-header">
 
-    <a href="index.html" class="back-button">
-        ← بازگشت
+            <a href="index.html" class="back-button">
+                ← خانه
+            </a>
+
+            <div class="header-info">
+                <h2>پیام‌رسان</h2>
+                <span>قاب‌های ماندگار</span>
+            </div>
+
+            <div class="header-actions">
+
+    <a
+        href="profile.html"
+        class="profile-button"
+        aria-label="پروفایل"
+        title="پروفایل"
+    >
+        👤
     </a>
 
-    <div class="header-info">
-        <h2>پیام‌رسان</h2>
-        <span>قاب‌های ماندگار</span>
-    </div>
+    <button
+        id="themeToggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="تغییر تم"
+        title="تغییر تم"
+    >
+        <span id="themeIcon">☀️</span>
+    </button>
 
-</header>
+</div>
+
+        </header>
 
         <div class="chat-box" id="chatBox">
+
             <div class="empty-chat">
-                پیامی نیست... 
+                پیامی نیست...
             </div>
+
         </div>
 
         <div class="message-input">
 
-            <input
-                type="text"
+            <textarea
                 id="messageInput"
                 placeholder="بنویس..."
-                autocomplete="off"
-            >
+                rows="1"
+                aria-label="متن پیام"
+            ></textarea>
 
-            <button id="sendMessage">
-                ارسال
+            <button id="sendMessage" type="button">
+                بده بره
             </button>
 
         </div>
 
     </div>
-    
-<script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
+
+    <!-- مدیریت تم سایت -->
+    <script src="theme.js"></script>
+
+    <!-- هماهنگی رنگ پیام‌رسان با رنگ پروفایل -->
+    <script>
+        (function () {
+            const colors = [
+                "purple",
+                "blue",
+                "pink",
+                "green",
+                "orange"
+            ];
+
+            function applyProfileColor() {
+                let savedColor =
+                    localStorage.getItem("profileColor") || "purple";
+
+                if (!colors.includes(savedColor)) {
+                    savedColor = "purple";
+                }
+
+                document.body.classList.remove(
+                    ...colors.map(color => "theme-" + color)
+                );
+
+                document.body.classList.add("theme-" + savedColor);
+            }
+
+            applyProfileColor();
+
+            window.addEventListener("pageshow", applyProfileColor);
+
+            window.addEventListener("storage", function (event) {
+                if (event.key === "profileColor") {
+                    applyProfileColor();
+                }
+            });
+        })();
+    </script>
+
+    <!-- Appwrite -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
+
+    <!-- منطق پیام‌رسان -->
     <script src="messenger.js"></script>
 
-</body>
+    <!-- بررسی ورود کاربر و تنظیم ارتفاع کادر -->
+    <script>
+        (function () {
+            const loggedIn = localStorage.getItem("loggedIn");
+            const memoryUser = localStorage.getItem("memoryUser");
 
+            if (loggedIn !== "true" || !memoryUser) {
+                alert("برای استفاده از پیام‌رسان، ابتدا وارد حساب کاربری خود شوید.");
+                window.location.replace("login.html");
+            }
+        })();
+
+        const chatTextarea = document.getElementById("messageInput");
+
+        function resizeMessageInput() {
+            chatTextarea.style.height = "auto";
+
+            const maxHeight = 140;
+
+            chatTextarea.style.height =
+                Math.min(chatTextarea.scrollHeight, maxHeight) + "px";
+
+            chatTextarea.style.overflowY =
+                chatTextarea.scrollHeight > maxHeight ? "auto" : "hidden";
+        }
+
+        chatTextarea.addEventListener("input", resizeMessageInput);
+    </script>
+
+</body>
 </html>

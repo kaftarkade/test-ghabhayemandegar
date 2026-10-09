@@ -58,6 +58,35 @@
         0.4s ease;
 }
 
+body.theme-purple {
+    --main-color: #8b5cf6;
+    --main-color-2: #ec4899;
+    --main-rgb: 139, 92, 246;
+}
+
+body.theme-blue {
+    --main-color: #3b82f6;
+    --main-color-2: #06b6d4;
+    --main-rgb: 59, 130, 246;
+}
+
+body.theme-pink {
+    --main-color: #ec4899;
+    --main-color-2: #f43f5e;
+    --main-rgb: 236, 72, 153;
+}
+
+body.theme-green {
+    --main-color: #22c55e;
+    --main-color-2: #14b8a6;
+    --main-rgb: 34, 197, 94;
+}
+
+body.theme-orange {
+    --main-color: #f97316;
+    --main-color-2: #eab308;
+    --main-rgb: 249, 115, 22;
+}
 
 /* =========================================================
    03. PROFILE COLOR THEMES
@@ -467,7 +496,7 @@ audio {
 
     color: var(--white);
 
-    background: var(--profile-color, #8b5cf6);
+    background: var(--theme-gradient);
 
     border: 1px solid rgba(255, 255, 255, 0.15);
 
@@ -4978,6 +5007,146 @@ body {
 }
 
 
+/* =========================================
+   هماهنگی اجزای سایت با تم انتخاب‌شده
+========================================= */
+
+/* دکمه‌های اصلی */
+.btn,
+.main-btn {
+    background: var(--theme-gradient);
+    border-color: var(--theme-border);
+    color: #fff;
+}
+
+.btn:hover,
+.main-btn:hover {
+    background: var(--theme-gradient);
+    box-shadow: 0 10px 30px var(--theme-shadow);
+}
+
+/* لینک‌های منو */
+.mobile-menu a:hover,
+.site-nav a:hover {
+    background: var(--theme-soft);
+    color: var(--main-color);
+}
+
+/* دکمه‌های علاقه‌مندی تصاویر */
+.favorite-btn:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover,
+#lightboxFavorite:hover {
+    background: var(--main-color);
+    border-color: var(--main-color);
+}
+
+/* کنترل‌های پلیر موسیقی */
+.play-btn,
+.pro-play-btn,
+.mini-player-button {
+    background: var(--theme-gradient);
+}
+
+/* نوار پیشرفت و کنترل صدا */
+#progress,
+#proProgress,
+#proVolume,
+.music-progress {
+    accent-color: var(--main-color);
+}
+
+/* کادرهای دارای تم */
+.photo-card:hover,
+.music-player .player-info:hover,
+.pro-track:hover {
+    border-color: var(--theme-border);
+}
+
+/* افکت رنگی هماهنگ */
+.photo-card:hover,
+.music-player .player-info:hover,
+.pro-music-player {
+    --card-theme-shadow: var(--theme-soft);
+}
+
+/* تغییر نرم رنگ‌ها */
+.btn,
+.main-btn,
+.favorite-btn,
+.music-favorite,
+.pro-control-btn,
+.pro-play-btn,
+.mini-player-button,
+.site-nav a,
+.mobile-menu a {
+    transition:
+        background 0.35s ease,
+        color 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        transform 0.25s ease;
+}
 
 
-ع
+
+/* =========================================================
+   هماهنگی رنگ تمام صفحات با رنگ انتخابی پروفایل
+========================================================= */
+
+/* رنگ اصلی دکمه‌ها */
+.btn,
+.main-btn,
+.play-btn,
+.pro-play-btn,
+.mini-player-button {
+    background: var(--theme-gradient);
+    border-color: var(--theme-border);
+}
+
+/* رنگ هنگام رفتن نشانگر روی دکمه */
+.btn:hover,
+.main-btn:hover,
+.play-btn:hover,
+.pro-play-btn:hover,
+.mini-player-button:hover {
+    box-shadow: 0 8px 24px var(--theme-shadow);
+}
+
+/* رنگ لینک‌های منو */
+.site-nav a:hover,
+.mobile-menu a:hover {
+    color: var(--main-color);
+    background: var(--theme-soft);
+}
+
+/* رنگ کادرها */
+.photo-card:hover,
+.pro-track:hover {
+    border-color: var(--theme-border);
+}
+
+/* هماهنگی رنگ آیکون‌های موردعلاقه */
+.favorite-btn:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background: var(--main-color);
+    border-color: var(--main-color);
+}
+
+/* تغییر نرم رنگ اجزا */
+.btn,
+.main-btn,
+.play-btn,
+.pro-play-btn,
+.mini-player-button,
+.site-nav a,
+.mobile-menu a,
+.photo-card {
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+

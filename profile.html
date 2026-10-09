@@ -27,8 +27,11 @@
             قاب‌های ماندگار 🖼️
         </a>
 
-        <a href="index.html" class="back-btn">
-            ← خانه
+       
+<button type="button" class="back-button" onclick="goBack()">
+    ← بازگشت
+</button>
+
         </a>
 
     </header>
@@ -168,6 +171,38 @@
                         </strong>
 
                     </div>
+
+                </div>
+
+                <!-- EMAIL (برای بازیابی رمز) -->
+
+                <div class="info-item">
+
+                    <span class="info-icon">
+                        ✉️
+                    </span>
+
+                    <div class="info-content">
+
+                        <small>
+                            ایمیل بازیابی
+                        </small>
+
+                        <strong id="profileEmail">
+                            ثبت نشده
+                        </strong>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="edit-info-btn"
+                        data-edit="email"
+                        aria-label="ثبت ایمیل بازیابی"
+                        title="ثبت ایمیل بازیابی"
+                    >
+                        ✏️
+                    </button>
 
                 </div>
 
@@ -564,28 +599,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
 
+    <script src="sync.js"></script>
+
     <script src="theme.js"></script>
 
     <script src="profile.js"></script>
     
     <script>
-document.addEventListener("DOMContentLoaded", function () {
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const favoriteCount =
-        document.getElementById("favoriteCount");
-
-    if (!favoriteCount) {
-        return;
-    }
-
-
-    let totalFavorites = 0;
-
-
-<script>
 
 /* =====================================================
    PROFILE FAVORITES COUNT
