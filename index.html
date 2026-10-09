@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>قاب‌های ماندگار</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+        قاب‌های ماندگار
+    </div>
+
+
+    <!-- دکمه سه خط -->
+
+    <input
+        type="checkbox"
+        id="menu-toggle"
+    >
+
+    <label
+        for="menu-toggle"
+        class="menu-button"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
+
+
+     <!-- ================= DESKTOP NAV ================= -->
+
+        <nav class="desktop-nav">
+
+<a
+                href="login.html"
+                class="account-link"
+            >
+                 👤 ورود / ثبت‌نام
+            </a>
+            
+            <a href="massages.html">
+                 💬 پیام‌رسان
+            </a>
+
+            <a href="gallery.html">
+                تصاویر
+            </a>
+
+            <a href="musics.html">
+                آهنگ
+            </a>
+
+            <a href="https://eitaa.com/@matin_7451">
+                ارتباط با ما
+            </a>
+
+        </nav>
+
+
+        <!-- ================= MOBILE NAV ================= -->
+
+        <nav class="mobile-menu">
+
+            <!-- ACCOUNT -->
+
+            <a
+                href="login.html"
+                class="account-link"
+            >
+                👤 ورود / ثبت‌نام
+            </a>
+
+            <a href="massages.html">
+            💬 پیام‌رسان
+            </a>
+
+            <!-- GALLERY -->
+
+            <a href="gallery.html">
+                تصاویر
+            </a>
+
+
+            <!-- MUSICS -->
+
+            <a href="musics.html">
+                آهنگ
+            </a>
+
+            <!-- EITAA -->
+
+<a href="https://s7.uplod.ir:182/d/3w222r4e4hvhuf6tfsnyhl3f6hspze5tvokmhznflylquuiizznqefodrfmmec2d7h6luevk/ghab_haye_mandegar._">دانلود برنامه نسخه قبلی</a>
+
+            <!-- CONTACT -->
+
+            <a href="https://eitaa.com/@matin_7451">
+                ارتباط با ما
+            </a>
+
+
+        <!-- تغییر حالت روشن / تاریک -->
+
+        <div class="theme-switch">
+
+            <input
+                type="checkbox"
+                id="theme-toggle"
+            >
+
+            <label
+                for="theme-toggle"
+                class="theme-button"
+            >
+
+                <span class="sun">
+                    ☀️
+                </span>
+
+                <span class="moon">
+                    🌙
+                </span>
+
+            </label>
+
+        </div>
+
+    </nav>
+
+</header>
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero" id="home">
+
+        <div class="hero-content">
+
+            <h1>
+                قاب‌های<br>
+                <strong>ماندگار</strong>
+            </h1>
+
+            <p>
+              خاطرات ارزش ماندن دارند.
+            </p>
+
+<br>
+          <br>
+        <br>
+          <a href="gallery.html" class="btn"><b>آلبوم خاطرات</b></a>
+          <a href="musics.html" class="btn"><b>آهنگ های داخلی</b></a>
+          
+        </div>
+
+    </section>
+  
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+           قاب‌های ماندگار 🖼
+        </div>
+
+        <p>
+          ساخته شده با ❤️ برای خاطراتمون
+        </p>
+
+    </footer>
+
+<script src="script.js"></script>
+
+<script src="theme.js"></script>
+
+<!-- وضعیت ورود: لینک حساب در منوی دسکتاپ و موبایل -->
+<script>
+(function () {
+
+    function updateAccountLinks() {
+
+        var links = document.querySelectorAll(".account-link");
+
+        var logged = false;
+
+        try {
+            logged = !!localStorage.getItem("memoryUser") &&
+                     localStorage.getItem("loggedIn") === "true";
+        } catch (e) {}
+
+        links.forEach(function (link) {
+            link.textContent = logged ? "👤 پروفایل" : "👤 ورود / ثبت‌نام";
+            link.setAttribute("href", logged ? "profile.html" : "login.html");
+        });
+
+    }
+
+    updateAccountLinks();
+
+    window.addEventListener("pageshow", updateAccountLinks);
+    window.addEventListener("focus", updateAccountLinks);
+
+})();
+</script>
+
+</body>
+
+</html>

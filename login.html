@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ورود / ثبت‌نام | قاب های ماندگار</title>
+
+    <link rel="stylesheet" href="login.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= BACKGROUND ================= -->
+
+    <div class="background">
+
+        <div class="glow glow-one"></div>
+        <div class="glow glow-two"></div>
+
+    </div>
+
+
+    <!-- ================= TOP BAR ================= -->
+
+    <header class="top-bar">
+
+        <a href="index.html" class="back-btn">
+            ← بازگشت
+        </a>
+
+
+        <!-- تغییر حالت روشن / تاریک -->
+
+        <button
+            class="theme-btn"
+            id="themeToggle"
+            type="button"
+            aria-label="تغییر حالت صفحه"
+        >
+
+            <span id="themeIcon">☀️</span>
+
+        </button>
+
+    </header>
+
+
+    <!-- ================= LOGIN / REGISTER ================= -->
+
+    <main class="auth-container">
+
+
+        <div class="auth-box">
+
+
+            <!-- ================= LOGO ================= -->
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    🖼️
+                </div>
+
+                <h1>
+                    قاب‌های ماندگار
+                </h1>
+
+                <p>
+                    خاطراتمون ابدیه 😉
+                </p>
+
+            </div>
+
+
+            <!-- ================= TABS ================= -->
+
+            <div class="tabs">
+
+                <button
+                    type="button"
+                    class="tab active"
+                    id="loginTab"
+                >
+                    ورود
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tab"
+                    id="registerTab"
+                >
+                    ثبت‌نام
+                </button>
+
+
+                <div class="tab-line"></div>
+
+            </div>
+
+
+            <!-- ================= FORMS ================= -->
+
+            <div class="forms-container">
+
+
+                <!-- =================================================
+                     LOGIN
+                ================================================== -->
+
+                <form
+                    id="loginForm"
+                    class="auth-form active-form"
+                >
+
+
+                    <!-- شماره موبایل -->
+
+                    <div class="input-group">
+
+                        <label for="loginPhone">
+                            شماره موبایل
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="loginPhone"
+                            name="loginPhone"
+                            placeholder="09xxxxxxxxx"
+                            inputmode="numeric"
+                            maxlength="11"
+                            pattern="09[0-9]{9}"
+                            autocomplete="tel"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- رمز عبور -->
+
+                    <div class="input-group">
+
+                        <label for="loginPassword">
+                            رمز عبور
+                        </label>
+
+
+                        <div class="password-box">
+
+                            <input
+                                type="password"
+                                id="loginPassword"
+                                name="loginPassword"
+                                placeholder="رمز عبور"
+                              autocomplete="current-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="show-password"
+                                data-target="loginPassword"
+                                aria-label="نمایش رمز عبور"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- دکمه ورود -->
+
+                    <button
+                        type="submit"
+                        class="submit-btn"
+                    >
+                        ورود به حساب
+                    </button>
+
+
+                    <!-- پیام -->
+
+                    <p
+                        class="message"
+                        id="loginMessage"
+                    ></p>
+
+
+                </form>
+
+
+                <!-- =================================================
+                     REGISTER
+                ================================================== -->
+
+                <form
+                    id="registerForm"
+                    class="auth-form"
+                >
+
+
+                    <!-- نام -->
+
+                    <div class="input-group">
+
+                        <label for="registerName">
+                            نام
+                        </label>
+
+
+                        <input
+                            type="text"
+                            id="registerName"
+                            name="registerName"
+                            placeholder="نام و نام خانوادگی"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- شماره موبایل -->
+
+                    <div class="input-group">
+
+                        <label for="phone">
+                            شماره موبایل
+                        </label>
+
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="09xxxxxxxxx"
+                            inputmode="numeric"
+                            maxlength="11"
+                            pattern="09[0-9]{9}"
+                            autocomplete="tel"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- رمز عبور -->
+
+                    <div class="input-group">
+
+                        <label for="registerPassword">
+                            رمز عبور
+                        </label>
+
+
+                        <div class="password-box">
+
+                            <input
+                                type="password"
+                                id="registerPassword"
+                                name="registerPassword"
+                                placeholder="حداقل ۸ کاراکتر"
+                                minlength="8"
+                                autocomplete="new-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="show-password"
+                                data-target="registerPassword"
+                                aria-label="نمایش رمز عبور"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- تکرار رمز -->
+
+                    <div class="input-group">
+
+                        <label for="registerPassword2">
+                            تکرار رمز عبور
+                        </label>
+
+
+                        <div class="password-box">
+
+                            <input
+                                type="password"
+                                id="registerPassword2"
+                                name="registerPassword2"
+                                placeholder="رمز عبور را دوباره وارد کنید"
+                                minlength="8"
+                                autocomplete="new-password"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                class="show-password"
+                                data-target="registerPassword2"
+                                aria-label="نمایش رمز عبور"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- دکمه ثبت نام -->
+
+                    <button
+                        type="submit"
+                        class="submit-btn"
+                    >
+                        ساخت حساب
+                    </button>
+
+
+                    <!-- پیام -->
+
+                    <p
+                        class="message"
+                        id="registerMessage"
+                    ></p>
+
+
+                </form>
+
+
+            </div>
+
+
+            <!-- ================= BOTTOM TEXT ================= -->
+
+            <div class="bottom-text">
+
+                با ورود یا ثبت‌نام،
+                می‌توان به پیام‌رسان دسترسی پیدا کرد 💌
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
+
+<script>
+console.log("LOGIN HTML OK");
+</script>
+
+    <script src="login.js"></script>
+
+    <script src="theme.js"></script>
+
+</body>
+
+</html>

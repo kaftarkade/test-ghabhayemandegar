@@ -1,0 +1,173 @@
+body {
+    background: blue !important;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: #09090d;
+    color: #fff;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* قاب اصلی پیام‌رسان */
+.messenger {
+    width: 100%;
+    max-width: 600px;
+    height: 90vh;
+    max-height: 800px;
+    background: #111116;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* سربرگ */
+.messenger-header {
+    padding: 20px 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.messenger-header h2 {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.messenger-header span {
+    color: #a855f7;
+    font-size: 13px;
+}
+
+/* محل پیام‌ها */
+.chat-box {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* پیام */
+.message {
+    max-width: 75%;
+    padding: 11px 16px;
+    border-radius: 18px;
+    line-height: 1.8;
+    font-size: 15px;
+    word-wrap: break-word;
+}
+
+/* پیام ارسال‌شده */
+.message.sent {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border-bottom-left-radius: 5px;
+}
+
+/* وقتی هنوز پیامی نیست */
+.empty-chat {
+    margin: auto;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 14px;
+}
+
+/* قسمت نوشتن پیام */
+.message-input {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.message-input input {
+    flex: 1;
+    height: 48px;
+    padding: 0 17px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    outline: none;
+    background: #09090d;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.message-input input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.message-input input:focus {
+    border-color: #a855f7;
+}
+
+/* دکمه ارسال */
+.message-input button {
+    height: 48px;
+    padding: 0 22px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.message-input button:hover {
+    transform: translateY(-2px);
+}
+
+.message-input button:active {
+    transform: scale(0.96);
+}
+
+/* موبایل */
+@media (max-width: 650px) {
+
+    body {
+        align-items: stretch;
+    }
+
+    .messenger {
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+    }
+
+    .messenger-header {
+        padding: 18px 20px;
+    }
+
+    .chat-box {
+        padding: 15px;
+    }
+
+    .message {
+        max-width: 82%;
+    }
+
+    .message-input {
+        padding: 12px;
+    }
+
+    .message-input button {
+        padding: 0 17px;
+    }
+}

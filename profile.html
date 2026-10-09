@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>پروفایل | قاب‌های ماندگار</title>
+
+    <link rel="stylesheet" href="profile.css">
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <header class="top-bar">
+
+        <a href="index.html" class="logo">
+            قاب‌های ماندگار 🖼️
+        </a>
+
+        <a href="index.html" class="back-btn">
+            ← خانه
+        </a>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         PROFILE
+    ====================================================== -->
+
+    <main class="profile-container">
+
+        <section class="profile-card">
+
+
+            <!-- ================= PROFILE PHOTO ================= -->
+
+            <div
+                class="profile-avatar"
+                id="profileAvatar"
+            >
+
+                <img
+                    id="profileImage"
+                    src=""
+                    alt="عکس پروفایل"
+                >
+
+                <span id="defaultAvatar">
+                    👤
+                </span>
+
+                <button
+                    id="deleteProfileImage"
+                    class="delete-profile-btn"
+                    type="button"
+                    title="حذف عکس پروفایل"
+                    aria-label="حذف عکس پروفایل"
+                >
+                    🗑️
+                </button>
+
+            </div>
+
+
+            <label
+                for="profileImageInput"
+                class="change-photo-btn"
+            >
+                📸 تغییر عکس
+            </label>
+
+
+            <input
+                type="file"
+                id="profileImageInput"
+                accept="image/*"
+                hidden
+            >
+
+
+
+            <!-- ================= WELCOME ================= -->
+
+            <h1>
+                سلام
+                <span id="userName">
+                    کاربر
+                </span>
+                ! 👋
+            </h1>
+
+
+            <p class="welcome">
+                خوش اومدی به قاب‌های ماندگار ❤️
+            </p>
+
+
+
+            <!-- =================================================
+                 INFORMATION
+            ================================================== -->
+
+            <div class="info-list">
+
+
+                <!-- NAME -->
+
+                <div class="info-item">
+
+                    <span class="info-icon">
+                        👤
+                    </span>
+
+                    <div class="info-content">
+
+                        <small>
+                            نام
+                        </small>
+
+                        <strong id="profileName">
+                            -
+                        </strong>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="edit-info-btn"
+                        data-edit="name"
+                        aria-label="ویرایش نام"
+                        title="ویرایش نام"
+                    >
+                        ✏️
+                    </button>
+
+                </div>
+
+
+
+                <!-- PHONE -->
+
+                <div class="info-item">
+
+                    <span class="info-icon">
+                        📱
+                    </span>
+
+                    <div class="info-content">
+
+                        <small>
+                            شماره موبایل
+                        </small>
+
+                        <strong id="profilePhone">
+                            -
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATS
+            ================================================== -->
+
+            <div class="stats">
+
+                <div class="stat">
+
+                    <strong id="favoriteCount">
+                        0
+                    </strong>
+
+                    <span>
+                        ⭐ موردعلاقه‌ها
+                    </span>
+
+
+
+                </div>
+
+
+                <div class="stat">
+
+                    <strong id="joinDate">
+                        -
+                    </strong>
+
+                    <span>
+                        📅 عضو از
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 THEME COLORS
+            ================================================== -->
+
+            <div class="theme-section">
+
+                <div class="theme-title">
+                    🎨 رنگ ظاهری
+                </div>
+
+                <div class="theme-colors">
+
+                    <button
+                        type="button"
+                        class="color-option purple"
+                        data-color="purple"
+                        aria-label="بنفش"
+                        title="بنفش"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="color-option blue"
+                        data-color="blue"
+                        aria-label="آبی"
+                        title="آبی"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="color-option pink"
+                        data-color="pink"
+                        aria-label="صورتی"
+                        title="صورتی"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="color-option green"
+                        data-color="green"
+                        aria-label="سبز"
+                        title="سبز"
+                    ></button>
+
+                    <button
+                        type="button"
+                        class="color-option orange"
+                        data-color="orange"
+                        aria-label="نارنجی"
+                        title="نارنجی"
+                    ></button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 LOGOUT
+            ================================================== -->
+
+            <button
+                id="logoutBtn"
+                class="logout-btn"
+                type="button"
+            >
+                🚪 خروج از حساب
+            </button>
+
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         EDIT INFORMATION MODAL
+    ====================================================== -->
+
+    <div
+        class="edit-modal"
+        id="editModal"
+    >
+
+        <div class="edit-box">
+
+            <div class="edit-icon">
+                ✏️
+            </div>
+
+            <h2 id="editTitle">
+                ویرایش اطلاعات
+            </h2>
+
+            <p id="editHelp">
+                اطلاعات جدیدت رو وارد کن.
+            </p>
+
+
+            <input
+                type="text"
+                id="editInput"
+                class="edit-input"
+                autocomplete="off"
+            >
+
+
+            <div class="edit-buttons">
+
+                <button
+                    type="button"
+                    id="cancelEdit"
+                    class="cancel-edit-btn"
+                >
+                    لغو
+                </button>
+
+                <button
+                    type="button"
+                    id="saveEdit"
+                    class="save-edit-btn"
+                >
+                    ✓ ذخیره
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         IMAGE CROP MODAL
+    ====================================================== -->
+
+    <div
+        class="crop-modal"
+        id="cropModal"
+    >
+
+        <div class="crop-box">
+
+            <h2>
+                انتخاب عکس پروفایل
+            </h2>
+
+            <p class="crop-help">
+                عکس را بکش تا قسمت دلخواهت داخل قاب قرار بگیرد
+            </p>
+
+
+            <div
+                class="crop-area"
+                id="cropArea"
+            >
+
+                <img
+                    id="cropImage"
+                    src=""
+                    alt="انتخاب عکس"
+                    draggable="false"
+                >
+
+                <div class="crop-circle"></div>
+
+            </div>
+
+
+            <div class="zoom-controls">
+
+                <button
+                    type="button"
+                    id="zoomOut"
+                >
+                    −
+                </button>
+
+                <span>
+                    🔍
+                </span>
+
+                <button
+                    type="button"
+                    id="zoomIn"
+                >
+                    +
+                </button>
+
+            </div>
+
+
+            <div class="crop-buttons">
+
+                <button
+                    type="button"
+                    id="cancelCrop"
+                    class="cancel-btn"
+                >
+                    لغو
+                </button>
+
+                <button
+                    type="button"
+                    id="saveCrop"
+                    class="save-btn"
+                >
+                    ✓ ذخیره عکس
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         DELETE PROFILE PHOTO MODAL
+    ====================================================== -->
+
+    <div
+        class="delete-modal"
+        id="deleteModal"
+    >
+
+        <div class="delete-box">
+
+            <div class="delete-icon">
+                🗑️
+            </div>
+
+            <h2>
+                حذف عکس پروفایل؟
+            </h2>
+
+            <p>
+                مطمئنی که می‌خوای عکس پروفایلت رو حذف کنی؟
+            </p>
+
+            <div class="delete-buttons">
+
+                <button
+                    type="button"
+                    id="cancelDelete"
+                    class="cancel-delete-btn"
+                >
+                    لغو
+                </button>
+
+                <button
+                    type="button"
+                    id="confirmDelete"
+                    class="confirm-delete-btn"
+                >
+                    🗑️ بله، حذفش کن
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         IMAGE PREVIEW
+    ====================================================== -->
+
+    <div
+        class="image-preview-modal"
+        id="imagePreviewModal"
+    >
+
+        <button
+            type="button"
+            id="closeImagePreview"
+            class="close-preview-btn"
+            aria-label="بستن"
+        >
+            ×
+        </button>
+
+        <img
+            id="previewProfileImage"
+            src=""
+            alt="نمایش عکس پروفایل"
+        >
+
+    </div>
+
+
+
+    <!-- =====================================================
+         LOGOUT MODAL
+    ====================================================== -->
+
+    <div
+        class="logout-modal"
+        id="logoutModal"
+    >
+
+        <div class="logout-box">
+
+            <div class="logout-icon">
+                🚪
+            </div>
+
+            <h2>
+                خروج از حساب؟
+            </h2>
+
+            <p>
+                مطمئنی که می‌خوای از حسابت خارج بشی؟
+            </p>
+
+            <div class="logout-buttons">
+
+                <button
+                    type="button"
+                    id="cancelLogout"
+                    class="cancel-logout-btn"
+                >
+                    لغو
+                </button>
+
+                <button
+                    type="button"
+                    id="confirmLogout"
+                    class="confirm-logout-btn"
+                >
+                    🚪 بله، خارج شو
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
+
+    <script src="theme.js"></script>
+
+    <script src="profile.js"></script>
+    
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const favoriteCount =
+        document.getElementById("favoriteCount");
+
+    if (!favoriteCount) {
+        return;
+    }
+
+
+    let totalFavorites = 0;
+
+
+<script>
+
+/* =====================================================
+   PROFILE FAVORITES COUNT
+   🎵 آهنگ + 📸 عکس
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const favoriteCount =
+        document.getElementById("favoriteCount");
+
+
+    if (!favoriteCount) {
+        return;
+    }
+
+
+    let musicCount = 0;
+    let imageCount = 0;
+
+
+    /* =================================================
+       🎵 شمارش آهنگ‌ها
+    ================================================= */
+
+    for (
+        let i = 0;
+        i < localStorage.length;
+        i++
+    ) {
+
+        const key =
+            localStorage.key(i);
+
+
+        if (
+            key &&
+            key.indexOf("favorite-song-") === 0 &&
+            localStorage.getItem(key) === "true"
+        ) {
+
+            musicCount++;
+
+        }
+
+    }
+
+
+    /* =================================================
+       📸 شمارش عکس‌ها
+    ================================================= */
+
+    try {
+
+        const savedImages =
+            localStorage.getItem(
+                "favoriteImages"
+            );
+
+
+        if (savedImages) {
+
+            const images =
+                JSON.parse(savedImages);
+
+
+            if (Array.isArray(images)) {
+
+                imageCount =
+                    images.length;
+
+            }
+
+        }
+
+    } catch (error) {
+
+        imageCount = 0;
+
+    }
+
+
+    /* =================================================
+       ⭐ مجموع
+    ================================================= */
+
+    const total =
+        musicCount + imageCount;
+
+
+    favoriteCount.textContent =
+        total;
+
+});
+
+</script>
+    
+
+</body>
+
+</html>
