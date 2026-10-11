@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>آهنگ | قاب‌های ماندگار</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <header class="navbar">
+
+        <!-- LOGO -->
+
+        <div class="logo">
+            قاب‌های ماندگار
+        </div>
+
+
+        <!-- MOBILE MENU TOGGLE -->
+
+        <input
+            type="checkbox"
+            id="menu-toggle"
+        >
+
+
+        <label
+            for="menu-toggle"
+            class="menu-button"
+        >
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </label>
+
+
+        <!-- ================= DESKTOP NAV ================= -->
+
+        <nav class="desktop-nav">
+
+<a
+                href="login.html"
+                id="accountLink"
+            >
+                 👤 ورود / ثبت‌نام
+            </a>
+            
+            <a href="massages.html">
+                 💬 پیام‌رسان
+            </a>
+
+            <a href="index.html">
+                خانه
+            </a>
+
+            <a href="gallery.html">
+                تصاویر
+            </a>
+
+
+            <a href="https://eitaa.com/@matin_7451">
+                ارتباط با ما
+            </a>
+
+        </nav>
+
+
+        <!-- ================= MOBILE NAV ================= -->
+
+        <nav class="mobile-menu">
+
+            <!-- ACCOUNT -->
+
+            <a
+                href="login.html"
+                id="accountLink"
+            >
+                👤 ورود / ثبت‌نام
+            </a>
+
+            <a href="massages.html">
+            💬 پیام‌رسان
+            </a>
+
+            <!-- HOME -->
+
+            <a href="index.html">
+                خانه
+            </a>
+
+
+            <!-- GALLERY -->
+
+            <a href="gallery.html">
+                تصاویر
+            </a>
+
+
+            <!-- EITAA -->
+
+<a href="https://abrehamrahi.ir/o/public/2quBbcwi/">دانلود برنامه نسخه قبلی</a>
+</p>
+
+            <!-- CONTACT -->
+
+            <a href="https://eitaa.com/@matin_7451">
+                ارتباط با ما
+            </a>
+
+
+            <!-- ================= THEME SWITCH ================= -->
+
+            <div class="theme-switch">
+
+                <input
+                    type="checkbox"
+                    id="theme-toggle"
+                >
+
+
+                <label
+                    for="theme-toggle"
+                    class="theme-button"
+                >
+
+                    <span class="sun">
+                        ☀️
+                    </span>
+
+                    <span class="moon">
+                        🌙
+                    </span>
+
+                </label>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MUSIC SECTION
+    ====================================================== -->
+
+    <section
+        class="music-section"
+        id="music"
+    >
+
+
+        <!-- ================= TITLE ================= -->
+
+        <div class="section-heading">
+
+            <br>
+
+            <h2>
+                آهنگامون 🎧
+            </h2>
+
+            <br>
+            <br>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             MUSIC PLAYER
+        ====================================================== -->
+
+        <div class="pro-music-player">
+
+
+            <!-- =================================================
+                 AUDIO FILES
+            ================================================== -->
+
+            <audio
+                id="audio0"
+                preload="metadata"
+                src="musics/Final Export (anbar-nesa) - bakalam.mp3"
+            ></audio>
+
+
+            <audio
+                id="audio1"
+                preload="metadata"
+                src="musics/Final Export (madrese) - bakalam.mp3"
+            ></audio>
+
+
+            <audio
+                id="audio2"
+                preload="metadata"
+                src="musics/شهر پایگاه - کفترکده.mp3"
+            ></audio>
+
+
+            <audio
+                id="audio3"
+                preload="metadata"
+                src="musics/یک گفت‌وگوی خصوصی.mp3"
+            ></audio>
+
+
+            <audio
+                id="audio4"
+                preload="metadata"
+                src="musics/قایقی خواهم ساخت - ویرگول مدیا.mp3"
+            ></audio>
+
+
+
+            <!-- =================================================
+                 SONG INFO
+            ================================================== -->
+
+            <div class="pro-song-info">
+
+                <div class="pro-song-icon">
+                    🎵
+                </div>
+
+
+                <div class="pro-song-details">
+
+                    <h3 id="proSongTitle">
+                        عنبر نسأ
+                    </h3>
+
+
+                    <p id="proSongArtist">
+                        ابوالفضل جمالی
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PROGRESS
+            ================================================== -->
+
+            <div class="pro-progress-area">
+
+                <span id="proCurrentTime">
+                    00:00
+                </span>
+
+
+                <input
+                    type="range"
+                    id="proProgress"
+                    min="0"
+                    max="100"
+                    value="0"
+                >
+
+
+                <span id="proDuration">
+                    00:00
+                </span>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CONTROLS
+            ================================================== -->
+
+            <div class="pro-controls">
+
+                <button
+                    type="button"
+                    id="proNext"
+                    class="pro-control-btn"
+                    aria-label="آهنگ بعدی"
+                >
+                    ⏭
+                </button>
+
+
+                <button
+                    type="button"
+                    id="proPlay"
+                    class="pro-play-btn"
+                    aria-label="پخش"
+                >
+                    ▶
+                </button>
+
+
+                <button
+                    type="button"
+                    id="proPrev"
+                    class="pro-control-btn"
+                    aria-label="آهنگ قبلی"
+                >
+                    ⏮
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 VOLUME
+            ================================================== -->
+
+            <div class="pro-volume">
+
+                <span>
+                    🔈
+                </span>
+
+
+                <input
+                    type="range"
+                    id="proVolume"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="1"
+                >
+
+
+                <span>
+                    🔊
+                </span>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DIVIDER
+            ================================================== -->
+
+            <div class="pro-divider"></div>
+
+
+
+            <!-- =================================================
+                 PLAYLIST TITLE
+            ================================================== -->
+
+            <div class="pro-playlist-title">
+
+                <span>
+                    لیست آهنگ‌ها
+                </span>
+
+
+                <span>
+                    ☷
+                </span>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PLAYLIST
+            ================================================== -->
+
+            <div class="pro-playlist">
+
+
+                <!-- ================= آهنگ 1 ================= -->
+
+                <div
+                    class="pro-track active"
+                    data-index="0"
+                    role="button"
+                    tabindex="0"
+                >
+
+                    <span class="pro-track-number">
+                        01
+                    </span>
+
+
+                    <span class="pro-track-icon">
+                        🎵
+                    </span>
+
+
+                    <span class="pro-track-info">
+
+                        <strong>
+                            عنبر نسأ
+                        </strong>
+
+
+                        <small>
+                            ابوالفضل جمالی
+                        </small>
+
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="favorite-btn music-favorite-btn"
+                        aria-label="افزودن به موردعلاقه‌ها"
+                    >
+                        ☆
+                    </button>
+
+                </div>
+
+
+
+                <!-- ================= آهنگ 2 ================= -->
+
+                <div
+                    class="pro-track"
+                    data-index="1"
+                    role="button"
+                    tabindex="0"
+                >
+
+                    <span class="pro-track-number">
+                        02
+                    </span>
+
+
+                    <span class="pro-track-icon">
+                        🎵
+                    </span>
+
+
+                    <span class="pro-track-info">
+
+                        <strong>
+                            مدرسه
+                        </strong>
+
+
+                        <small>
+                            جواد ابراهیمی، حسین حق‌خواه، ابوالفضل جمالی، عرفان سرانجام
+                        </small>
+
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="favorite-btn music-favorite-btn"
+                        aria-label="افزودن به موردعلاقه‌ها"
+                    >
+                        ☆
+                    </button>
+
+                </div>
+
+
+
+                <!-- ================= آهنگ 3 ================= -->
+
+                <div
+                    class="pro-track"
+                    data-index="2"
+                    role="button"
+                    tabindex="0"
+                >
+
+                    <span class="pro-track-number">
+                        03
+                    </span>
+
+
+                    <span class="pro-track-icon">
+                        🎵
+                    </span>
+
+
+                    <span class="pro-track-info">
+
+                        <strong>
+                            شهر پایگاه
+                        </strong>
+
+
+                        <small>
+                            امیر علی پیرمراد - هوش مصنوعی
+                        </small>
+
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="favorite-btn music-favorite-btn"
+                        aria-label="افزودن به موردعلاقه‌ها"
+                    >
+                        ☆
+                    </button>
+
+                </div>
+
+
+
+                <!-- ================= آهنگ 4 ================= -->
+
+                <div
+                    class="pro-track"
+                    data-index="3"
+                    role="button"
+                    tabindex="0"
+                >
+
+                    <span class="pro-track-number">
+                        04
+                    </span>
+
+
+                    <span class="pro-track-icon">
+                        🎵
+                    </span>
+
+
+                    <span class="pro-track-info">
+
+                        <strong>
+                            پادکست یک گفت‌وگوی خصوصی
+                        </strong>
+
+
+                        <small>
+                            جواد ابراهیمی / ویرگول مدیا
+                        </small>
+
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="favorite-btn music-favorite-btn"
+                        aria-label="افزودن به موردعلاقه‌ها"
+                    >
+                        ☆
+                    </button>
+
+                </div>
+
+
+
+                <!-- ================= آهنگ 5 ================= -->
+
+                <div
+                    class="pro-track"
+                    data-index="4"
+                    role="button"
+                    tabindex="0"
+                >
+
+                    <span class="pro-track-number">
+                        05
+                    </span>
+
+
+                    <span class="pro-track-icon">
+                        🎵
+                    </span>
+
+
+                    <span class="pro-track-info">
+
+                        <strong>
+                            پادکست قایقی خواهم ساخت
+                        </strong>
+
+
+                        <small>
+                            عرفان سرانجام، امیرعلی پیرمراد، سبحان قادری، رضا اسدی
+                        </small>
+
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="favorite-btn music-favorite-btn"
+                        aria-label="افزودن به موردعلاقه‌ها"
+                    >
+                        ☆
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        <div class="footer-logo">
+            قاب‌های ماندگار 🖼
+        </div>
+
+
+        <p>
+            ساخته شده با ❤️ برای خاطراتمون
+        </p>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
+
+    <script src="sync.js"></script>
+
+    <script src="theme.js"></script>
+
+    <script src="music-enhancements.js"></script>
+
+    <script src="music.js"></script>
+
+
+<script>
+/* پر شدن نوار پیشرفت و صدا با رنگ تم */
+(function () {
+
+    var sliders = ["proProgress", "proVolume"]
+        .map(function (id) { return document.getElementById(id); })
+        .filter(Boolean);
+
+    function paint(el) {
+
+        var min = parseFloat(el.min) || 0;
+        var max = parseFloat(el.max) || 100;
+        var value = parseFloat(el.value) || 0;
+
+        var percent = max > min ? ((value - min) / (max - min)) * 100 : 0;
+
+        el.style.setProperty("--fill", percent + "%");
+
+        el.style.setProperty(
+            "--fill-dir",
+            getComputedStyle(el).direction === "rtl" ? "to left" : "to right"
+        );
+
+    }
+
+    sliders.forEach(function (el) {
+        el.addEventListener("input", function () { paint(el); });
+        paint(el);
+    });
+
+    // پیشرفت آهنگ را خود پخش‌کننده عوض می‌کند، پس هر چند لحظه دوباره رنگ کن
+    setInterval(function () { sliders.forEach(paint); }, 250);
+
+})();
+</script>
+
+</body>
+
+</html>

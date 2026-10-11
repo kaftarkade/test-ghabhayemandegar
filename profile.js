@@ -77,6 +77,56 @@ async function saveAvatarToAccount(avatar) {
 
 }
 
+const tablesDB = new Appwrite.TablesDB(appwriteClient);
+
+const DATABASE_ID = "6ac3b50f001bdd8488ff";
+const TABLE_ID = "6ac3b51800052942e6b5";
+
+// بیوگرافی برای نمایش به بقیه در ردیف پروفایل (جدول MemoryDB) ذخیره می‌شود
+async function publishBio(bio) {
+
+    const base = {
+        userName: user.name || "کاربر",
+        bio: bio
+    };
+
+    try {
+
+        await tablesDB.updateRow({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            rowId: user.userid,
+            data: base
+        });
+
+    } catch (error) {
+
+        if (error.code !== 404) {
+            throw error;
+        }
+
+        await tablesDB.createRow({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            rowId: user.userid,
+            data: Object.assign({
+                userId: user.userid,
+                userAvatar: accountPrefs.avatar || "",
+                massage: "",
+                recieverid: "profile",
+                createdat: new Date().toISOString()
+            }, base),
+            permissions: [
+                Appwrite.Permission.read(Appwrite.Role.users()),
+                Appwrite.Permission.update(Appwrite.Role.user(user.userid)),
+                Appwrite.Permission.delete(Appwrite.Role.user(user.userid))
+            ]
+        });
+
+    }
+
+}
+
 
 /* =========================================================
    USER ELEMENTS
@@ -103,6 +153,16 @@ const favoriteCount =
 ========================================================= */
 
 function updateUserDisplay() {
+
+    const profileBio =
+        document.getElementById("profileBio");
+
+    if (profileBio) {
+
+        profileBio.textContent =
+            user.bio || "ثبت نشده";
+
+    }
 
     const profileEmail =
         document.getElementById("profileEmail");
@@ -376,6 +436,22 @@ editPassword.style.marginTop = "10px";
 
 editInput.insertAdjacentElement("afterend", editPassword);
 
+// کادر چندخطی بیوگرافی
+const editBio = document.createElement("textarea");
+
+editBio.className = editInput.className;
+editBio.maxLength = 150;
+editBio.rows = 4;
+editBio.placeholder = "چند کلمه درباره‌ی خودت...";
+editBio.style.display = "none";
+editBio.style.marginTop = "10px";
+editBio.style.width = "100%";
+editBio.style.minHeight = "110px";
+editBio.style.resize = "none";
+editBio.style.fontFamily = "inherit";
+
+editPassword.insertAdjacentElement("afterend", editBio);
+
 
 /* ---------- Open Edit ---------- */
 
@@ -426,6 +502,27 @@ document
 
                 }
 
+if (editingField === "bio") {
+
+                    editTitle.textContent =
+                        "ویرایش بیوگرافی";
+
+                    editHelp.textContent =
+                        "حداکثر ۱۵۰ کاراکتر. بقیه‌ی کاربران توی چت می‌بینن.";
+
+                    editBio.value =
+                        user.bio || "";
+
+                    setTimeout(function () { editBio.focus(); }, 60);
+
+                }
+
+                editInput.style.display =
+                    editingField === "bio" ? "none" : "";
+
+                editBio.style.display =
+                    editingField === "bio" ? "block" : "none";
+
                 editPassword.value = "";
 
                 editPassword.style.display =
@@ -458,6 +555,70 @@ if (saveEdit) {
     saveEdit.addEventListener(
         "click",
         async function () {
+
+            if (editingField === "bio") {
+
+                const bio =
+                    editBio.value.trim();
+
+                if (bio.length > 150) {
+                    alert("بیوگرافی حداکثر ۱۵۰ کاراکتر باشد.");
+                    return;
+                }
+
+                saveEdit.disabled = true;
+
+                try {
+
+                    await updateMyPrefs({ bio: bio });
+
+                    user.bio = bio;
+
+                    localStorage.setItem(
+                        "memoryUser",
+                        JSON.stringify(user)
+                    );
+
+                    updateUserDisplay();
+
+                    editModal.classList.remove("active");
+
+                    editingField = null;
+
+                    // نمایش برای بقیه در چت
+                    try {
+
+                        await publishBio(bio);
+
+                    } catch (publishError) {
+
+                        console.error(publishError);
+
+                        alert(
+                            "بیوگرافی ذخیره شد، ولی برای نمایش به بقیه باید توی جدول MemoryDB " +
+                            "ستونی به اسم bio اضافه کنی (String، سایز ۳۰۰، Required خاموش)."
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "ذخیره‌ی بیوگرافی انجام نشد: " +
+                        (error.message || "خطای نامشخص")
+                    );
+
+                } finally {
+
+                    saveEdit.disabled = false;
+
+                }
+
+                return;
+
+            }
 
             if (editingField === "email") {
 
@@ -548,6 +709,8 @@ if (saveEdit) {
                     await appwriteAccount.updateName({ name: value });
 
                 user.name = acc.name;
+
+        user.bio = accountPrefs.bio || "";
 
                 localStorage.setItem(
                     "memoryUser",
@@ -1703,8 +1866,7 @@ if (confirmLogout) {
 
 
 
-            window.location.href =
-                "login.html";
+            (window.pageNavigate || function (u) { window.location.href = u; })("login.html");
 
         }
     );
@@ -2169,9 +2331,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function goBack() {
+
+    const go = window.pageNavigate;
+
     if (window.history.length > 1) {
-        window.history.back();
+
+        if (go) {
+            go("back");
+        } else {
+            window.history.back();
+        }
+
+    } else if (go) {
+
+        go("index.html");
+
     } else {
+
         window.location.href = "index.html";
+
     }
+
 }

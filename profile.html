@@ -23,16 +23,49 @@
 
     <header class="top-bar">
 
+        <!-- لوگو -->
         <a href="index.html" class="logo">
             قاب‌های ماندگار 🖼️
         </a>
 
-       
-<button type="button" class="back-button" onclick="goBack()">
-    ← بازگشت
-</button>
+            <div class="header-actions">
 
+            <!-- خانه -->
+        <a
+            href="index.html"
+            class="profile-button"
+            aria-label="خانه"
+            title="خانه"
+        >
+            🏠
         </a>
+
+
+
+           <!-- پروفایل -->
+    <a
+        href="massages.html"
+        class="profile-button"
+        aria-label="پیام‌رسان"
+        title="پیام‌رسان"
+    >
+        💬
+    </a>
+   
+
+          <!-- تغییر تم -->
+<button
+
+        id="themeToggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="تغییر تم"
+        title="تغییر تم"
+    >
+        <span id="themeIcon">☀️</span>
+    </button>
+    
+</div>
 
     </header>
 
@@ -200,6 +233,38 @@
                         data-edit="email"
                         aria-label="ثبت ایمیل بازیابی"
                         title="ثبت ایمیل بازیابی"
+                    >
+                        ✏️
+                    </button>
+
+                </div>
+
+                <!-- BIO -->
+
+                <div class="info-item">
+
+                    <span class="info-icon">
+                        📝
+                    </span>
+
+                    <div class="info-content">
+
+                        <small>
+                            بیوگرافی
+                        </small>
+
+                        <strong id="profileBio">
+                            ثبت نشده
+                        </strong>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="edit-info-btn"
+                        data-edit="bio"
+                        aria-label="ویرایش بیوگرافی"
+                        title="ویرایش بیوگرافی"
                     >
                         ✏️
                     </button>

@@ -852,3 +852,55 @@ body.theme-green {
 body.theme-orange {
     --main-color: #f97316;
 }
+
+
+/* انیمیشن چرخش آیکن دکمه‌ی تم (کلاس rotate را theme.js می‌گذارد) */
+#themeIcon {
+    display: inline-block;
+    transform-origin: center;
+}
+
+#themeIcon.rotate {
+    animation: themeSpin 0.55s ease-in-out;
+}
+
+@keyframes themeSpin {
+    0%   { transform: rotate(0deg)   scale(0.75); opacity: 0.5; }
+    50%  { transform: rotate(180deg) scale(1.15); opacity: 1; }
+    100% { transform: rotate(360deg) scale(1);    opacity: 1; }
+}
+
+/* =========================================================
+   انیمیشن ورود و خروج صفحه
+========================================================= */
+
+@keyframes pageIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pageIn2 { from { opacity: 0; } to { opacity: 1; } }
+
+body {
+    animation: pageIn 0.45s ease backwards;
+}
+
+/* وقتی از حافظه‌ی مرورگر (دکمه‌ی برگشت) صفحه برمی‌گردد */
+body.page-enter {
+    animation: pageIn2 0.45s ease backwards;
+}
+
+body.page-leave {
+    opacity: 0;
+    transition: opacity 0.26s ease;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    body,
+    body.page-enter {
+        animation: none;
+    }
+
+    body.page-leave {
+        transition: none;
+    }
+
+}

@@ -3,7 +3,7 @@
 ========================================================= */
 
 if (typeof Appwrite === "undefined") {
-    alert("شبکه در دسترس نیست، اینترنت / VPN را بررسی کنید.");
+    alert("کتابخانه‌ی Appwrite لود نشد. اینترنت/VPN را بررسی کن و صفحه را رفرش کن.");
 }
 
 const appwriteClient = new Appwrite.Client()
@@ -211,7 +211,7 @@ registerForm.addEventListener("submit", async function (event) {
         showMsg(message, "حساب با موفقیت ساخته شد ❤️", "success");
 
         setTimeout(function () {
-            window.location.href = "profile.html";
+            (window.pageNavigate || function (u) { window.location.href = u; })("profile.html");
         }, 1000);
 
     } catch (error) {
@@ -276,7 +276,7 @@ loginForm.addEventListener("submit", async function (event) {
         showMsg(message, "خوش اومدی " + acc.name + " ❤️", "success");
 
         setTimeout(function () {
-            window.location.href = "index.html";
+            (window.pageNavigate || function (u) { window.location.href = u; })("index.html");
         }, 1000);
 
     } catch (error) {
@@ -365,35 +365,4 @@ if (forgotLink && forgotBox) {
         }
     });
 
-}
-
-
-/* =========================================================
-   تم (روشن / تاریک)
-========================================================= */
-
-const themeToggle = document.getElementById("themeToggle");
-const themeIcon = document.getElementById("themeIcon");
-
-function updateThemeIcon() {
-    if (!themeIcon) return;
-    themeIcon.textContent =
-        document.body.classList.contains("light-mode") ? "🌙" : "☀️";
-}
-
-if (localStorage.getItem("theme") === "light") {
-    document.body.classList.add("light-mode");
-}
-
-updateThemeIcon();
-
-if (themeToggle) {
-    themeToggle.addEventListener("click", function () {
-        document.body.classList.toggle("light-mode");
-        localStorage.setItem(
-            "theme",
-            document.body.classList.contains("light-mode") ? "light" : "dark"
-        );
-        updateThemeIcon();
-    });
 }

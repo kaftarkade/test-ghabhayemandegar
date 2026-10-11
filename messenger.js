@@ -24,6 +24,7 @@ const shownIds = new Set();
 
 let me = null;
 let myAvatar = "";
+let myBio = "";
 let myAvatarThumb = "";   // عکس کوچک (۹۶ پیکسل) که روی پیام‌ها ذخیره می‌شود
 let replyTo = null;
 
@@ -100,6 +101,61 @@ extraStyle.textContent = `
 #replyBar .rb-name { display: block; color: #a855f7; font-size: 12px; }
 #replyBar .rb-text { display: block; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #replyBar button { background: none; border: none; color: inherit; font-size: 18px; cursor: pointer; padding: 0 4px; }
+
+/* انیمیشن حذف پیام */
+.msg-swipe.removing {
+    height: 0 !important;
+    margin-top: -12px;
+    opacity: 0;
+    transform: translateX(-40px) scale(.9);
+    transition: height .35s ease, margin .35s ease, opacity .3s ease, transform .35s ease;
+}
+
+/* تب‌ها و نوار گفتگو */
+#chatTabs { display: flex; gap: 8px; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
+#chatTabs button { flex: 1; padding: 9px 0; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: transparent; color: inherit; font-family: inherit; font-size: 14px; cursor: pointer; transition: .25s; }
+#chatTabs button.active { background: linear-gradient(135deg, var(--main-color), var(--main-color-2)); border-color: transparent; color: #fff; }
+.tab-badge { display: none; min-width: 18px; height: 18px; padding: 0 5px; margin-right: 6px; border-radius: 9px; background: #ef4444; color: #fff; font-size: 11px; line-height: 18px; text-align: center; }
+#convBar { display: none; align-items: center; gap: 12px; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
+#convBar button { background: none; border: none; color: var(--main-color); font-family: inherit; font-size: 13px; cursor: pointer; padding: 4px 0; }
+.conv-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; cursor: pointer; transition: background .2s; }
+.conv-item:hover { background: rgba(255,255,255,.05); }
+.conv-avatar { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--main-color), var(--main-color-2)); color: #fff; font-size: 18px; }
+.conv-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.conv-main { flex: 1; min-width: 0; }
+.conv-name { font-weight: bold; font-size: 15px; }
+.conv-last { font-size: 13px; opacity: .65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conv-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.conv-time { font-size: 11px; opacity: .55; }
+body.light-mode #chatTabs, body.light-mode #convBar { border-color: rgba(0,0,0,.08); }
+body.light-mode #chatTabs button { border-color: rgba(0,0,0,.1); }
+body.light-mode .conv-item:hover { background: rgba(0,0,0,.04); }
+
+/* دکمه‌ی پیام خصوصی در بزرگ‌نمایی عکس */
+.avatar-preview-dm { margin-top: 14px; padding: 10px 22px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--main-color), var(--main-color-2)); color: #fff; font-family: inherit; font-size: 14px; cursor: pointer; }
+
+/* نوار گفتگو: عکس + نام قابل لمس */
+.conv-info-btn { display: flex; align-items: center; gap: 10px; flex: 0 1 auto; min-width: 0; max-width: 100%; padding: 4px 8px; border-radius: 12px; background: none; border: none; color: inherit; font-family: inherit; font-size: 15px; cursor: pointer; transition: background .2s; }
+.conv-info-btn:hover { background: rgba(255,255,255,.06); }
+.conv-info-btn strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.conv-avatar-sm { width: 34px; height: 34px; font-size: 14px; }
+body.light-mode .conv-info-btn:hover { background: rgba(0,0,0,.05); }
+
+/* کارت اطلاعات طرف مقابل */
+.peer-info-overlay { position: fixed; inset: 0; z-index: 99998; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,.7); }
+.peer-info-card { width: min(100%, 340px); padding: 26px 22px 20px; border-radius: 22px; background: var(--section-bg, #111116); color: var(--text-color, #fff); border: 1px solid rgba(255,255,255,.1); text-align: center; box-shadow: 0 25px 70px rgba(0,0,0,.5); animation: peerInfoPop .25s ease; }
+.peer-info-avatar { width: 120px; height: 120px; margin: 0 auto 14px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--main-color), var(--main-color-2)); color: #fff; font-size: 48px; }
+.peer-info-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.peer-info-name { font-size: 20px; font-weight: bold; margin-bottom: 14px; }
+.peer-info-bio { margin: -4px 0 14px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.05); font-size: 13px; line-height: 1.9; opacity: .9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.avatar-preview-bio { margin-top: 14px; max-width: min(90%, 340px); color: #fff; text-align: center; font-size: 14px; line-height: 1.9; opacity: .92; white-space: pre-wrap; overflow-wrap: anywhere; cursor: default; }
+.peer-info-lines { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.peer-info-line { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.05); font-size: 13px; }
+.peer-info-line span { opacity: .65; }
+.peer-info-close { width: 100%; padding: 11px 0; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--main-color), var(--main-color-2)); color: #fff; font-family: inherit; font-size: 14px; cursor: pointer; }
+body.light-mode .peer-info-card { border-color: rgba(0,0,0,.08); }
+body.light-mode .peer-info-line, body.light-mode .peer-info-bio { background: rgba(0,0,0,.04); }
+@keyframes peerInfoPop { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
 `;
 
 document.head.appendChild(extraStyle);
@@ -115,19 +171,19 @@ function makeThumb(dataUrl) {
 
         img.onload = () => {
             const c = document.createElement("canvas");
-            c.width = 96;
-            c.height = 96;
+            c.width = 128;
+            c.height = 128;
 
             const side = Math.min(img.naturalWidth, img.naturalHeight);
             const sx = (img.naturalWidth - side) / 2;
             const sy = (img.naturalHeight - side) / 2;
 
-            c.getContext("2d").drawImage(img, sx, sy, side, side, 0, 0, 96, 96);
+            c.getContext("2d").drawImage(img, sx, sy, side, side, 0, 0, 128, 128);
 
-            let q = .75;
+            let q = .82;
             let out = c.toDataURL("image/jpeg", q);
 
-            while (out.length > 12000 && q > .3) {
+            while (out.length > 16000 && q > .3) {
                 q -= .1;
                 out = c.toDataURL("image/jpeg", q);
             }
@@ -342,7 +398,7 @@ function showMessage(row) {
 
     // فقط برای پیام دریافتی عکس و نام نشان بده
     if (!isMine) {
-        if (row.userAvatar) {
+        if (row.userAvatar && mode !== "dm") {
             const avatar = document.createElement("img");
 
             avatar.src = row.userAvatar;
@@ -351,37 +407,7 @@ function showMessage(row) {
             
             avatar.title = "برای بزرگ‌نمایی کلیک کنید";
 
-avatar.addEventListener("click", () => {
-    const preview = document.createElement("div");
-    preview.className = "avatar-preview";
-
-    const largeImage = document.createElement("img");
-    largeImage.src = avatar.src;
-    largeImage.alt = avatar.alt;
-
-    const closeButton = document.createElement("button");
-    closeButton.className = "avatar-preview-close";
-    closeButton.textContent = "×";
-    closeButton.type = "button";
-    closeButton.setAttribute("aria-label", "بستن تصویر");
-
-    closeButton.addEventListener("click", (event) => {
-        event.stopPropagation();
-        preview.remove();
-    });
-
-    preview.addEventListener("click", () => {
-        preview.remove();
-    });
-
-    largeImage.addEventListener("click", (event) => {
-        event.stopPropagation();
-    });
-
-    preview.appendChild(largeImage);
-    preview.appendChild(closeButton);
-    document.body.appendChild(preview);
-});
+avatar.addEventListener("click", () => openAvatarPreview(row, avatar.src));
 
             avatar.onerror = function () {
                 this.remove();
@@ -477,20 +503,373 @@ avatar.addEventListener("click", () => {
 }
 
 // ================================
-// حذف پیام از صفحه
+// حالت‌های صفحه: گروه / لیست گفتگوها / گفتگوی خصوصی
 // ================================
+const PRIVATE_PREFIX = "dm:";
+
+let mode = "group";        // "group" | "list" | "dm"
+let peer = null;           // { id, name } وقتی در گفتگوی خصوصی هستیم
+let groupRows = [];
+let privateRows = [];
+const knownIds = new Set();
+const nameCache = {};      // userId ← نام
+const avatarCache = {};    // userId ← عکس باکیفیت (از ردیف پروفایل)
+
+function isPrivate(row) {
+    return typeof row.recieverid === "string" &&
+           row.recieverid.indexOf(PRIVATE_PREFIX) === 0;
+}
+
+function peerOf(row) {
+    return row.userId === me.$id
+        ? row.recieverid.slice(PRIVATE_PREFIX.length)
+        : row.userId;
+}
+
+function isMyPrivate(row) {
+    return isPrivate(row) &&
+           (row.userId === me.$id || row.recieverid === PRIVATE_PREFIX + me.$id);
+}
+
+function byTime(a, b) {
+    return new Date(a.$createdAt) - new Date(b.$createdAt);
+}
+
+function dmRowsFor(id) {
+    return privateRows.filter((r) => peerOf(r) === id).sort(byTime);
+}
+
+// ردیف جدید را در لیست‌ها ذخیره کن؛ اگر قبلاً بوده false برمی‌گرداند
+function addRow(row) {
+    if (!row || !row.$id || !row.massage) return false;
+    if (row.recieverid === "profile") return false;
+    if (knownIds.has(row.$id)) return false;
+
+    if (isPrivate(row)) {
+        if (!isMyPrivate(row)) return false;
+        privateRows.push(row);
+    } else {
+        groupRows.push(row);
+        if (row.userId && row.userName) nameCache[row.userId] = row.userName;
+    }
+
+    knownIds.add(row.$id);
+    return true;
+}
+
+// ---------- نام‌ها و «خوانده‌شده» (روی همین گوشی) ----------
+function readJson(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "{}") || {}; }
+    catch (e) { return {}; }
+}
+
+function savedNames() { return readJson("dmNames_" + me.$id); }
+
+function saveName(id, name) {
+    const n = savedNames();
+    n[id] = name;
+    localStorage.setItem("dmNames_" + me.$id, JSON.stringify(n));
+}
+
+function seenMap() { return readJson("dmSeen_" + me.$id); }
+
+function markRead(id) {
+    const s = seenMap();
+    s[id] = new Date().toISOString();
+    localStorage.setItem("dmSeen_" + me.$id, JSON.stringify(s));
+    updateBadges();
+}
+
+// بار اول: پیام‌های قدیمی را «خوانده‌شده» حساب کن
+function initSeen() {
+    const key = "dmSeen_" + me.$id;
+    if (localStorage.getItem(key) !== null) return;
+
+    const s = {};
+    privateRows.forEach((r) => {
+        const id = peerOf(r);
+        if (!s[id] || r.$createdAt > s[id]) s[id] = r.$createdAt;
+    });
+    localStorage.setItem(key, JSON.stringify(s));
+}
+
+function isUnread(row) {
+    if (row.userId === me.$id) return false;
+    const seen = seenMap()[peerOf(row)];
+    return !seen || new Date(row.$createdAt) > new Date(seen);
+}
+
+function buildConversations() {
+    const map = {};
+
+    privateRows.forEach((r) => {
+        const id = peerOf(r);
+        const c = map[id] || (map[id] = { id: id, name: "", avatar: "", last: null, unread: 0 });
+
+        if (r.userId !== me.$id) {
+            if (r.userName) c.name = r.userName;
+            if (r.userAvatar) c.avatar = r.userAvatar;
+        }
+
+        if (!c.last || new Date(r.$createdAt) > new Date(c.last.$createdAt)) c.last = r;
+        if (isUnread(r)) c.unread++;
+    });
+
+    const names = savedNames();
+
+    return Object.values(map)
+        .map((c) => {
+            if (!c.name) c.name = nameCache[c.id] || names[c.id] || "کاربر";
+            return c;
+        })
+        .sort((a, b) => new Date(b.last.$createdAt) - new Date(a.last.$createdAt));
+}
+
+// ================================
+// نوار تب‌ها و نوار گفتگو
+// ================================
+const headerEl = document.querySelector(".messenger-header");
+const inputBar = document.querySelector(".message-input");
+
+const tabsBar = document.createElement("div");
+tabsBar.id = "chatTabs";
+
+const tabGroup = document.createElement("button");
+tabGroup.type = "button";
+tabGroup.textContent = "💬 عمومی";
+
+const tabPrivate = document.createElement("button");
+tabPrivate.type = "button";
+tabPrivate.appendChild(document.createTextNode("🔒 خصوصی"));
+
+const tabBadge = document.createElement("span");
+tabBadge.className = "tab-badge";
+tabPrivate.appendChild(tabBadge);
+
+tabsBar.appendChild(tabGroup);
+tabsBar.appendChild(tabPrivate);
+
+const convBar = document.createElement("div");
+convBar.id = "convBar";
+
+const convBack = document.createElement("button");
+convBack.type = "button";
+convBack.textContent = "← گفتگوها";
+
+// عکس + نام طرف مقابل؛ با زدن روی آن، اطلاعاتش باز می‌شود
+const convInfoBtn = document.createElement("button");
+convInfoBtn.type = "button";
+convInfoBtn.className = "conv-info-btn";
+convInfoBtn.title = "اطلاعات";
+
+const convAvatar = document.createElement("div");
+convAvatar.className = "conv-avatar conv-avatar-sm";
+
+const convName = document.createElement("strong");
+
+convInfoBtn.appendChild(convAvatar);
+convInfoBtn.appendChild(convName);
+
+convBar.appendChild(convBack);
+convBar.appendChild(convInfoBtn);
+
+if (headerEl) {
+    headerEl.after(tabsBar);
+} else {
+    chatBox.before(tabsBar);
+}
+tabsBar.after(convBar);
+
+tabGroup.addEventListener("click", () => setMode("group"));
+tabPrivate.addEventListener("click", () => setMode("list"));
+convBack.addEventListener("click", () => setMode("list"));
+convInfoBtn.addEventListener("click", () => openPeerInfo());
+
+function totalUnread() {
+    return privateRows.filter(isUnread).length;
+}
+
+function updateBadges() {
+    const n = totalUnread();
+    tabBadge.textContent = n > 99 ? "99+" : String(n);
+    tabBadge.style.display = n > 0 && mode !== "dm" ? "inline-block" : "none";
+}
+
+function updateChrome() {
+    tabGroup.className = mode === "group" ? "active" : "";
+    tabPrivate.className = mode === "group" ? "" : "active";
+
+    convBar.style.display = mode === "dm" ? "flex" : "none";
+    convName.textContent = mode === "dm" && peer ? peer.name : "";
+
+    if (mode === "dm" && peer) {
+        fillAvatar(convAvatar, peerThumb(peer.id), peer.name);
+    }
+
+    messageInput.placeholder =
+        mode === "dm" && peer ? "پیام خصوصی به " + peer.name + "..." : "بنویس...";
+
+    if (inputBar) inputBar.style.display = mode === "list" ? "none" : "";
+
+    updateBadges();
+}
+
+function setMode(newMode, newPeer) {
+    if (!me) return;   // هنوز ورود/اتصال کامل نشده
+
+    mode = newMode;
+    peer = newPeer || null;
+
+    clearReply();
+    updateChrome();
+    render();
+}
+
+function startDm(userId, name) {
+    if (!me || !userId || userId === me.$id) return;
+    saveName(userId, name || "کاربر");
+    setMode("dm", { id: userId, name: name || "کاربر" });
+}
+
+// ================================
+// نمایش محتوای صفحه بر اساس حالت
+// ================================
+function render() {
+    shownIds.clear();
+    chatBox.innerHTML = "";
+
+    if (mode === "list") {
+        renderConversationList();
+        return;
+    }
+
+    const rows = mode === "dm" && peer ? dmRowsFor(peer.id) : groupRows.slice().sort(byTime);
+
+    if (!rows.length) {
+        chatBox.appendChild(emptyState());
+    } else {
+        rows.forEach(showMessage);
+    }
+
+    if (mode === "dm" && peer) markRead(peer.id);
+}
+
+function emptyState(text) {
+    const d = document.createElement("div");
+    d.className = "empty-chat";
+    d.textContent = text || (mode === "dm"
+        ? "هنوز پیامی نفرستادی. اولین پیام رو بنویس 👋"
+        : "پیامی نیست...");
+    return d;
+}
+
+function renderConversationList() {
+    const convs = buildConversations();
+
+    if (!convs.length) {
+        chatBox.appendChild(emptyState(
+            "هنوز گفتگوی خصوصی نداری. توی گروه روی عکس یکی بزن و «پیام خصوصی» رو انتخاب کن."
+        ));
+        return;
+    }
+
+    convs.forEach((c) => {
+        const item = document.createElement("div");
+        item.className = "conv-item";
+
+        const av = document.createElement("div");
+        av.className = "conv-avatar";
+
+        if (c.avatar) {
+            const img = document.createElement("img");
+            img.src = c.avatar;
+            img.alt = "";
+            av.appendChild(img);
+        } else {
+            av.textContent = (c.name || "?").trim().charAt(0) || "?";
+        }
+
+        const main = document.createElement("div");
+        main.className = "conv-main";
+
+        const nm = document.createElement("div");
+        nm.className = "conv-name";
+        nm.textContent = c.name;
+
+        const last = document.createElement("div");
+        last.className = "conv-last";
+        last.textContent = (c.last.userId === me.$id ? "تو: " : "") + snippet(c.last.massage, 60);
+
+        main.appendChild(nm);
+        main.appendChild(last);
+
+        const side = document.createElement("div");
+        side.className = "conv-side";
+
+        const tm = document.createElement("div");
+        tm.className = "conv-time";
+        tm.textContent = formatTime(c.last.$createdAt);
+        side.appendChild(tm);
+
+        if (c.unread > 0) {
+            const b = document.createElement("span");
+            b.className = "tab-badge";
+            b.style.display = "inline-block";
+            b.textContent = String(c.unread);
+            side.appendChild(b);
+        }
+
+        item.appendChild(av);
+        item.appendChild(main);
+        item.appendChild(side);
+        item.addEventListener("click", () => startDm(c.id, c.name));
+
+        chatBox.appendChild(item);
+    });
+}
+
+// ================================
+// حذف پیام از صفحه (با انیمیشن)
+// ================================
+function animateOut(el, done) {
+    if (el.classList.contains("removing")) return;
+
+    el.style.height = el.offsetHeight + "px";
+    el.style.overflow = "hidden";
+    void el.offsetHeight;
+    el.classList.add("removing");
+
+    setTimeout(() => {
+        el.remove();
+        if (done) done();
+    }, 380);
+}
+
 function removeMessage(id) {
-    const el = chatBox.querySelector('[data-id="' + id + '"]');
-
-    if (el) el.remove();
-
+    groupRows = groupRows.filter((r) => r.$id !== id);
+    privateRows = privateRows.filter((r) => r.$id !== id);
+    knownIds.delete(id);
     shownIds.delete(id);
 
     if (replyTo && replyTo.id === id) clearReply();
 
-    if (!chatBox.querySelector(".message")) {
-        chatBox.innerHTML =
-            '<div class="empty-chat">هنوز پیامی ارسال نشده است.</div>';
+    updateBadges();
+
+    const el = chatBox.querySelector('[data-id="' + id + '"]');
+
+    const afterRemove = () => {
+        if (mode === "list") {
+            render();
+        } else if (!chatBox.querySelector(".message")) {
+            chatBox.innerHTML = "";
+            chatBox.appendChild(emptyState());
+        }
+    };
+
+    if (el) {
+        animateOut(el, afterRemove);
+    } else if (mode === "list") {
+        render();
     }
 }
 
@@ -516,20 +895,401 @@ async function deleteMessage(row) {
 }
 
 // ================================
-// بارگذاری پیام‌های قبلی
+// عکس باکیفیت (بزرگ‌نمایی)
 // ================================
-async function loadMessages() {
-    const res = await tablesDB.listRows({
-        databaseId: DATABASE_ID,
-        tableId: TABLE_ID,
-        queries: [
-            Query.isNotNull("massage"),
-            Query.orderDesc("$createdAt"),
-            Query.limit(100)
-        ]
+const profileCache = {};   // userId ← ردیف پروفایل (یا null)
+
+async function getProfileRow(userId) {
+    if (userId in profileCache) return profileCache[userId];
+
+    let row = null;
+
+    try {
+        row = await tablesDB.getRow({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            rowId: userId
+        });
+    } catch (e) {}
+
+    profileCache[userId] = row;
+    return row;
+}
+
+async function getFullAvatar(userId) {
+    const row = await getProfileRow(userId);
+    return row ? (row.userAvatar || "") : "";
+}
+
+// آخرین عکس کوچکی که این کاربر روی پیام‌هایش گذاشته
+function peerThumb(id) {
+    const rows = groupRows.concat(privateRows);
+
+    for (let i = rows.length - 1; i >= 0; i--) {
+        if (rows[i].userId === id && rows[i].userAvatar) return rows[i].userAvatar;
+    }
+
+    return "";
+}
+
+// عکس یا حرف اول اسم داخل یک دایره
+function fillAvatar(el, src, name) {
+    el.textContent = "";
+
+    if (src) {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "";
+        el.appendChild(img);
+    } else {
+        el.textContent = (name || "?").trim().charAt(0) || "?";
+    }
+}
+
+// ================================
+// اطلاعات طرف مقابل (گفتگوی خصوصی)
+// ================================
+function openPeerInfo() {
+    if (!peer) return;
+
+    const id = peer.id;
+    const name = peer.name;
+
+    const overlay = document.createElement("div");
+    overlay.className = "peer-info-overlay";
+
+    const card = document.createElement("div");
+    card.className = "peer-info-card";
+
+    const av = document.createElement("div");
+    av.className = "peer-info-avatar";
+    fillAvatar(av, peerThumb(id), name);
+
+    const nm = document.createElement("div");
+    nm.className = "peer-info-name";
+    nm.textContent = name;
+
+    
+const bioLabel = document.createElement("div");
+
+bioLabel.textContent ="بیوگرافی: ";
+
+bioLabel.style.cssText = `
+    text-align: right;
+    font-size: 11px;
+    font-weight: bold;
+    opacity: 0.65;
+    margin: 0 4px 5px;
+    display: none;
+`;
+
+const bioEl = document.createElement("div");
+
+bioEl.className = "peer-info-bio";
+bioEl.style.display = "none";
+
+
+    const lines = document.createElement("div");
+    lines.className = "peer-info-lines";
+
+    function addLine(label, value) {
+        const l = document.createElement("div");
+        l.className = "peer-info-line";
+
+        const k = document.createElement("span");
+        k.textContent = label;
+
+        const v = document.createElement("b");
+        v.textContent = value;
+
+        l.appendChild(k);
+        l.appendChild(v);
+        lines.appendChild(l);
+    }
+
+    const rows = dmRowsFor(id);
+    const mineCount = rows.filter((r) => r.userId === me.$id).length;
+
+    addLine("پیام‌های این گفتگو", rows.length + " (" + mineCount + " از تو، " + (rows.length - mineCount) + " از او)");
+
+    if (rows.length) {
+        addLine("اولین پیام", formatTime(rows[0].$createdAt));
+    }
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "peer-info-close";
+    closeBtn.textContent = "بستن";
+
+    let closed = false;
+
+    function close() {
+        closed = true;
+        overlay.remove();
+    }
+
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", close);
+    card.addEventListener("click", (event) => event.stopPropagation());
+
+    card.appendChild(av);
+    card.appendChild(nm);
+    card.appendChild(bioLabel);
+    card.appendChild(bioEl);
+    card.appendChild(lines);
+    card.appendChild(closeBtn);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    // عکس باکیفیت و تاریخ عضویت (از ردیف پروفایل) که رسید اضافه می‌شود
+    getProfileRow(id).then((row) => {
+        if (closed || !row) return;
+
+        if (row.userAvatar) fillAvatar(av, row.userAvatar, name);
+
+        
+if (row.bio && row.bio.trim()) {
+    bioEl.textContent = row.bio;
+    bioEl.style.display = "block";
+    bioLabel.style.display = "block";
+}
+
+
+        if (row.$createdAt) {
+            const d = new Date(row.$createdAt);
+
+            if (!isNaN(d)) {
+                addLine(
+                    "عضو از",
+                    d.toLocaleDateString("fa-IR", { year: "numeric", month: "long", day: "numeric" })
+                );
+            }
+        }
+    });
+}
+
+function openAvatarPreview(row, thumbSrc) {
+    const preview = document.createElement("div");
+    preview.className = "avatar-preview";
+    preview.style.flexDirection = "column";
+
+    const largeImage = document.createElement("img");
+    largeImage.src = thumbSrc;
+    largeImage.alt = "عکس پروفایل " + (row.userName || "کاربر");
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "avatar-preview-close";
+    closeButton.textContent = "×";
+    closeButton.type = "button";
+    closeButton.setAttribute("aria-label", "بستن تصویر");
+
+    let closed = false;
+
+    function close() {
+        closed = true;
+        preview.remove();
+    }
+
+    closeButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        close();
     });
 
-    res.rows.reverse().forEach(showMessage);
+    preview.addEventListener("click", close);
+
+    largeImage.addEventListener("click", (event) => {
+        event.stopPropagation();
+    });
+
+    preview.appendChild(largeImage);
+
+    // دکمه‌ی پیام خصوصی (برای عکس دیگران)
+    if (row.userId && row.userId !== me.$id) {
+        const dmBtn = document.createElement("button");
+        dmBtn.type = "button";
+        dmBtn.className = "avatar-preview-dm";
+        dmBtn.textContent = "💬 پیام خصوصی";
+        dmBtn.addEventListener("click", (event) => {
+            event.stopPropagation();
+            close();
+            startDm(row.userId, row.userName);
+        });
+        preview.appendChild(dmBtn);
+    }
+
+    preview.appendChild(closeButton);
+    document.body.appendChild(preview);
+
+    // عکس کوچک بلافاصله؛ نسخه‌ی باکیفیت و بیوگرافی که رسید اضافه می‌شود
+    getProfileRow(row.userId).then((prow) => {
+        if (!prow || closed) return;
+
+        if (prow.userAvatar) largeImage.src = prow.userAvatar;
+
+        if (prow.bio) {
+            const cap = document.createElement("div");
+            cap.className = "avatar-preview-bio";
+            cap.textContent = prow.bio;
+            cap.addEventListener("click", (event) => event.stopPropagation());
+            preview.insertBefore(cap, preview.children[1] || null);
+        }
+    });
+}
+
+// عکس باکیفیت من برای دیگران (ردیف پروفایل)
+async function ensureMyProfileRow() {
+    let row = null;
+
+    try {
+        row = await tablesDB.getRow({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            rowId: me.$id
+        });
+    } catch (e) {
+        if (e.code !== 404) return;
+    }
+
+    const name = me.name || "کاربر";
+
+    if (row) {
+        const same =
+            (row.userAvatar || "") === (myAvatar || "") &&
+            row.userName === name &&
+            (row.bio || "") === (myBio || "");
+
+        if (same) return;
+
+        const data = { userName: name, userAvatar: myAvatar || "" };
+
+        // ستون bio فقط وقتی لازم است فرستاده می‌شود
+        if (myBio || row.bio) data.bio = myBio || "";
+
+        try {
+            await tablesDB.updateRow({
+                databaseId: DATABASE_ID,
+                tableId: TABLE_ID,
+                rowId: me.$id,
+                data: data
+            });
+        } catch (e) {
+            // ستون bio هنوز در جدول ساخته نشده؛ بدون آن ذخیره کن
+            if (data.bio === undefined) throw e;
+
+            delete data.bio;
+
+            await tablesDB.updateRow({
+                databaseId: DATABASE_ID,
+                tableId: TABLE_ID,
+                rowId: me.$id,
+                data: data
+            });
+        }
+
+        return;
+    }
+
+    if (!myAvatar && !myBio) return;
+
+    const base = {
+        userId: me.$id,
+        userName: name,
+        userAvatar: myAvatar || "",
+        massage: "",
+        recieverid: "profile",
+        createdat: new Date().toISOString()
+    };
+
+    const permissions = [
+        Permission.read(Role.users()),
+        Permission.update(Role.user(me.$id)),
+        Permission.delete(Role.user(me.$id))
+    ];
+
+    try {
+        await tablesDB.createRow({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            rowId: me.$id,
+            data: myBio ? Object.assign({ bio: myBio }, base) : base,
+            permissions: permissions
+        });
+    } catch (e) {
+        if (!myBio) throw e;
+
+        await tablesDB.createRow({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            rowId: me.$id,
+            data: base,
+            permissions: permissions
+        });
+    }
+}
+
+// ================================
+// بارگذاری پیام‌های قبلی (گروه + خصوصی)
+// ================================
+async function loadAll() {
+    // گروه: ۱۰۰ پیام آخر
+    try {
+        const res = await tablesDB.listRows({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            queries: [
+                Query.equal("recieverid", "public"),
+                Query.isNotNull("massage"),
+                Query.orderDesc("$createdAt"),
+                Query.limit(100)
+            ]
+        });
+        res.rows.reverse().forEach(addRow);
+    } catch (e) {
+        console.error("خطا در خواندن پیام‌های گروه:", e);
+
+        const res = await tablesDB.listRows({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            queries: [Query.isNotNull("massage"), Query.orderDesc("$createdAt"), Query.limit(100)]
+        });
+        res.rows.reverse().forEach(addRow);
+    }
+
+    // خصوصی
+    try {
+        const res = await tablesDB.listRows({
+            databaseId: DATABASE_ID,
+            tableId: TABLE_ID,
+            queries: [
+                Query.startsWith("recieverid", PRIVATE_PREFIX),
+                Query.orderDesc("$createdAt"),
+                Query.limit(200)
+            ]
+        });
+        res.rows.forEach(addRow);
+    } catch (e) {
+        console.error("خطا در خواندن پیام‌های خصوصی:", e);
+    }
+}
+
+// پیام تازه‌رسیده (از سرور یا ارسال خودم)
+function handleIncoming(row) {
+    if (!addRow(row)) return;
+
+    if (isPrivate(row)) {
+        const id = peerOf(row);
+
+        if (mode === "dm" && peer && peer.id === id) {
+            showMessage(row);
+            if (row.userId !== me.$id) markRead(id);
+        } else if (mode === "list") {
+            render();
+        }
+
+        updateBadges();
+    } else if (mode === "group") {
+        showMessage(row);
+    }
 }
 
 // ================================
@@ -539,13 +1299,24 @@ async function sendMessageNow() {
     const message = messageInput.value.trim();
 
     if (!message || !me) return;
+    if (mode === "list") return;
 
     const currentReply = replyTo;
+    const toPeer = mode === "dm" ? peer : null;
 
     messageInput.value = "";
     clearReply();
 
     if (typeof resizeMessageInput === "function") resizeMessageInput();
+
+    // نکته: Appwrite اجازه نمی‌دهد به آیدی یک کاربر دیگر دسترسی بدهیم
+    // (فقط users، any و آیدی خودمان)؛ پس خصوصی‌بودن گفتگو در خود برنامه
+    // (فیلتر گیرنده) اعمال می‌شود.
+    const permissions = [
+        Permission.read(Role.users()),
+        Permission.update(Role.user(me.$id)),
+        Permission.delete(Role.user(me.$id))
+    ];
 
     try {
         const row = await tablesDB.createRow({
@@ -558,19 +1329,16 @@ async function sendMessageNow() {
                 userName: me.name || "کاربر",
                 userAvatar: myAvatarThumb || "",
                 massage: message,
-                recieverid: "public",
+                recieverid: toPeer ? PRIVATE_PREFIX + toPeer.id : "public",
                 createdat: new Date().toISOString(),
                 // فقط وقتی پاسخ است ستون reply فرستاده می‌شود
                 ...(currentReply ? { reply: JSON.stringify(currentReply) } : {})
             },
 
-            permissions: [
-                Permission.update(Role.user(me.$id)),
-                Permission.delete(Role.user(me.$id))
-            ]
+            permissions: permissions
         });
 
-        showMessage(row);
+        handleIncoming(row);
 
     } catch (error) {
         console.error("خطا در ارسال پیام:", error);
@@ -607,6 +1375,8 @@ messageInput.addEventListener("keydown", (e) => {
             localStorage.getItem("profileImage") ||
             "";
 
+        myBio = prefs.bio || "";
+
     } catch (e) {
         if (e.code === 401) {
             localStorage.removeItem("loggedIn");
@@ -630,24 +1400,31 @@ messageInput.addEventListener("keydown", (e) => {
     }
 
     try {
-        await loadMessages();
+        await loadAll();
     } catch (e) {
         console.error("خطا در خواندن پیام‌ها:", e);
     }
+
+    initSeen();
+    setMode("group");
 
     // دریافت لحظه‌ای پیام‌ها
     client.subscribe(
         `databases.${DATABASE_ID}.tables.${TABLE_ID}.rows`,
         (event) => {
-            if (event.events.some((x) => x.endsWith(".create"))) {
-                showMessage(event.payload);
-            }
-
             if (event.events.some((x) => x.endsWith(".delete"))) {
                 removeMessage(event.payload.$id);
+                return;
+            }
+
+            if (event.events.some((x) => x.endsWith(".create"))) {
+                handleIncoming(event.payload);
             }
         }
     );
+
+    // عکس باکیفیت من برای دیگران (ردیف پروفایل)
+    ensureMyProfileRow().catch((e) => console.error("ردیف پروفایل:", e));
 })();
 
 
@@ -662,3 +1439,4 @@ function resizeMessageInput() {
 }
 
 messageInput.addEventListener("input", resizeMessageInput);
+

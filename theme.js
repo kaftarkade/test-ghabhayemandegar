@@ -197,3 +197,132 @@ window.addEventListener("storage", function (event) {
 });
 
 })();
+
+
+/* =========================================================
+   انیمیشن خروج از صفحه
+   - کلیک روی لینک‌های داخلی سایت
+   - window.pageNavigate("آدرس") برای رفتن با کد
+   - window.pageNavigate("back") برای برگشت
+========================================================= */
+
+(function () {
+
+    var DURATION = 260;
+
+    var reduceMotion =
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var leaving = false;
+
+    function showBar() {
+
+        var bar = document.createElement("div");
+
+        bar.style.cssText =
+            "position:fixed;top:0;right:0;height:3px;width:0;" +
+            "background:linear-gradient(90deg,var(--main-color,#a855f7)," +
+            "var(--main-color-2,#ec4899));z-index:2147483647;" +
+            "transition:width " + DURATION + "ms ease;pointer-events:none;";
+
+        document.documentElement.appendChild(bar);
+
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                bar.style.width = "100%";
+            });
+        });
+
+    }
+
+    function go(target) {
+
+        if (target === "back") {
+            window.history.back();
+        } else {
+            window.location.href = target;
+        }
+
+    }
+
+    function leave(target) {
+
+        if (reduceMotion || leaving) {
+            if (!leaving) go(target);
+            return;
+        }
+
+        leaving = true;
+
+        document.body.classList.add("page-leave");
+
+        showBar();
+
+        setTimeout(function () {
+            go(target);
+        }, DURATION);
+
+    }
+
+    window.pageNavigate = leave;
+
+    document.addEventListener("click", function (event) {
+
+        if (event.defaultPrevented || event.button !== 0) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+        var link = event.target.closest && event.target.closest("a[href]");
+
+        if (!link) return;
+        if (link.target && link.target !== "_self") return;
+        if (link.hasAttribute("download")) return;
+
+        var href = link.getAttribute("href");
+
+        if (!href || href.charAt(0) === "#") return;
+        if (/^(mailto:|tel:|javascript:)/i.test(href)) return;
+
+        var url;
+
+        try {
+            url = new URL(link.href, window.location.href);
+        } catch (e) {
+            return;
+        }
+
+        if (url.origin !== window.location.origin) return;
+
+        // همان صفحه (فقط hash عوض می‌شود)
+        if (
+            url.pathname === window.location.pathname &&
+            url.search === window.location.search
+        ) return;
+
+        event.preventDefault();
+
+        leave(url.href);
+
+    });
+
+    // برگشت با دکمه‌ی back: صفحه از حافظه برمی‌گردد
+    window.addEventListener("pageshow", function (event) {
+
+        if (!event.persisted) return;
+
+        leaving = false;
+
+        document.body.classList.remove("page-leave");
+        document.body.classList.remove("page-enter");
+
+        void document.body.offsetWidth;
+
+        document.body.classList.add("page-enter");
+
+        var bars = document.documentElement.querySelectorAll("div[style*='2147483647']");
+
+        bars.forEach(function (b) { b.remove(); });
+
+    });
+
+})();
