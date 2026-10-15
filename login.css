@@ -886,9 +886,10 @@ body.page-enter {
     animation: pageIn2 0.45s ease backwards;
 }
 
+@keyframes pageOut { from { opacity: 1; } to { opacity: 0; } }
+
 body.page-leave {
-    opacity: 0;
-    transition: opacity 0.26s ease;
+    animation: pageOut 0.26s ease forwards !important;
     pointer-events: none;
 }
 
@@ -900,7 +901,8 @@ body.page-leave {
     }
 
     body.page-leave {
-        transition: none;
+        animation: none !important;
+        opacity: 0;
     }
 
 }

@@ -700,6 +700,35 @@ body {
     }
 }
 
+
+
+.chat-image-download {
+    display: block;
+    margin: 4px 0 8px;
+    padding: 7px 12px;
+    border: 1px solid var(--main-color);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--main-color);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition:
+        background .25s ease,
+        color .25s ease,
+        transform .2s ease;
+}
+
+.chat-image-download:hover {
+    background: var(--main-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.chat-image-download:active {
+    transform: scale(.96);
+}
+
     </style>
 </head>
 

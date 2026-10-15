@@ -1,4 +1,4 @@
-const { Client, Account, TablesDB, ID, Query, Permission, Role } = Appwrite;
+const { Client, Account, TablesDB, Storage, ID, Query, Permission, Role } = Appwrite;
 
 // ================================
 // تنظیمات Appwrite
@@ -9,9 +9,15 @@ const client = new Client()
 
 const account = new Account(client);
 const tablesDB = new TablesDB(client);
+const storage = new Storage(client);
 
 const DATABASE_ID = "6ac3b50f001bdd8488ff";
 const TABLE_ID = "6ac3b51800052942e6b5";
+
+// فضای ذخیره‌ی عکس‌های چت (Storage ← Create bucket، با شناسه‌ی chat-images)
+const BUCKET_ID = "chat-images";
+const ENDPOINT = "https://cloud.appwrite.io/v1";
+const PROJECT_ID = "6ac3b38f000976364cad";
 
 // ================================
 // عناصر صفحه
@@ -156,6 +162,48 @@ body.light-mode .conv-info-btn:hover { background: rgba(0,0,0,.05); }
 body.light-mode .peer-info-card { border-color: rgba(0,0,0,.08); }
 body.light-mode .peer-info-line, body.light-mode .peer-info-bio { background: rgba(0,0,0,.04); }
 @keyframes peerInfoPop { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
+
+/* دایره‌ی حرف اول برای کاربر بدون عکس */
+.message-avatar-letter { display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--main-color), var(--main-color-2)); color: #fff; font-size: 15px; font-weight: bold; cursor: pointer; }
+.peer-info-dm { width: 100%; margin-bottom: 10px; padding: 11px 0; border: 1px solid var(--main-color); border-radius: 14px; background: transparent; color: var(--main-color); font-family: inherit; font-size: 14px; cursor: pointer; transition: background .2s, color .2s; }
+.peer-info-dm:hover { background: var(--main-color); color: #fff; }
+
+/* عنوان کوچک بیوگرافی */
+.bio-title { display: block; margin-bottom: 4px; font-size: 11px; color: var(--main-color); opacity: .9; letter-spacing: .3px; }
+
+/* نوار رنگی لغزنده زیر تب‌ها */
+#chatTabs { position: relative; }
+#chatTabs::before { content: ""; position: absolute; top: 8px; bottom: 8px; right: 14px; width: calc((100% - 36px) / 2); border-radius: 12px; background: linear-gradient(135deg, var(--main-color), var(--main-color-2)); transition: transform .38s cubic-bezier(.4, 1.3, .5, 1); }
+#chatTabs.tabs-private::before { transform: translateX(calc(-100% - 8px)); }
+#chatTabs button { position: relative; z-index: 1; }
+#chatTabs button.active { background: transparent; border-color: transparent; color: #fff; }
+
+/* انیمیشن جابه‌جایی بین عمومی / لیست / گفتگو */
+@keyframes slideInLeft  { from { opacity: 0; transform: translateX(-34px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(34px); }  to { opacity: 1; transform: translateX(0); } }
+@keyframes dropIn       { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+#chatBox.slide-in-left  { animation: slideInLeft .34s ease; }
+#chatBox.slide-in-right { animation: slideInRight .34s ease; }
+#convBar, #userSearchBar { animation: dropIn .3s ease; }
+
+/* جستجوی کاربر */
+#userSearchBar { display: none; padding: 10px 14px 4px; }
+#userSearchBar input { width: 100%; height: 42px; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05); color: inherit; font-family: inherit; font-size: 14px; outline: none; transition: border-color .2s; }
+#userSearchBar input:focus { border-color: var(--main-color); }
+body.light-mode #userSearchBar input { border-color: rgba(0,0,0,.12); background: rgba(0,0,0,.04); }
+
+/* دکمه و نوار ارسال عکس */
+#attachBtn { width: 48px; height: 48px; flex-shrink: 0; border-radius: 14px; border: 1px solid rgba(255,255,255,.12); background: transparent; color: inherit; font-size: 20px; cursor: pointer; transition: background .2s, border-color .2s, transform .2s; }
+#attachBtn:hover { background: rgba(255,255,255,.08); border-color: var(--main-color); }
+#attachBtn:active { transform: scale(.92); }
+body.light-mode #attachBtn { border-color: rgba(0,0,0,.12); }
+#attachBar { display: none; align-items: center; gap: 10px; padding: 8px 14px; background: rgba(255,255,255,.04); border-top: 1px solid rgba(255,255,255,.08); font-size: 13px; animation: dropIn .25s ease; }
+#attachBar img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; }
+#attachBar span { flex: 1; opacity: .8; }
+#attachBar button { background: none; border: none; color: inherit; font-size: 18px; cursor: pointer; padding: 0 4px; }
+
+/* عکس داخل پیام */
+.chat-image { display: block; max-width: 100%; max-height: 320px; margin-bottom: 6px; border-radius: 12px; object-fit: cover; cursor: zoom-in; background: rgba(255,255,255,.06); min-height: 60px; min-width: 120px; }
 `;
 
 document.head.appendChild(extraStyle);
@@ -229,7 +277,7 @@ function setReply(row) {
     replyTo = {
         id: row.$id,
         name: snippet(row.userName || "کاربر", 40),
-        text: snippet(row.massage, 120)
+        text: snippet(previewText(row.massage), 120)
     };
     rbName.textContent = "پاسخ به " + replyTo.name;
     rbText.textContent = replyTo.text;
@@ -328,6 +376,122 @@ function enableSwipe(wrap, hint, onReply) {
 }
 
 // ================================
+// عکس در چت: پیام با برچسب [[img:شناسه]] ذخیره می‌شود
+// ================================
+const IMG_RE = /^\[\[img:([A-Za-z0-9._-]{1,36})\]\]/;
+
+function parseImage(text) {
+    const m = IMG_RE.exec(text || "");
+    return m ? { id: m[1], caption: String(text).slice(m[0].length).trim() } : null;
+}
+
+// متن کوتاه برای لیست گفتگوها و نقل‌قول
+function previewText(text) {
+    const im = parseImage(text);
+    return im ? "📷 عکس" + (im.caption ? " " + im.caption : "") : text;
+}
+
+function imageUrl(fileId) {
+    return ENDPOINT + "/storage/buckets/" + BUCKET_ID + "/files/" + fileId +
+           "/view?project=" + PROJECT_ID;
+}
+
+
+async function downloadChatImage(fileId) {
+    try {
+        const url =
+            ENDPOINT + "/storage/buckets/" +
+            BUCKET_ID + "/files/" + fileId +
+            "/download?project=" + PROJECT_ID;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("دریافت عکس انجام نشد.");
+        }
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = objectUrl;
+        link.download = "ghabhaye-mandegar-" + fileId + ".jpg";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+
+    } catch (error) {
+        console.error("خطا در دانلود عکس:", error);
+        alert("دانلود عکس انجام نشد. دوباره تلاش کن.");
+    }
+}
+
+// کوچک کردن عکس قبل از آپلود (سریع‌تر و کم‌حجم‌تر)
+function compressImage(file, maxSide, quality) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+
+            const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+            const w = Math.max(1, Math.round(img.naturalWidth * scale));
+            const h = Math.max(1, Math.round(img.naturalHeight * scale));
+
+            const c = document.createElement("canvas");
+            c.width = w;
+            c.height = h;
+
+            const ctx = c.getContext("2d");
+            ctx.fillStyle = "#ffffff";           // عکس‌های شفاف (PNG) پس‌زمینه‌ی سفید می‌گیرند
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+
+            c.toBlob((blob) => {
+                if (!blob) { reject(new Error("تبدیل عکس انجام نشد")); return; }
+                resolve(new File([blob], "photo.jpg", { type: "image/jpeg" }));
+            }, "image/jpeg", quality);
+        };
+
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("عکس خوانده نشد"));
+        };
+
+        img.src = url;
+    });
+}
+
+function openImageViewer(src) {
+    const viewer = document.createElement("div");
+    viewer.className = "avatar-preview";
+
+    const big = document.createElement("img");
+    big.src = src;
+    big.alt = "عکس";
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "avatar-preview-close";
+    closeButton.type = "button";
+    closeButton.textContent = "×";
+    closeButton.setAttribute("aria-label", "بستن تصویر");
+
+    function close() { viewer.remove(); }
+
+    closeButton.addEventListener("click", (event) => { event.stopPropagation(); close(); });
+    viewer.addEventListener("click", close);
+    big.addEventListener("click", (event) => event.stopPropagation());
+
+    viewer.appendChild(big);
+    viewer.appendChild(closeButton);
+    document.body.appendChild(viewer);
+}
+
+// ================================
 // ساعت پیام
 // ================================
 function formatTime(iso) {
@@ -410,10 +574,13 @@ function showMessage(row) {
 avatar.addEventListener("click", () => openAvatarPreview(row, avatar.src));
 
             avatar.onerror = function () {
-                this.remove();
+                this.replaceWith(makeLetterAvatar(row));
             };
 
             rowEl.appendChild(avatar);
+        } else if (mode !== "dm") {
+            // کاربر عکس پروفایل ندارد: دایره‌ی حرف اول (برای شروع پیام خصوصی)
+            rowEl.appendChild(makeLetterAvatar(row));
         }
 
         const name = document.createElement("small");
@@ -422,6 +589,12 @@ avatar.addEventListener("click", () => openAvatarPreview(row, avatar.src));
 
         name.style.cssText =
             "display:block;opacity:.6;font-size:11px;margin-bottom:2px";
+
+        if (mode !== "dm") {
+            name.style.cursor = "pointer";
+            name.title = "اطلاعات کاربر";
+            name.addEventListener("click", () => openUserCard(row));
+        }
 
         el.appendChild(name);
     }
@@ -448,11 +621,53 @@ avatar.addEventListener("click", () => openAvatarPreview(row, avatar.src));
     }
 
     // متن پیام
-    const text = document.createElement("span");
+    const imgInfo = parseImage(row.massage);
 
-    text.textContent = row.massage;
+    if (imgInfo) {
+        const pic = document.createElement("img");
+        pic.className = "chat-image";
+        pic.loading = "lazy";
+        pic.alt = "عکس";
+        pic.src = imageUrl(imgInfo.id);
+        pic.addEventListener("click", () => openImageViewer(pic.src));
+        
+        
+const downloadBtn = document.createElement("button");
 
-    el.appendChild(text);
+downloadBtn.type = "button";
+downloadBtn.className = "chat-image-download";
+downloadBtn.textContent = "⬇️ دانلود عکس";
+downloadBtn.title = "دانلود عکس";
+
+downloadBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    downloadChatImage(imgInfo.id);
+});
+
+el.appendChild(pic);
+el.appendChild(downloadBtn);
+
+        
+        pic.addEventListener("error", () => {
+            pic.style.display = "none";
+            const miss = document.createElement("span");
+            miss.textContent = "🖼️ عکس در دسترس نیست";
+            el.insertBefore(miss, pic.nextSibling);
+        });
+
+        if (imgInfo.caption) {
+            const cap = document.createElement("span");
+            cap.textContent = imgInfo.caption;
+            cap.style.display = "block";
+            el.appendChild(cap);
+        }
+    } else {
+        const text = document.createElement("span");
+
+        text.textContent = row.massage;
+
+        el.appendChild(text);
+    }
 
     // ساعت و دکمه حذف
     const meta = document.createElement("div");
@@ -680,10 +895,121 @@ if (headerEl) {
 }
 tabsBar.after(convBar);
 
+// کادر جستجوی کاربر (فقط در تب «خصوصی»)
+const searchBar = document.createElement("div");
+searchBar.id = "userSearchBar";
+
+const searchInput = document.createElement("input");
+searchInput.type = "search";
+searchInput.placeholder = "🔍 جستجوی کاربر با اسم...";
+searchInput.autocomplete = "off";
+
+searchBar.appendChild(searchInput);
+convBar.after(searchBar);
+
+let searchQuery = "";
+let directory = null;          // [{ id, name }] کاربرانی که ردیف پروفایل دارند
+let directoryLoading = null;
+
+// ---- عکس: دکمه + نوار پیش‌نمایش ----
+let pendingImage = null;       // فایل فشرده‌شده‌ی آماده‌ی ارسال
+let pendingUrl = "";
+
+const fileInput = document.createElement("input");
+fileInput.type = "file";
+fileInput.accept = "image/*";
+fileInput.style.display = "none";
+
+const attachBtn = document.createElement("button");
+attachBtn.type = "button";
+attachBtn.id = "attachBtn";
+attachBtn.title = "ارسال عکس";
+attachBtn.textContent = "📷";
+
+if (sendButton.parentNode) {
+    sendButton.parentNode.insertBefore(attachBtn, sendButton);
+    sendButton.parentNode.appendChild(fileInput);
+}
+
+const attachBar = document.createElement("div");
+attachBar.id = "attachBar";
+
+const attachThumb = document.createElement("img");
+attachThumb.alt = "";
+
+const attachText = document.createElement("span");
+
+const attachClose = document.createElement("button");
+attachClose.type = "button";
+attachClose.textContent = "✕";
+attachClose.title = "حذف عکس";
+
+attachBar.appendChild(attachThumb);
+attachBar.appendChild(attachText);
+attachBar.appendChild(attachClose);
+replyBar.after(attachBar);
+
+function clearPending() {
+    if (pendingUrl) URL.revokeObjectURL(pendingUrl);
+    pendingImage = null;
+    pendingUrl = "";
+    attachBar.style.display = "none";
+}
+
+function setPending(file) {
+    if (pendingUrl) URL.revokeObjectURL(pendingUrl);
+
+    pendingImage = file;
+    pendingUrl = URL.createObjectURL(file);
+
+    attachThumb.src = pendingUrl;
+    attachText.textContent = "عکس آماده‌ی ارسال (" + Math.max(1, Math.round(file.size / 1024)) + " کیلوبایت)";
+    attachBar.style.display = "flex";
+}
+
+attachBtn.addEventListener("click", () => fileInput.click());
+attachClose.addEventListener("click", clearPending);
+
+fileInput.addEventListener("change", async () => {
+    const f = fileInput.files && fileInput.files[0];
+    fileInput.value = "";
+
+    if (!f) return;
+
+    if (!/^image\//.test(f.type)) {
+        alert("فقط عکس می‌شه فرستاد.");
+        return;
+    }
+
+    try {
+        const small = await compressImage(f, 1280, 0.82);
+
+        if (small.size > 4 * 1024 * 1024) {
+            alert("حجم عکس خیلی زیاده.");
+            return;
+        }
+
+        setPending(small);
+        messageInput.focus();
+    } catch (e) {
+        alert("خطا در خواندن عکس: " + e.message);
+    }
+});
+
 tabGroup.addEventListener("click", () => setMode("group"));
 tabPrivate.addEventListener("click", () => setMode("list"));
 convBack.addEventListener("click", () => setMode("list"));
 convInfoBtn.addEventListener("click", () => openPeerInfo());
+
+searchInput.addEventListener("input", () => {
+    searchQuery = searchInput.value.trim();
+
+    if (searchQuery && !directory) {
+        loadDirectory().then(() => { if (mode === "list") render(); });
+    }
+
+    if (mode === "list") render();
+});
 
 function totalUnread() {
     return privateRows.filter(isUnread).length;
@@ -711,11 +1037,40 @@ function updateChrome() {
 
     if (inputBar) inputBar.style.display = mode === "list" ? "none" : "";
 
+    searchBar.style.display = mode === "list" ? "block" : "none";
+
+    if (mode !== "list" && searchInput.value) {
+        searchInput.value = "";
+        searchQuery = "";
+    }
+
+    // نوار رنگی زیر تب‌ها بین «عمومی» و «خصوصی» می‌لغزد
+    if (mode === "group") {
+        tabsBar.classList.remove("tabs-private");
+    } else {
+        tabsBar.classList.add("tabs-private");
+    }
+
     updateBadges();
+}
+
+const MODE_ORDER = { group: 0, list: 1, dm: 2 };
+
+// محتوا از سمتی که تب انتخابی آنجاست می‌لغزد تو
+function animateChat(direction) {
+    chatBox.classList.remove("slide-in-left", "slide-in-right");
+    void chatBox.offsetWidth;
+    chatBox.classList.add(direction > 0 ? "slide-in-left" : "slide-in-right");
+
+    setTimeout(() => {
+        chatBox.classList.remove("slide-in-left", "slide-in-right");
+    }, 400);
 }
 
 function setMode(newMode, newPeer) {
     if (!me) return;   // هنوز ورود/اتصال کامل نشده
+
+    const direction = MODE_ORDER[newMode] - MODE_ORDER[mode];
 
     mode = newMode;
     peer = newPeer || null;
@@ -723,6 +1078,8 @@ function setMode(newMode, newPeer) {
     clearReply();
     updateChrome();
     render();
+
+    if (direction !== 0) animateChat(direction);
 }
 
 function startDm(userId, name) {
@@ -763,12 +1120,130 @@ function emptyState(text) {
     return d;
 }
 
+function norm(s) {
+    return String(s || "")
+        .toLowerCase()
+        .replace(/ي/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/\u200c/g, " ")
+        .trim();
+}
+
+// فهرست کاربران (ردیف‌های پروفایل) را یک بار بگیر
+async function loadDirectory() {
+    if (directory) return directory;
+    if (directoryLoading) return directoryLoading;
+
+    directoryLoading = (async () => {
+        let rows = [];
+
+        try {
+            const res = await tablesDB.listRows({
+                databaseId: DATABASE_ID,
+                tableId: TABLE_ID,
+                queries: [
+                    Query.equal("recieverid", "profile"),
+                    Query.select(["$id", "userId", "userName"]),
+                    Query.limit(500)
+                ]
+            });
+            rows = res.rows;
+        } catch (e) {
+            try {
+                const res = await tablesDB.listRows({
+                    databaseId: DATABASE_ID,
+                    tableId: TABLE_ID,
+                    queries: [Query.equal("recieverid", "profile"), Query.limit(100)]
+                });
+                rows = res.rows;
+            } catch (e2) {
+                console.error("خطا در خواندن فهرست کاربران:", e2);
+            }
+        }
+
+        directory = rows
+            .map((r) => ({ id: r.userId || r.$id, name: r.userName || "کاربر" }))
+            .filter((u) => u.id);
+
+        directoryLoading = null;
+        return directory;
+    })();
+
+    return directoryLoading;
+}
+
+function searchUsers(q) {
+    const seen = {};
+    const all = [];
+
+    (directory || []).forEach((u) => { seen[u.id] = true; all.push(u); });
+
+    // کسانی که توی عمومی پیام داده‌اند هم پیدا شوند
+    Object.keys(nameCache).forEach((id) => {
+        if (!seen[id]) all.push({ id: id, name: nameCache[id] });
+    });
+
+    const nq = norm(q);
+
+    return all.filter((u) => u.id !== me.$id && norm(u.name).indexOf(nq) !== -1);
+}
+
+function renderSearchResults() {
+    if (!directory) {
+        chatBox.appendChild(emptyState("در حال جستجو..."));
+        return;
+    }
+
+    const found = searchUsers(searchQuery);
+
+    if (!found.length) {
+        chatBox.appendChild(emptyState(
+            "کاربری با این اسم پیدا نشد. فقط کسانی که حداقل یک بار پیام‌رسان رو باز کرده‌ان پیدا می‌شن."
+        ));
+        return;
+    }
+
+    found.forEach((u) => {
+        const item = document.createElement("div");
+        item.className = "conv-item";
+
+        const av = document.createElement("div");
+        av.className = "conv-avatar";
+        fillAvatar(av, peerThumb(u.id), u.name);
+
+        const main = document.createElement("div");
+        main.className = "conv-main";
+
+        const nm = document.createElement("div");
+        nm.className = "conv-name";
+        nm.textContent = u.name;
+
+        const hint = document.createElement("div");
+        hint.className = "conv-last";
+        hint.textContent = "شروع گفتگوی خصوصی";
+
+        main.appendChild(nm);
+        main.appendChild(hint);
+
+        item.appendChild(av);
+        item.appendChild(main);
+        item.addEventListener("click", () => startDm(u.id, u.name));
+
+        chatBox.appendChild(item);
+    });
+}
+
 function renderConversationList() {
+    if (searchQuery) {
+        renderSearchResults();
+        return;
+    }
+
     const convs = buildConversations();
 
     if (!convs.length) {
         chatBox.appendChild(emptyState(
-            "هنوز گفتگوی خصوصی نداری. توی گروه روی عکس یکی بزن و «پیام خصوصی» رو انتخاب کن."
+            "هنوز گفتگوی خصوصی نداری. توی عمومی روی عکس یکی بزن (یا بالا جستجو کن) و «پیام خصوصی» رو انتخاب کن."
         ));
         return;
     }
@@ -798,7 +1273,7 @@ function renderConversationList() {
 
         const last = document.createElement("div");
         last.className = "conv-last";
-        last.textContent = (c.last.userId === me.$id ? "تو: " : "") + snippet(c.last.massage, 60);
+        last.textContent = (c.last.userId === me.$id ? "تو: " : "") + snippet(previewText(c.last.massage), 60);
 
         main.appendChild(nm);
         main.appendChild(last);
@@ -887,6 +1362,13 @@ async function deleteMessage(row) {
         });
 
         removeMessage(row.$id);
+
+        // اگر پیام عکس داشت، فایلش هم پاک شود
+        const im = parseImage(row.massage);
+
+        if (im) {
+            storage.deleteFile({ bucketId: BUCKET_ID, fileId: im.id }).catch(() => {});
+        }
     } catch (error) {
         console.error("خطا در حذف پیام:", error);
 
@@ -1068,6 +1550,99 @@ if (row.bio && row.bio.trim()) {
     });
 }
 
+// ================================
+// کاربر بدون عکس پروفایل: دایره‌ی حرف اول + کارت اطلاعات
+// ================================
+function makeLetterAvatar(row) {
+    const el = document.createElement("div");
+    el.className = "message-avatar message-avatar-letter";
+    el.textContent = (row.userName || "?").trim().charAt(0) || "?";
+    el.title = "اطلاعات کاربر";
+    el.addEventListener("click", () => openUserCard(row));
+    return el;
+}
+
+function openUserCard(row) {
+    const id = row.userId;
+    const name = row.userName || "کاربر";
+
+    const overlay = document.createElement("div");
+    overlay.className = "peer-info-overlay";
+
+    const card = document.createElement("div");
+    card.className = "peer-info-card";
+
+    const av = document.createElement("div");
+    av.className = "peer-info-avatar";
+    fillAvatar(av, row.userAvatar || peerThumb(id), name);
+
+    const nm = document.createElement("div");
+    nm.className = "peer-info-name";
+    nm.textContent = name;
+
+    const bioBox = document.createElement("div");
+    bioBox.className = "peer-info-bio";
+    bioBox.style.display = "none";
+
+    const bioTitle = document.createElement("small");
+    bioTitle.className = "bio-title";
+    bioTitle.textContent = "بیوگرافی";
+
+    const bioText = document.createElement("div");
+
+    bioBox.appendChild(bioTitle);
+    bioBox.appendChild(bioText);
+
+    let closed = false;
+
+    function close() {
+        closed = true;
+        overlay.remove();
+    }
+
+    card.appendChild(av);
+    card.appendChild(nm);
+    card.appendChild(bioBox);
+
+    // پیام خصوصی: برای همه‌ی کاربران (حتی بدون عکس و بیو)
+    if (id && id !== me.$id) {
+        const dmBtn = document.createElement("button");
+        dmBtn.type = "button";
+        dmBtn.className = "peer-info-dm";
+        dmBtn.textContent = "💬 پیام خصوصی";
+        dmBtn.addEventListener("click", () => {
+            close();
+            startDm(id, name);
+        });
+        card.appendChild(dmBtn);
+    }
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "peer-info-close";
+    closeBtn.textContent = "بستن";
+    closeBtn.addEventListener("click", close);
+    card.appendChild(closeBtn);
+
+    overlay.addEventListener("click", close);
+    card.addEventListener("click", (event) => event.stopPropagation());
+
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    // عکس باکیفیت و بیوگرافی (اگر ثبت کرده باشد) که رسید اضافه می‌شود
+    getProfileRow(id).then((prow) => {
+        if (closed || !prow) return;
+
+        if (prow.userAvatar) fillAvatar(av, prow.userAvatar, name);
+
+        if (prow.bio && prow.bio.trim()) {
+            bioText.textContent = prow.bio;
+            bioBox.style.display = "block";
+        }
+    });
+}
+
 function openAvatarPreview(row, thumbSrc) {
     const preview = document.createElement("div");
     preview.className = "avatar-preview";
@@ -1129,7 +1704,16 @@ function openAvatarPreview(row, thumbSrc) {
         if (prow.bio) {
             const cap = document.createElement("div");
             cap.className = "avatar-preview-bio";
-            cap.textContent = prow.bio;
+
+            const capTitle = document.createElement("small");
+            capTitle.className = "bio-title";
+            capTitle.textContent = "بیوگرافی";
+
+            const capText = document.createElement("div");
+            capText.textContent = prow.bio;
+
+            cap.appendChild(capTitle);
+            cap.appendChild(capText);
             cap.addEventListener("click", (event) => event.stopPropagation());
             preview.insertBefore(cap, preview.children[1] || null);
         }
@@ -1188,8 +1772,6 @@ async function ensureMyProfileRow() {
 
         return;
     }
-
-    if (!myAvatar && !myBio) return;
 
     const base = {
         userId: me.$id,
@@ -1297,15 +1879,53 @@ function handleIncoming(row) {
 // ================================
 async function sendMessageNow() {
     const message = messageInput.value.trim();
+    const image = pendingImage;
 
-    if (!message || !me) return;
+    if ((!message && !image) || !me) return;
     if (mode === "list") return;
 
     const currentReply = replyTo;
     const toPeer = mode === "dm" ? peer : null;
 
+    // اول عکس آپلود شود (اگر خطا داد، متن و عکس سر جایشان می‌مانند)
+    let imageTag = "";
+
+    if (image) {
+        sendButton.disabled = true;
+        attachText.textContent = "در حال ارسال عکس...";
+
+        try {
+            const file = await storage.createFile({
+                bucketId: BUCKET_ID,
+                fileId: ID.unique(),
+                file: image,
+                permissions: [
+                    Permission.read(Role.any()),
+                    Permission.delete(Role.user(me.$id))
+                ]
+            });
+
+            imageTag = "[[img:" + file.$id + "]]";
+        } catch (error) {
+            console.error("خطا در آپلود عکس:", error);
+
+            attachText.textContent = "عکس آماده‌ی ارسال (" + Math.max(1, Math.round(image.size / 1024)) + " کیلوبایت)";
+
+            alert(
+                error.code === 404
+                    ? "فضای ذخیره‌ی عکس (bucket با شناسه‌ی chat-images) توی Appwrite ساخته نشده."
+                    : "ارسال عکس انجام نشد: " + error.message
+            );
+
+            return;
+        } finally {
+            sendButton.disabled = false;
+        }
+    }
+
     messageInput.value = "";
     clearReply();
+    clearPending();
 
     if (typeof resizeMessageInput === "function") resizeMessageInput();
 
@@ -1328,7 +1948,7 @@ async function sendMessageNow() {
                 userId: me.$id,
                 userName: me.name || "کاربر",
                 userAvatar: myAvatarThumb || "",
-                massage: message,
+                massage: imageTag + message,
                 recieverid: toPeer ? PRIVATE_PREFIX + toPeer.id : "public",
                 createdat: new Date().toISOString(),
                 // فقط وقتی پاسخ است ستون reply فرستاده می‌شود
@@ -1439,4 +2059,3 @@ function resizeMessageInput() {
 }
 
 messageInput.addEventListener("input", resizeMessageInput);
-

@@ -560,6 +560,172 @@
     </button>
 
 </div>
+
+
+
+<script>
+(function () {
+    const savedUser = localStorage.getItem("memoryUser");
+    const loggedIn = localStorage.getItem("loggedIn") === "true";
+
+    if (loggedIn && savedUser) {
+        try {
+            JSON.parse(savedUser);
+            return;
+        } catch (error) {
+            // اطلاعات حساب معتبر نیست
+        }
+    }
+
+    const style = document.createElement("style");
+
+    style.textContent = `
+        .gallery-auth-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            background: rgba(5, 5, 12, .88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            animation: galleryAuthFade .35s ease;
+        }
+
+        .gallery-auth-card {
+            width: 100%;
+            max-width: 360px;
+            padding: 30px 24px;
+            text-align: center;
+            color: #fff;
+            background: linear-gradient(145deg, #191526, #101018);
+            border: 1px solid rgba(168, 85, 247, .35);
+            border-radius: 25px;
+            box-shadow: 0 20px 70px rgba(139, 92, 246, .2);
+            animation: galleryAuthRise .5s cubic-bezier(.2,.8,.2,1);
+        }
+
+        .gallery-auth-icon {
+            width: 76px;
+            height: 76px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            box-shadow: 0 8px 28px rgba(168, 85, 247, .3);
+        }
+
+        .gallery-auth-card h2 {
+            margin: 0 0 12px;
+            font-size: 21px;
+        }
+
+        .gallery-auth-card p {
+            margin: 0 0 24px;
+            color: #c7c3d2;
+            font-size: 13px;
+            line-height: 2;
+        }
+
+        .gallery-auth-btn {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px;
+            margin-top: 11px;
+            border: 0;
+            border-radius: 13px;
+            text-decoration: none;
+            font: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .gallery-auth-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .gallery-auth-primary {
+            color: white;
+            background: linear-gradient(110deg, #8b5cf6, #ec4899);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, .22);
+        }
+
+        .gallery-auth-secondary {
+            color: #e5dafa;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        @keyframes galleryAuthFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes galleryAuthRise {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .gallery-auth-overlay,
+            .gallery-auth-card {
+                animation: none;
+            }
+        }
+    `;
+
+    document.head.appendChild(style);
+
+    const overlay = document.createElement("div");
+    overlay.className = "gallery-auth-overlay";
+
+    overlay.innerHTML = `
+        <div class="gallery-auth-card" role="dialog"
+             aria-modal="true" aria-labelledby="galleryAuthTitle">
+
+            <div class="gallery-auth-icon">🔐</div>
+
+            <h2 id="galleryAuthTitle">خاطرات منتظر تو هستند!</h2>
+
+            <p>
+                برای مشاهده‌ی گالری تصاویر «قاب‌های ماندگار»،
+                ابتدا وارد حساب کاربری خود شو یا ثبت‌نام کن.
+            </p>
+
+            <a href="login.html" class="gallery-auth-btn gallery-auth-primary"
+               id="galleryAuthLogin">
+                ورود / ثبت‌نام
+            </a>
+
+            <a href="index.html" class="gallery-auth-btn gallery-auth-secondary">
+                بازگشت به خانه
+            </a>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById("galleryAuthLogin").addEventListener(
+        "click",
+        function () {
+            localStorage.setItem("afterLoginRedirect", "gallery.html");
+        }
+    );
+})();
+</script>
+
     <!-- ================= FAVORITES JAVASCRIPT ================= -->
 
     <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>

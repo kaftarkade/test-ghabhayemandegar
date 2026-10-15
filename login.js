@@ -1,3 +1,4 @@
+
 /* =========================================================
    APPWRITE
 ========================================================= */
@@ -53,9 +54,7 @@ registerTab.addEventListener("click", function () {
 ========================================================= */
 
 document.querySelectorAll(".show-password").forEach(function (button) {
-
     button.addEventListener("click", function () {
-
         const input = document.getElementById(button.dataset.target);
 
         if (!input) return;
@@ -67,9 +66,7 @@ document.querySelectorAll(".show-password").forEach(function (button) {
             input.type = "password";
             button.textContent = "👁";
         }
-
     });
-
 });
 
 
@@ -82,39 +79,61 @@ function phoneToEmail(phone) {
 }
 
 function showMsg(el, text, type) {
+    if (!el) return;
+
     el.textContent = text;
     el.className = "message";
-    if (type) el.classList.add(type);
+
+    if (type) {
+        el.classList.add(type);
+    }
 }
 
 function authErrorText(error) {
-    if (error.code === 409) return "این شماره قبلاً ثبت‌نام کرده. وارد شو.";
-    if (error.code === 401) return "شماره موبایل یا رمز عبور اشتباه است.";
-    if (error.code === 429) return "تعداد تلاش‌ها زیاد بود. کمی بعد دوباره امتحان کن.";
+    if (error.code === 409) {
+        return "این شماره قبلاً ثبت‌نام کرده. وارد شو.";
+    }
+
+    if (error.code === 401) {
+        return "شماره موبایل یا رمز عبور اشتباه است.";
+    }
+
+    if (error.code === 429) {
+        return "تعداد تلاش‌ها زیاد بود. کمی بعد دوباره امتحان کن.";
+    }
+
     if (error.message && error.message.includes("Failed to fetch")) {
         return "اتصال به سرور برقرار نشد. اینترنت/VPN را بررسی کن.";
     }
+
     return "خطا: " + (error.message || "نامشخص");
 }
 
-// اگر نشست قبلی باز است ببند (وگرنه Appwrite خطای session فعال می‌دهد)
+
+// بستن نشست قبلی Appwrite
 async function clearOldSession() {
     try {
         await appwriteAccount.deleteSession({ sessionId: "current" });
-    } catch (e) {}
+    } catch (e) {
+        // اگر نشست قبلی وجود نداشت، ادامه می‌دهیم
+    }
 }
 
-// ذخیره‌ی اطلاعات کاربر برای بقیه‌ی صفحات (بدون رمز عبور)
-function saveLocalUser(acc) {
 
+// ذخیره اطلاعات کاربر برای صفحات دیگر، بدون رمز عبور
+function saveLocalUser(acc) {
     let old = {};
 
     try {
         old = JSON.parse(localStorage.getItem("memoryUser") || "{}") || {};
-    } catch (e) {}
+    } catch (e) {
+        old = {};
+    }
 
-    // اگر حساب دیگری بود، اطلاعات قبلی را نگه نمی‌داریم
-    if (old.userid !== acc.$id) old = {};
+    // اطلاعات حساب قبلی نباید به حساب دیگری منتقل شود
+    if (old.userid !== acc.$id) {
+        old = {};
+    }
 
     delete old.password;
 
@@ -124,7 +143,8 @@ function saveLocalUser(acc) {
     const user = Object.assign(old, {
         userid: acc.$id,
         name: acc.name,
-        phone: (acc.prefs && acc.prefs.phone) || (isFakeEmail ? email.split("@")[0] : ""),
+        phone: (acc.prefs && acc.prefs.phone) ||
+            (isFakeEmail ? email.split("@")[0] : ""),
         email: isFakeEmail ? "" : email,
         joinDate: new Date(acc.$createdAt).toLocaleDateString("fa-IR")
     });
@@ -132,7 +152,7 @@ function saveLocalUser(acc) {
     localStorage.setItem("memoryUser", JSON.stringify(user));
     localStorage.setItem("loggedIn", "true");
 
-    // عکس پروفایل از دیتابیس (هر حساب عکس خودش را دارد)
+    // ذخیره عکس پروفایل
     if (acc.prefs && acc.prefs.avatar) {
         localStorage.setItem("profileImage", acc.prefs.avatar);
     } else {
@@ -141,12 +161,34 @@ function saveLocalUser(acc) {
 }
 
 
+// انتخاب مقصد بعد از ورود یا ثبت‌نام
+function getAfterAuthDestination(defaultUrl) {
+    const target = localStorage.getItem("afterLoginRedirect");
+
+    if (target === "gallery.html") {
+        localStorage.removeItem("afterLoginRedirect");
+        return target;
+    }
+
+    return defaultUrl;
+}
+
+
+// انتقال به مقصد انتخاب‌شده
+function navigateAfterAuth(defaultUrl) {
+    const destination = getAfterAuthDestination(defaultUrl);
+
+    (window.pageNavigate || function (url) {
+        window.location.href = url;
+    })(destination);
+}
+
+
 /* =========================================================
    ثبت‌نام
 ========================================================= */
 
 registerForm.addEventListener("submit", async function (event) {
-
     event.preventDefault();
 
     const name = document.getElementById("registerName").value.trim();
@@ -181,7 +223,6 @@ registerForm.addEventListener("submit", async function (event) {
     button.disabled = true;
 
     try {
-
         await clearOldSession();
 
         const email = phoneToEmail(phone);
@@ -199,7 +240,9 @@ registerForm.addEventListener("submit", async function (event) {
         });
 
         try {
-            await appwriteAccount.updatePrefs({ prefs: { phone: phone } });
+            await appwriteAccount.updatePrefs({
+                prefs: { phone: phone }
+            });
         } catch (e) {
             console.error(e);
         }
@@ -211,17 +254,14 @@ registerForm.addEventListener("submit", async function (event) {
         showMsg(message, "حساب با موفقیت ساخته شد ❤️", "success");
 
         setTimeout(function () {
-            (window.pageNavigate || function (u) { window.location.href = u; })("profile.html");
+            navigateAfterAuth("profile.html");
         }, 1000);
 
     } catch (error) {
-
         console.error(error);
         showMsg(message, authErrorText(error), "error");
         button.disabled = false;
-
     }
-
 });
 
 
@@ -230,7 +270,6 @@ registerForm.addEventListener("submit", async function (event) {
 ========================================================= */
 
 loginForm.addEventListener("submit", async function (event) {
-
     event.preventDefault();
 
     const identifier = document.getElementById("loginPhone").value.trim();
@@ -249,7 +288,11 @@ loginForm.addEventListener("submit", async function (event) {
     }
 
     if (!loginEmail) {
-        showMsg(message, "شماره موبایل (مثل 09123456789) یا ایمیل را وارد کن.", "error");
+        showMsg(
+            message,
+            "شماره موبایل (مثل 09123456789) یا ایمیل را وارد کن.",
+            "error"
+        );
         return;
     }
 
@@ -261,7 +304,6 @@ loginForm.addEventListener("submit", async function (event) {
     button.disabled = true;
 
     try {
-
         await clearOldSession();
 
         await appwriteAccount.createEmailPasswordSession({
@@ -276,22 +318,19 @@ loginForm.addEventListener("submit", async function (event) {
         showMsg(message, "خوش اومدی " + acc.name + " ❤️", "success");
 
         setTimeout(function () {
-            (window.pageNavigate || function (u) { window.location.href = u; })("index.html");
+            navigateAfterAuth("index.html");
         }, 1000);
 
     } catch (error) {
-
         console.error(error);
         showMsg(message, authErrorText(error), "error");
         button.disabled = false;
-
     }
-
 });
 
 
 /* =========================================================
-   فراموشی رمز عبور (با ایمیل بازیابی ثبت‌شده در پروفایل)
+   فراموشی رمز عبور
 ========================================================= */
 
 const forgotLink = document.getElementById("forgotLink");
@@ -301,6 +340,7 @@ const forgotSend = document.getElementById("forgotSend");
 const forgotMessage = document.getElementById("forgotMessage");
 
 async function sendRecovery() {
+    if (!forgotEmail || !forgotSend || !forgotMessage) return;
 
     const email = forgotEmail.value.trim().toLowerCase();
 
@@ -314,7 +354,6 @@ async function sendRecovery() {
     forgotSend.disabled = true;
 
     try {
-
         await appwriteAccount.createRecovery({
             email: email,
             url: window.location.origin + "/reset.html"
@@ -327,7 +366,6 @@ async function sendRecovery() {
         );
 
     } catch (error) {
-
         console.error(error);
 
         if (error.code === 404) {
@@ -341,28 +379,28 @@ async function sendRecovery() {
         }
 
     } finally {
-
         forgotSend.disabled = false;
-
     }
-
 }
 
 if (forgotLink && forgotBox) {
-
     forgotLink.addEventListener("click", function (event) {
         event.preventDefault();
+
         forgotBox.style.display =
             forgotBox.style.display === "none" ? "block" : "none";
     });
 
-    forgotSend.addEventListener("click", sendRecovery);
+    if (forgotSend) {
+        forgotSend.addEventListener("click", sendRecovery);
+    }
 
-    forgotEmail.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            sendRecovery();
-        }
-    });
-
+    if (forgotEmail) {
+        forgotEmail.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendRecovery();
+            }
+        });
+    }
 }
