@@ -636,7 +636,7 @@ const downloadBtn = document.createElement("button");
 
 downloadBtn.type = "button";
 downloadBtn.className = "chat-image-download";
-downloadBtn.textContent = "⬇️ دانلود عکس";
+downloadBtn.textContent = "ذخیره";
 downloadBtn.title = "دانلود عکس";
 
 downloadBtn.addEventListener("click", (event) => {
