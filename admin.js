@@ -164,6 +164,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById("editMemberId").value = member.$id;
         document.getElementById("editFullName").value = data.fullName;
         document.getElementById("editPhone").value = data.phone;
+        document.getElementById("editResetEmail").checked = false;
         document.getElementById("editNationalId").value = data.nationalId;
         document.getElementById("editRing").value = data.ring;
         document.getElementById("editStatus").value = data.status;
@@ -206,6 +207,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             await callWorker("updateMember", {
                 rowId,
+                resetEmail: document.getElementById("editResetEmail").checked,
                 name: data.fullName,
                 phone: data.phone,
                 nationalId: data.nationalId,

@@ -43,7 +43,7 @@
                 <label for="phone">شماره تلفن</label>
                 <input id="phone" type="tel" inputmode="numeric" placeholder="09123456789" required>
 
-                <label for="nationalId">کد ملی (رمز ورود عضو)</label>
+                <label for="nationalId">کد ملی (برای تأیید هویت در ورود)</label>
                 <input id="nationalId" type="text" inputmode="numeric" maxlength="10"
                        pattern="[0-9]{10}" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" required>
 
@@ -94,7 +94,7 @@
                     <label for="editPhone">شماره تلفن</label>
                     <input id="editPhone" type="tel" inputmode="numeric" required>
 
-                    <label for="editNationalId">کد ملی (رمز ورود عضو)</label>
+                    <label for="editNationalId">کد ملی (برای تأیید هویت در ورود)</label>
                     <input id="editNationalId" type="text" inputmode="numeric"
                            maxlength="10" pattern="[0-9]{10}" required>
 
@@ -112,6 +112,11 @@
                         <option value="active">فعال</option>
                         <option value="inactive">غیرفعال (امکان ورود ندارد)</option>
                     </select>
+
+                    <label>
+                        <input id="editResetEmail" type="checkbox">
+                        ریست ایمیل (کاربر دفعهٔ بعد ایمیل خودش را دوباره ثبت می‌کند)
+                    </label>
 
                     <button type="submit">ذخیره تغییرات</button>
                     <button id="cancelEdit" type="button">انصراف</button>
