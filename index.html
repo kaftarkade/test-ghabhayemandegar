@@ -1,229 +1,97 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>قاب‌های ماندگار</title>
-
-<link rel="stylesheet" href="style.css">
+    <meta name="theme-color" content="#176b45">
+    <title>پیام‌رسان حلقات صالحین</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
 </head>
+<body class="messenger-page">
 
-<body>
-
-
-
-<!-- ================= NAVBAR ================= -->
-
-<header class="navbar">
-
-    <div class="logo">
-        قاب‌های ماندگار
-    </div>
-
-
-    <!-- دکمه سه خط -->
-
-    <input
-        type="checkbox"
-        id="menu-toggle"
-    >
-
-    <label
-        for="menu-toggle"
-        class="menu-button"
-    >
-        <span></span>
-        <span></span>
-        <span></span>
-    </label>
-
-
-     <!-- ================= DESKTOP NAV ================= -->
-
-        <nav class="desktop-nav">
-
-<a
-                href="login.html"
-                class="account-link"
-            >
-                 👤 ورود / ثبت‌نام
-            </a>
-            
-            <a href="massages.html">
-                 💬 پیام‌رسان
-            </a>
-
-            <a href="gallery.html">
-                تصاویر
-            </a>
-
-            <a href="musics.html">
-                آهنگ
-            </a>
-
-            <a href="https://eitaa.com/@matin_7451">
-                ارتباط با ما
-            </a>
-
-        </nav>
-
-
-        <!-- ================= MOBILE NAV ================= -->
-
-        <nav class="mobile-menu">
-
-            <!-- ACCOUNT -->
-
-            <a
-                href="login.html"
-                class="account-link"
-            >
-                👤 ورود / ثبت‌نام
-            </a>
-
-            <a href="massages.html">
-            💬 پیام‌رسان
-            </a>
-
-            <!-- GALLERY -->
-
-            <a href="gallery.html">
-                تصاویر
-            </a>
-
-
-            <!-- MUSICS -->
-
-            <a href="musics.html">
-                آهنگ
-            </a>
-
-            <!-- EITAA -->
-
-<a href="https://abrehamrahi.ir/o/public/2quBbcwi/">دانلود برنامه نسخه قبلی</a>
-
-            <!-- CONTACT -->
-
-            <a href="https://eitaa.com/@matin_7451">
-                ارتباط با ما
-            </a>
-
-
-        <!-- تغییر حالت روشن / تاریک -->
-
-        <div class="theme-switch">
-
-            <input
-                type="checkbox"
-                id="theme-toggle"
-            >
-
-            <label
-                for="theme-toggle"
-                class="theme-button"
-            >
-
-                <span class="sun">
-                    ☀️
-                </span>
-
-                <span class="moon">
-                    🌙
-                </span>
-
-            </label>
-
-        </div>
-
-    </nav>
-
+<header class="messenger-header">
+    <a href="index.html" class="messenger-brand">
+        <span class="brand-icon">ح</span>
+        <span>
+            <strong>حلقات صالحین</strong>
+            <small>پیام‌رسان پایگاه</small>
+        </span>
+    </a>
+    <a href="profile.html" class="account-button">
+        <span>👤</span>
+        <span>پروفایل من</span>
+    </a>
 </header>
 
-    <!-- ================= HERO ================= -->
+<main class="messenger-main">
 
-    <section class="hero" id="home">
+    <nav class="messenger-tabs" aria-label="بخش‌های پیام‌رسان">
+        <button class="messenger-tab active" type="button"
+                data-tab="all" aria-selected="true">📋 همه</button>
+        <button class="messenger-tab" type="button"
+                data-tab="base" aria-selected="false">🏘️ پایگاه</button>
+        <button class="messenger-tab" type="button"
+                data-tab="personal" aria-selected="false">💬 شخصی</button>
+    </nav>
 
-        <div class="hero-content">
-
-            <h1>
-                قاب‌های<br>
-                <strong>ماندگار</strong>
-            </h1>
-
-            <p>
-              خاطرات ارزش ماندن دارند.
-            </p>
-
-<br>
-          <br>
-        <br>
-          <a href="gallery.html" class="btn"><b>آلبوم خاطرات</b></a>
-          <a href="musics.html" class="btn"><b>آهنگ های داخلی</b></a>
-          <a href="massages.html" class="btn" id="btn-mass"><b>پیام‌رسان</b></a>
+    <!-- پنج گروه مستقل -->
+    <section class="tab-panel" id="groups-panel">
+        <div class="list-heading">
+            <div>
+                <h1>گروه‌های حلقات</h1>
+                <p>گفت‌وگوی اختصاصی هر حلقه</p>
+            </div>
+            <span class="section-symbol">👥</span>
         </div>
 
+        <div id="groupsList"></div>
+
+        <div class="empty-hint" id="groupsHint" hidden>
+            <span>🔐</span>
+            <p></p>
+        </div>
     </section>
-  
-    <!-- ================= FOOTER ================= -->
 
-    <footer>
-
-        <div class="footer-logo">
-           قاب‌های ماندگار 🖼
+    <!-- کانال مستقل پایگاه -->
+    <section class="tab-panel" id="channels-panel">
+        <div class="list-heading">
+            <div>
+                <h1>کانال پایگاه</h1>
+                <p>اطلاعیه‌ها و برنامه‌های رسمی</p>
+            </div>
+            <span class="section-symbol">📢</span>
         </div>
 
-        <p>
-          ساخته شده با ❤️ برای خاطراتمون
-        </p>
+        <div id="channelsList"></div>
+    </section>
 
-    </footer>
+    <!-- پیام‌های خصوصی -->
+    <section class="tab-panel" id="personal-panel">
+        <div class="list-heading">
+            <div>
+                <h1>پیام‌های شخصی</h1>
+                <p>گفت‌وگوهای خصوصی اعضا</p>
+            </div>
+            <span class="section-symbol">💬</span>
+        </div>
 
-<script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
+        <div class="empty-hint">
+            <span>✉️</span>
+            <p>پیام‌های شخصی به‌زودی فعال می‌شود.</p>
+        </div>
+    </section>
 
-    <script src="sync.js"></script>
+</main>
 
-    <script src="script.js"></script>
+<footer class="messenger-footer">
+    پیام‌رسان اختصاصی حلقات صالحین
+</footer>
 
-<script src="theme.js"></script>
-
-<!-- وضعیت ورود: لینک حساب در منوی دسکتاپ و موبایل -->
-<script>
-(function () {
-
-    function updateAccountLinks() {
-
-        var links = document.querySelectorAll(".account-link");
-
-        var logged = false;
-
-        try {
-            logged = !!localStorage.getItem("memoryUser") &&
-                     localStorage.getItem("loggedIn") === "true";
-        } catch (e) {}
-
-        links.forEach(function (link) {
-            link.textContent = logged ? "👤 پروفایل" : "👤 ورود / ثبت‌نام";
-            link.setAttribute("href", logged ? "profile.html" : "login.html");
-        });
-
-    }
-
-    updateAccountLinks();
-
-    window.addEventListener("pageshow", updateAccountLinks);
-    window.addEventListener("focus", updateAccountLinks);
-
-})();
-
-
-document.addEventListener("contextmenu", function(event) {
-    event.preventDefault();
-});
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
 
 </body>
-
 </html>

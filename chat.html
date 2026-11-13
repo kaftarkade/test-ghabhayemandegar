@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#176b45">
+    <title>گفت‌وگو | حلقات صالحین</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="chat.css">
+</head>
+<body class="messenger-page chat-page">
+
+<header class="messenger-header">
+    <a href="index.html" class="messenger-brand">
+        <span class="brand-icon">ح</span>
+        <span>
+            <strong>حلقات صالحین</strong>
+            <small id="chatHeaderSubtitle">پیام‌رسان پایگاه</small>
+        </span>
+    </a>
+
+    <a href="index.html" class="account-button">← بازگشت</a>
+</header>
+
+<main class="chat-main">
+    <div class="chat-title-bar">
+        <span class="section-symbol" id="chatIcon">💬</span>
+        <div>
+            <h1 id="chatTitle">گفت‌وگو</h1>
+            <p id="chatDescription">در حال بارگذاری...</p>
+        </div>
+    </div>
+
+    <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+
+    <p id="chatStatus" class="chat-status" role="status"></p>
+
+    <form id="chatForm" class="chat-composer" hidden>
+        <textarea id="chatInput" rows="1" maxlength="2000" dir="auto"
+                  placeholder="پیامت را بنویس..." aria-label="متن پیام"></textarea>
+        <button type="submit" id="chatSend">ارسال</button>
+    </form>
+
+    <p id="chatReadonly" class="chat-readonly" hidden></p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
+<script src="config.js"></script>
+<script src="chat.js"></script>
+
+</body>
+</html>

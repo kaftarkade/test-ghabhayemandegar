@@ -2446,3 +2446,55 @@ height: 42px;
 min-width: 42px;
 font-size: 20px;
 }
+
+
+/* =========================================
+   اطلاعات حلقه و وضعیت عضویت
+   پیام‌رسان حلقات صالحین
+   ========================================= */
+
+#profileRing,
+#profileStatus {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    padding: 7px 13px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.8;
+    transition: background-color 0.25s ease,
+                color 0.25s ease;
+    overflow-wrap: anywhere;
+}
+
+/* حلقه صالحین */
+#profileRing {
+    color: #7c3aed;
+    background: rgba(139, 92, 246, 0.13);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+/* وضعیت فعال */
+#profileStatus {
+    color: #16a34a;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+/* وضعیت غیرفعال */
+#profileStatus[data-status="inactive"] {
+    color: #dc2626;
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.25);
+}
+
+/* هماهنگی با صفحه موبایل */
+@media (max-width: 480px) {
+    #profileRing,
+    #profileStatus {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بررسی سلامت سایت</title>
+<style>
+body{font-family:Tahoma,sans-serif;background:#0b0d12;color:#f8fafc;padding:16px;line-height:1.9}
+.t{border:1px solid #343b49;border-radius:12px;padding:10px 14px;margin:10px 0;background:#131720}
+.ok{color:#22c55e}.bad{color:#ef4444}.wait{color:#f59e0b}
+pre{white-space:pre-wrap;word-break:break-all;direction:ltr;text-align:left;font-size:12px;color:#aab2c0;margin:6px 0 0}
+</style>
+</head>
+<body>
+<h2>بررسی سلامت سایت</h2>
+<p>وقتی همهٔ مراحل تموم شد، از این صفحه اسکرین‌شات بگیر و بفرست.</p>
+<div id="out"></div>
+
+<script>
+window.addEventListener("error", e => add("خطای جاوااسکریپت", false, e.message + " (" + (e.filename||"").split("/").pop() + ":" + e.lineno + ")"));
+const out = document.getElementById("out");
+function add(title, ok, detail) {
+    const d = document.createElement("div"); d.className = "t";
+    const h = document.createElement("div");
+    h.className = ok === null ? "wait" : ok ? "ok" : "bad";
+    h.textContent = (ok === null ? "⏳ " : ok ? "✅ " : "❌ ") + title;
+    d.appendChild(h);
+    if (detail) { const p = document.createElement("pre"); p.textContent = detail; d.appendChild(p); }
+    out.appendChild(d);
+}
+const errText = e => "code=" + (e && e.code) + " type=" + (e && e.type) + "\n" + (e && e.message);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
+<script>
+if (typeof Appwrite === "undefined") add("کتابخانهٔ Appwrite بارگذاری نشد (اینترنت/فیلترشکن؟)", false);
+else add("کتابخانهٔ Appwrite بارگذاری شد", true);
+</script>
+<script src="config.js"></script>
+<script>
+(async function () {
+    if (typeof appwriteClient === "undefined") { add("config.js اجرا نشد (فایل جایگزین نشده یا خطا دارد)", false); return; }
+    add("config.js اجرا شد", true,
+        "FUNCTION_ID=" + FUNCTION_ID + "\nMESSAGES=" + APPWRITE_MESSAGES_TABLE_ID);
+
+    let acc = null;
+    try {
+        acc = await appwriteAccount.get();
+        add("وارد شده‌ای: " + acc.name, true,
+            "id=" + acc.$id + "\nemail=" + acc.email + "\nlabels=" + JSON.stringify(acc.labels) +
+            "\nadmin=" + (acc.$id === ADMIN_USER_ID));
+    } catch (e) {
+        add("وارد نشده‌ای (اول از login.html یا admin.html وارد شو و دوباره این صفحه را باز کن)", false, errText(e));
+    }
+
+    // جدول اعضا
+    try {
+        const r = await appwriteTablesDB.listRows({ databaseId: APPWRITE_DATABASE_ID, tableId: APPWRITE_TABLE_ID });
+        add("جدول اعضا (" + APPWRITE_TABLE_ID + ") خوانده شد", true, "تعداد ردیف قابل‌دیدن: " + r.total);
+    } catch (e) { add("جدول اعضا خوانده نشد", false, errText(e)); }
+
+    // جدول پیام‌ها
+    try {
+        const r = await appwriteTablesDB.listRows({
+            databaseId: APPWRITE_DATABASE_ID, tableId: APPWRITE_MESSAGES_TABLE_ID,
+            queries: [Appwrite.Query.equal("group_id", ["m:ann"]), Appwrite.Query.limit(1)]
+        });
+        add("جدول پیام‌ها (" + APPWRITE_MESSAGES_TABLE_ID + ") سالم است", true, "پیام‌های قابل‌دیدن در کانال: " + r.total);
+    } catch (e) { add("جدول پیام‌ها مشکل دارد", false, errText(e)); }
+
+    // تابع
+    try {
+        const ex = await appwriteFunctions.createExecution({
+            functionId: FUNCTION_ID, body: JSON.stringify({ action: "ping" }),
+            async: false, method: "POST", headers: { "content-type": "application/json" }
+        });
+        const reached = ex.responseStatusCode === 400 || ex.responseStatusCode === 200;
+        add(reached ? "تابع در Appwrite اجرا می‌شود" : "تابع اجرا شد ولی خطا داد", reached,
+            "status=" + ex.status + "\nhttp=" + ex.responseStatusCode +
+            "\nbody=" + ex.responseBody + "\nerrors=" + (ex.errors || ""));
+    } catch (e) { add("تابع پیدا یا اجرا نشد", false, errText(e)); }
+})();
+</script>
+</body>
+</html>

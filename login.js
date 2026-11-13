@@ -1,406 +1,80 @@
+"use strict";
 
-/* =========================================================
-   APPWRITE
-========================================================= */
+document.addEventListener("DOMContentLoaded", async () => {
+    const loginForm = document.getElementById("loginForm");
+    const message = document.getElementById("formMessage");
 
-if (typeof Appwrite === "undefined") {
-    alert("کتابخانه‌ی Appwrite لود نشد. اینترنت/VPN را بررسی کن و صفحه را رفرش کن.");
-}
+    function normalizeDigits(value = "") {
+        return value
+            .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+            .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+    }
 
-const appwriteClient = new Appwrite.Client()
-    .setEndpoint("https://cloud.appwrite.io/v1")
-    .setProject("6ac3b38f000976364cad");
+    function say(text, color) {
+        message.textContent = text;
+        message.style.color = color || "#f8fafc";
+    }
 
-const appwriteAccount = new Appwrite.Account(appwriteClient);
+    function saveLocalUser(account, phone) {
+        localStorage.setItem("memoryUser", JSON.stringify({
+            name: account.name || "",
+            phone: phone || (account.prefs && account.prefs.phone) || "",
+            email: ""
+        }));
+        localStorage.setItem("loggedIn", "true");
+    }
 
-// شماره موبایل به‌صورت ایمیل مجازی در Appwrite ذخیره می‌شود
-const PHONE_EMAIL_DOMAIN = "example.com";
-
-
-/* =========================================================
-   عناصر صفحه
-========================================================= */
-
-const loginTab = document.getElementById("loginTab");
-const registerTab = document.getElementById("registerTab");
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-const tabs = document.querySelector(".tabs");
-
-
-/* =========================================================
-   جابه‌جایی بین ورود و ثبت‌نام
-========================================================= */
-
-loginTab.addEventListener("click", function () {
-    loginTab.classList.add("active");
-    registerTab.classList.remove("active");
-    loginForm.classList.add("active-form");
-    registerForm.classList.remove("active-form");
-    tabs.classList.remove("register-active");
-});
-
-registerTab.addEventListener("click", function () {
-    registerTab.classList.add("active");
-    loginTab.classList.remove("active");
-    registerForm.classList.add("active-form");
-    loginForm.classList.remove("active-form");
-    tabs.classList.add("register-active");
-});
-
-
-/* =========================================================
-   نمایش / مخفی کردن رمز
-========================================================= */
-
-document.querySelectorAll(".show-password").forEach(function (button) {
-    button.addEventListener("click", function () {
-        const input = document.getElementById(button.dataset.target);
-
-        if (!input) return;
-
-        if (input.type === "password") {
-            input.type = "text";
-            button.textContent = "🙈";
-        } else {
-            input.type = "password";
-            button.textContent = "👁";
+    // اگر قبلاً وارد شده، مستقیم برو صفحهٔ اصلی
+    try {
+        const current = await appwriteAccount.get();
+        if (current.$id !== ADMIN_USER_ID) {
+            saveLocalUser(current);
+            window.location.replace("index.html");
+            return;
         }
-    });
-});
+    } catch (_) { /* نشست فعالی نیست */ }
 
-
-/* =========================================================
-   توابع کمکی
-========================================================= */
-
-function phoneToEmail(phone) {
-    return phone + "@" + PHONE_EMAIL_DOMAIN;
-}
-
-function showMsg(el, text, type) {
-    if (!el) return;
-
-    el.textContent = text;
-    el.className = "message";
-
-    if (type) {
-        el.classList.add(type);
-    }
-}
-
-function authErrorText(error) {
-    if (error.code === 409) {
-        return "این شماره قبلاً ثبت‌نام کرده. وارد شو.";
-    }
-
-    if (error.code === 401) {
-        return "شماره موبایل یا رمز عبور اشتباه است.";
-    }
-
-    if (error.code === 429) {
-        return "تعداد تلاش‌ها زیاد بود. کمی بعد دوباره امتحان کن.";
-    }
-
-    if (error.message && error.message.includes("Failed to fetch")) {
-        return "اتصال به سرور برقرار نشد. اینترنت/VPN را بررسی کن.";
-    }
-
-    return "خطا: " + (error.message || "نامشخص");
-}
-
-
-// بستن نشست قبلی Appwrite
-async function clearOldSession() {
-    try {
-        await appwriteAccount.deleteSession({ sessionId: "current" });
-    } catch (e) {
-        // اگر نشست قبلی وجود نداشت، ادامه می‌دهیم
-    }
-}
-
-
-// ذخیره اطلاعات کاربر برای صفحات دیگر، بدون رمز عبور
-function saveLocalUser(acc) {
-    let old = {};
-
-    try {
-        old = JSON.parse(localStorage.getItem("memoryUser") || "{}") || {};
-    } catch (e) {
-        old = {};
-    }
-
-    // اطلاعات حساب قبلی نباید به حساب دیگری منتقل شود
-    if (old.userid !== acc.$id) {
-        old = {};
-    }
-
-    delete old.password;
-
-    const email = acc.email || "";
-    const isFakeEmail = email.endsWith("@" + PHONE_EMAIL_DOMAIN);
-
-    const user = Object.assign(old, {
-        userid: acc.$id,
-        name: acc.name,
-        phone: (acc.prefs && acc.prefs.phone) ||
-            (isFakeEmail ? email.split("@")[0] : ""),
-        email: isFakeEmail ? "" : email,
-        joinDate: new Date(acc.$createdAt).toLocaleDateString("fa-IR")
-    });
-
-    localStorage.setItem("memoryUser", JSON.stringify(user));
-    localStorage.setItem("loggedIn", "true");
-
-    // ذخیره عکس پروفایل
-    if (acc.prefs && acc.prefs.avatar) {
-        localStorage.setItem("profileImage", acc.prefs.avatar);
-    } else {
-        localStorage.removeItem("profileImage");
-    }
-}
-
-
-// انتخاب مقصد بعد از ورود یا ثبت‌نام
-function getAfterAuthDestination(defaultUrl) {
-    const target = localStorage.getItem("afterLoginRedirect");
-
-    if (target === "gallery.html") {
-        localStorage.removeItem("afterLoginRedirect");
-        return target;
-    }
-
-    return defaultUrl;
-}
-
-
-// انتقال به مقصد انتخاب‌شده
-function navigateAfterAuth(defaultUrl) {
-    const destination = getAfterAuthDestination(defaultUrl);
-
-    (window.pageNavigate || function (url) {
-        window.location.href = url;
-    })(destination);
-}
-
-
-/* =========================================================
-   ثبت‌نام
-========================================================= */
-
-registerForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    const name = document.getElementById("registerName").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const password = document.getElementById("registerPassword").value;
-    const password2 = document.getElementById("registerPassword2").value;
-    const message = document.getElementById("registerMessage");
-    const button = registerForm.querySelector(".submit-btn");
-
-    showMsg(message, "");
-
-    if (!name) {
-        showMsg(message, "نام را وارد کن.", "error");
-        return;
-    }
-
-    if (!/^09[0-9]{9}$/.test(phone)) {
-        showMsg(message, "شماره موبایل باید مثل 09123456789 باشد.", "error");
-        return;
-    }
-
-    if (password.length < 8) {
-        showMsg(message, "رمز عبور باید حداقل ۸ کاراکتر باشد.", "error");
-        return;
-    }
-
-    if (password !== password2) {
-        showMsg(message, "رمزهای عبور یکسان نیستند.", "error");
-        return;
-    }
-
-    button.disabled = true;
-
-    try {
-        await clearOldSession();
-
-        const email = phoneToEmail(phone);
-
-        await appwriteAccount.create({
-            userId: Appwrite.ID.unique(),
-            email: email,
-            password: password,
-            name: name
-        });
-
-        await appwriteAccount.createEmailPasswordSession({
-            email: email,
-            password: password
-        });
-
-        try {
-            await appwriteAccount.updatePrefs({
-                prefs: { phone: phone }
-            });
-        } catch (e) {
-            console.error(e);
-        }
-
-        const acc = await appwriteAccount.get();
-
-        saveLocalUser(acc);
-
-        showMsg(message, "حساب با موفقیت ساخته شد ❤️", "success");
-
-        setTimeout(function () {
-            navigateAfterAuth("profile.html");
-        }, 1000);
-
-    } catch (error) {
-        console.error(error);
-        showMsg(message, authErrorText(error), "error");
-        button.disabled = false;
-    }
-});
-
-
-/* =========================================================
-   ورود
-========================================================= */
-
-loginForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    const identifier = document.getElementById("loginPhone").value.trim();
-    const password = document.getElementById("loginPassword").value;
-    const message = document.getElementById("loginMessage");
-    const button = loginForm.querySelector(".submit-btn");
-
-    showMsg(message, "");
-
-    let loginEmail = "";
-
-    if (/^09[0-9]{9}$/.test(identifier)) {
-        loginEmail = phoneToEmail(identifier);
-    } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)) {
-        loginEmail = identifier.toLowerCase();
-    }
-
-    if (!loginEmail) {
-        showMsg(
-            message,
-            "شماره موبایل (مثل 09123456789) یا ایمیل را وارد کن.",
-            "error"
-        );
-        return;
-    }
-
-    if (!password) {
-        showMsg(message, "رمز عبور را وارد کن.", "error");
-        return;
-    }
-
-    button.disabled = true;
-
-    try {
-        await clearOldSession();
-
-        await appwriteAccount.createEmailPasswordSession({
-            email: loginEmail,
-            password: password
-        });
-
-        const acc = await appwriteAccount.get();
-
-        saveLocalUser(acc);
-
-        showMsg(message, "خوش اومدی " + acc.name + " ❤️", "success");
-
-        setTimeout(function () {
-            navigateAfterAuth("index.html");
-        }, 1000);
-
-    } catch (error) {
-        console.error(error);
-        showMsg(message, authErrorText(error), "error");
-        button.disabled = false;
-    }
-});
-
-
-/* =========================================================
-   فراموشی رمز عبور
-========================================================= */
-
-const forgotLink = document.getElementById("forgotLink");
-const forgotBox = document.getElementById("forgotBox");
-const forgotEmail = document.getElementById("forgotEmail");
-const forgotSend = document.getElementById("forgotSend");
-const forgotMessage = document.getElementById("forgotMessage");
-
-async function sendRecovery() {
-    if (!forgotEmail || !forgotSend || !forgotMessage) return;
-
-    const email = forgotEmail.value.trim().toLowerCase();
-
-    showMsg(forgotMessage, "");
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showMsg(forgotMessage, "ایمیل معتبر وارد کن.", "error");
-        return;
-    }
-
-    forgotSend.disabled = true;
-
-    try {
-        await appwriteAccount.createRecovery({
-            email: email,
-            url: window.location.origin + "/reset.html"
-        });
-
-        showMsg(
-            forgotMessage,
-            "لینک بازیابی ارسال شد. ایمیلت (و پوشه‌ی اسپم) را چک کن.",
-            "success"
-        );
-
-    } catch (error) {
-        console.error(error);
-
-        if (error.code === 404) {
-            showMsg(
-                forgotMessage,
-                "حسابی با این ایمیل پیدا نشد. فقط کسانی که ایمیل بازیابی را در پروفایل ثبت کرده‌اند می‌توانند رمز را بازیابی کنند.",
-                "error"
-            );
-        } else {
-            showMsg(forgotMessage, authErrorText(error), "error");
-        }
-
-    } finally {
-        forgotSend.disabled = false;
-    }
-}
-
-if (forgotLink && forgotBox) {
-    forgotLink.addEventListener("click", function (event) {
+    loginForm.addEventListener("submit", async event => {
         event.preventDefault();
 
-        forgotBox.style.display =
-            forgotBox.style.display === "none" ? "block" : "none";
-    });
+        const phone = normalizeDigits(document.getElementById("phone").value.trim());
+        const nationalId = normalizeDigits(document.getElementById("nationalId").value.trim());
 
-    if (forgotSend) {
-        forgotSend.addEventListener("click", sendRecovery);
-    }
+        if (!/^09\d{9}$/.test(phone) || !/^\d{10}$/.test(nationalId)) {
+            say("شماره موبایل یا کد ملی معتبر نیست.", "#ef4444");
+            return;
+        }
 
-    if (forgotEmail) {
-        forgotEmail.addEventListener("keydown", function (event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                sendRecovery();
+        const button = loginForm.querySelector('button[type="submit"]');
+        button.disabled = true;
+        say("در حال ورود...", "#f59e0b");
+
+        try {
+            try { await appwriteAccount.deleteSession({ sessionId: "current" }); } catch (_) {}
+
+            await appwriteAccount.createEmailPasswordSession({
+                email: phone + "@fani.com",
+                password: nationalId
+            });
+
+            const account = await appwriteAccount.get();
+            saveLocalUser(account, phone);
+
+            say("ورود موفق بود.", "#22c55e");
+            window.location.replace("index.html");
+        } catch (error) {
+            console.error("Login error:", error && error.code, error && error.type);
+
+            if (error && error.type === "user_blocked") {
+                say("حساب شما غیرفعال است؛ با مسئول حلقه تماس بگیر.", "#ef4444");
+            } else if (error && error.code === 429) {
+                say("تلاش‌های زیاد؛ چند دقیقه بعد دوباره امتحان کن.", "#ef4444");
+            } else if (error && error.code === 401) {
+                say("شماره موبایل یا کد ملی اشتباه است.", "#ef4444");
+            } else {
+                say("ورود ناموفق بود؛ اتصال اینترنت را بررسی کن.", "#ef4444");
             }
-        });
-    }
-}
+            button.disabled = false;
+        }
+    });
+});

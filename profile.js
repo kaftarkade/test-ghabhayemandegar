@@ -8,6 +8,11 @@
    CHECK LOGIN
 ========================================================= */
 
+if (typeof appwriteClient === "undefined" || typeof appwriteAccount === "undefined") {
+    alert("تنظیمات Appwrite بارگذاری نشده است. بررسی کن config.js قبل از profile.js قرار داشته باشد.");
+    throw new Error("Appwrite config is missing");
+}
+
 const savedUser =
     localStorage.getItem("memoryUser");
 
@@ -49,26 +54,41 @@ try {
    APPWRITE (ذخیره‌ی پروفایل در دیتابیس)
 ========================================================= */
 
-const appwriteClient = new Appwrite.Client()
-    .setEndpoint("https://cloud.appwrite.io/v1")
-    .setProject("6ac3b38f000976364cad");
-
-const appwriteAccount = new Appwrite.Account(appwriteClient);
+// از appwriteClient و appwriteAccount موجود در config.js استفاده می‌کنیم.
 
 // تنظیمات (prefs) حساب؛ عکس پروفایل اینجا ذخیره می‌شود
 let accountPrefs = {};
 
 // تغییر prefs با گرفتن آخرین مقدار (تا چیزی پاک نشود)
+
 async function updateMyPrefs(patch) {
+    // ورود آزمایشی حساب واقعی Appwrite ندارد.
+    if (user && user.demoMode === true) {
+        Object.assign(user, patch);
+
+        localStorage.setItem(
+            "memoryUser",
+            JSON.stringify(user)
+        );
+
+        accountPrefs = Object.assign(
+            {},
+            accountPrefs,
+            patch
+        );
+
+        return;
+    }
 
     const cur = await appwriteAccount.get();
 
     const prefs = Object.assign({}, cur.prefs, patch);
 
-    const acc = await appwriteAccount.updatePrefs({ prefs: prefs });
+    const acc = await appwriteAccount.updatePrefs({
+        prefs: prefs
+    });
 
     accountPrefs = acc.prefs || prefs;
-
 }
 
 async function saveAvatarToAccount(avatar) {
@@ -77,55 +97,8 @@ async function saveAvatarToAccount(avatar) {
 
 }
 
-const tablesDB = new Appwrite.TablesDB(appwriteClient);
-
-const DATABASE_ID = "6ac3b50f001bdd8488ff";
-const TABLE_ID = "6ac3b51800052942e6b5";
-
-// بیوگرافی برای نمایش به بقیه در ردیف پروفایل (جدول MemoryDB) ذخیره می‌شود
-async function publishBio(bio) {
-
-    const base = {
-        userName: user.name || "کاربر",
-        bio: bio
-    };
-
-    try {
-
-        await tablesDB.updateRow({
-            databaseId: DATABASE_ID,
-            tableId: TABLE_ID,
-            rowId: user.userid,
-            data: base
-        });
-
-    } catch (error) {
-
-        if (error.code !== 404) {
-            throw error;
-        }
-
-        await tablesDB.createRow({
-            databaseId: DATABASE_ID,
-            tableId: TABLE_ID,
-            rowId: user.userid,
-            data: Object.assign({
-                userId: user.userid,
-                userAvatar: accountPrefs.avatar || "",
-                massage: "",
-                recieverid: "profile",
-                createdat: new Date().toISOString()
-            }, base),
-            permissions: [
-                Appwrite.Permission.read(Appwrite.Role.users()),
-                Appwrite.Permission.update(Appwrite.Role.user(user.userid)),
-                Appwrite.Permission.delete(Appwrite.Role.user(user.userid))
-            ]
-        });
-
-    }
-
-}
+// بیوگرافی و عکس در prefs حساب فعلی Appwrite ذخیره می‌شوند؛
+// این نسخه به جدول و شناسه‌های پروژه قبلی وابسته نیست.
 
 
 /* =========================================================
@@ -213,8 +186,7 @@ function updateUserDisplay() {
    JOIN DATE
 ========================================================= */
 
-if (!user.joinDate) {
-
+if (user && !user.joinDate) {
     user.joinDate =
         new Date().toLocaleDateString("fa-IR");
 
@@ -222,7 +194,6 @@ if (!user.joinDate) {
         "memoryUser",
         JSON.stringify(user)
     );
-
 }
 
 
@@ -585,21 +556,7 @@ if (saveEdit) {
 
                     editingField = null;
 
-                    // نمایش برای بقیه در چت
-                    try {
-
-                        await publishBio(bio);
-
-                    } catch (publishError) {
-
-                        console.error(publishError);
-
-                        alert(
-                            "بیوگرافی ذخیره شد، ولی برای نمایش به بقیه باید توی جدول MemoryDB " +
-                            "ستونی به اسم bio اضافه کنی (String، سایز ۳۰۰، Required خاموش)."
-                        );
-
-                    }
+                    // بیوگرافی در حساب همین کاربر ذخیره شد.
 
                 } catch (error) {
 
@@ -1837,33 +1794,17 @@ if (confirmLogout) {
 
 
             try {
-
-                const c = new Appwrite.Client()
-                    .setEndpoint("https://cloud.appwrite.io/v1")
-                    .setProject("6ac3b38f000976364cad");
-
-                await new Appwrite.Account(c)
-                    .deleteSession({ sessionId: "current" });
-
-            } catch (e) {}
+                await appwriteAccount.deleteSession({ sessionId: "current" });
+            } catch (e) {
+                console.warn("خروج از نشست Appwrite:", e);
+            }
 
             localStorage.removeItem(
                 "loggedIn"
             );
 
-            // اطلاعات حساب روی این گوشی پاک شود
-            localStorage.removeItem("profileImage");
-            localStorage.removeItem("favoriteImages");
-            localStorage.removeItem("musicFavorites");
-
-            Object.keys(localStorage).forEach(function (key) {
-
-                if (key.indexOf("favorite-song-") === 0) {
-                    localStorage.removeItem(key);
-                }
-
-            });
-
+            // علاقه‌مندی‌ها و عکس محلی را پاک نمی‌کنیم؛ فقط نشست ورود بسته می‌شود.
+            localStorage.removeItem("memoryUser");
 
 
             (window.pageNavigate || function (u) { window.location.href = u; })("login.html");
@@ -2261,6 +2202,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 (async function syncProfile() {
 
+    // ورود آزمایشی؛ نیازی به دریافت حساب Appwrite نیست
+    if (user && user.demoMode === true) {
+        updateUserDisplay();
+
+        const profileAvatar = document.getElementById("profileAvatar");
+        const savedAvatar = localStorage.getItem("profileImage");
+
+        if (profileAvatar && savedAvatar) {
+            profileAvatar.src = savedAvatar;
+        }
+
+        return;
+    }
+
     try {
 
         const acc =
@@ -2271,7 +2226,8 @@ document.addEventListener("DOMContentLoaded", function () {
         user.name = acc.name;
 
         const realEmail =
-            !(acc.email || "").endsWith("@example.com");
+            !(acc.email || "").endsWith("@example.com") &&
+            !(acc.email || "").endsWith("@fani.com");
 
         user.email = realEmail ? acc.email : "";
 
@@ -2353,3 +2309,64 @@ function goBack() {
     }
 
 }
+
+
+/* =========================================
+   اطلاعات واقعی عضو پیام‌رسان حلقات صالحین
+   ========================================= */
+
+(async function loadShalihinMemberProfile() {
+    try {
+        const account = await appwriteAccount.get();
+
+        // حلقه و وضعیت مستقیماً از برچسب‌ها و وضعیت حساب خوانده می‌شود
+        // (توسط مدیر از طریق Worker تنظیم می‌شود؛ نیازی به خواندن جدول اعضا نیست)
+        const labels = account.labels || [];
+        const isAdmin = typeof ADMIN_USER_ID !== "undefined" && account.$id === ADMIN_USER_ID;
+
+        const ringKey = labels.find(l => /^ring[1-5]$/.test(l)) || "";
+        const ringNames = typeof RING_NAMES !== "undefined" ? RING_NAMES : {};
+
+        const email = account.email || "";
+        const phoneFromEmail = email.endsWith("@fani.com")
+            ? email.slice(0, -"@fani.com".length)
+            : "";
+        const phone = (account.prefs && account.prefs.phone) || phoneFromEmail || "";
+
+        const memberName = account.name || "ثبت نشده";
+        const memberRing = isAdmin
+            ? "مدیر (همهٔ حلقه‌ها)"
+            : (ringNames[ringKey] || "نامشخص");
+        const active = account.status !== false;
+
+        const saved = JSON.parse(localStorage.getItem("memoryUser") || "{}");
+        saved.name = memberName;
+        saved.phone = phone;
+        saved.groupId = ringKey;
+        saved.status = active ? "active" : "inactive";
+        localStorage.setItem("memoryUser", JSON.stringify(saved));
+
+        const userName = document.getElementById("userName");
+        const profileName = document.getElementById("profileName");
+        const profilePhone = document.getElementById("profilePhone");
+        const ringElement = document.getElementById("profileRing");
+        const statusElement = document.getElementById("profileStatus");
+
+        if (userName) userName.textContent = memberName;
+        if (profileName) profileName.textContent = memberName;
+        if (profilePhone) profilePhone.textContent = phone || "-";
+        if (ringElement) ringElement.textContent = memberRing;
+        if (statusElement) {
+            statusElement.textContent = active ? "فعال" : "غیرفعال";
+            statusElement.dataset.status = active ? "active" : "inactive";
+        }
+
+        // نام عضو باید از طرف ادمین مدیریت شود
+        document.querySelectorAll('[data-edit="name"]').forEach(button => {
+            button.hidden = true;
+        });
+
+    } catch (error) {
+        console.error("خطا در دریافت اطلاعات عضو:", error);
+    }
+})();

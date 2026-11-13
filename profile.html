@@ -9,7 +9,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>پروفایل | قاب‌های ماندگار</title>
+    <title>پروفایل | حلقات صالحین</title>
 
     <link rel="stylesheet" href="profile.css">
 </head>
@@ -25,7 +25,7 @@
 
         <!-- لوگو -->
         <a href="index.html" class="logo">
-            قاب‌های ماندگار 🖼️
+            پیام رسان حلقات صالحین
         </a>
 
             <div class="header-actions">
@@ -44,7 +44,7 @@
 
            <!-- پروفایل -->
     <a
-        href="massages.html"
+        href="chat.html?type=announcements"
         class="profile-button"
         aria-label="پیام‌رسان"
         title="پیام‌رسان"
@@ -139,7 +139,7 @@
 
 
             <p class="welcome">
-                خوش اومدی به قاب‌های ماندگار ❤️
+                خوش اومدی به پیام رسان حلقات صالحین ❤️
             </p>
 
 
@@ -184,6 +184,23 @@
                 </div>
 
 
+<!-- حلقه عضو -->
+<div class="info-item">
+    <span class="info-icon">👥</span>
+    <div class="info-content">
+        <small>حلقه صالحین</small>
+        <strong id="profileRing">در حال دریافت...</strong>
+    </div>
+</div>
+
+<!-- وضعیت عضویت -->
+<div class="info-item">
+    <span class="info-icon">🟢</span>
+    <div class="info-content">
+        <small>وضعیت عضویت</small>
+        <strong id="profileStatus">در حال دریافت...</strong>
+    </div>
+</div>
 
                 <!-- PHONE -->
 
@@ -207,37 +224,6 @@
 
                 </div>
 
-                <!-- EMAIL (برای بازیابی رمز) -->
-
-                <div class="info-item">
-
-                    <span class="info-icon">
-                        ✉️
-                    </span>
-
-                    <div class="info-content">
-
-                        <small>
-                            ایمیل بازیابی
-                        </small>
-
-                        <strong id="profileEmail">
-                            ثبت نشده
-                        </strong>
-
-                    </div>
-
-                    <button
-                        type="button"
-                        class="edit-info-btn"
-                        data-edit="email"
-                        aria-label="ثبت ایمیل بازیابی"
-                        title="ثبت ایمیل بازیابی"
-                    >
-                        ✏️
-                    </button>
-
-                </div>
 
                 <!-- BIO -->
 
@@ -272,30 +258,9 @@
                 </div>
 
 
-            </div>
+            </div> 
 
-
-
-            <!-- =================================================
-                 STATS
-            ================================================== -->
-
-            <div class="stats">
-
-                <div class="stat">
-
-                    <strong id="favoriteCount">
-                        0
-                    </strong>
-
-                    <span>
-                        ⭐ موردعلاقه‌ها
-                    </span>
-
-
-
-                </div>
-
+<br> 
 
                 <div class="stat">
 
@@ -464,7 +429,7 @@
             </h2>
 
             <p class="crop-help">
-                عکس را بکش تا قسمت دلخواهت داخل قاب قرار بگیرد
+                عکس را بکش تا قسمت دلخواهت داخل قاب قرار بگیره
             </p>
 
 
@@ -554,7 +519,7 @@
             </h2>
 
             <p>
-                مطمئنی که می‌خوای عکس پروفایلت رو حذف کنی؟
+                واقعاً می‌خوای عکس پروفایلت رو حذف کنی؟
             </p>
 
             <div class="delete-buttons">
@@ -627,11 +592,11 @@
             </div>
 
             <h2>
-                خروج از حساب؟
+                خروج از حساب
             </h2>
 
             <p>
-                مطمئنی که می‌خوای از حسابت خارج بشی؟
+                واقعاً می‌خوای از حسابت خارج بشی؟
             </p>
 
             <div class="logout-buttons">
@@ -662,9 +627,9 @@
 
     <!-- ================= JAVASCRIPT ================= -->
 
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@27.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
 
-    <script src="sync.js"></script>
+    <script src="config.js"></script>
 
     <script src="theme.js"></script>
 
@@ -765,6 +730,13 @@ document.addEventListener("DOMContentLoaded", function () {
         total;
 
 });
+
+
+
+document.addEventListener("contextmenu", function(event) {
+    event.preventDefault();
+});
+
 
 </script>
     
