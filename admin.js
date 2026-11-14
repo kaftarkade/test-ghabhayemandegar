@@ -40,7 +40,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             nationalId: member.national_id || "",
             fullName: member.display_name || "",
             ring: member.group_id || "ring1",
-            status: member.status || "active"
+            status: member.status || "active",
+            role: content.role === "manager" ? "manager" : "member"
         };
     }
 
@@ -60,12 +61,34 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // فقط مدیر اجازهٔ استفاده دارد
+    let isAdmin = false;
+    let managerRing = null;
+
     try {
         const currentUser = await account.get();
-        if (currentUser.$id !== ADMIN_USER_ID) return;
+        isAdmin = currentUser.$id === ADMIN_USER_ID;
+        const mgrLabel = (currentUser.labels || []).find(l => /^manager[1-5]$/.test(l));
+        managerRing = mgrLabel ? "ring" + mgrLabel.slice(7) : null;
+        if (!isAdmin && !managerRing) return;
     } catch (_) {
         membersList.textContent = "ابتدا وارد حساب مدیر شو.";
         return;
+    }
+
+    if (!isAdmin) {
+        // مدیر حلقه فقط اعضای حلقهٔ خودش را مدیریت می‌کند
+        document.querySelectorAll("[data-admin-only]").forEach(node => { node.hidden = true; });
+
+        ["ring", "editRing"].forEach(id => {
+            const select = document.getElementById(id);
+            Array.from(select.options).forEach(option => {
+                if (option.value !== managerRing) option.remove();
+            });
+            select.value = managerRing;
+        });
+
+        const subtitle = document.getElementById("panelSubtitle");
+        if (subtitle) subtitle.textContent = "مدیریت اعضای " + ringNames[managerRing];
     }
 
     function renderMembers() {
@@ -101,7 +124,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             ring.textContent = "حلقه: " + (ringNames[data.ring] || "نامشخص");
 
             const status = document.createElement("p");
-            status.textContent = "وضعیت: " + (data.status === "active" ? "فعال" : "غیرفعال");
+            status.textContent = "وضعیت: " + (data.status === "active" ? "فعال" : "غیرفعال") +
+                (data.role === "manager" ? " — مدیر حلقه" : "");
 
             const actions = document.createElement("div");
             actions.className = "member-actions";
@@ -118,7 +142,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             deleteButton.textContent = "حذف";
             deleteButton.addEventListener("click", () => deleteMember(member));
 
-            actions.append(editButton, deleteButton);
+            // مدیر حلقه نمی‌تواند مدیران دیگر را ویرایش یا حذف کند
+            if (isAdmin || data.role !== "manager") actions.append(editButton, deleteButton);
             card.append(name, phone, ring, status, actions);
             membersList.appendChild(card);
         });
@@ -134,7 +159,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             // صفحه‌به‌صفحه می‌خوانیم تا بیشتر از ۲۵ عضو هم نمایش داده شود
             for (;;) {
-                const queries = [Appwrite.Query.limit(100)];
+                const queries = [
+                    Appwrite.Query.equal("group_id", Object.keys(ringNames)),
+                    Appwrite.Query.limit(100)
+                ];
                 if (cursor) queries.push(Appwrite.Query.cursorAfter(cursor));
 
                 const page = await tablesDB.listRows({
@@ -164,10 +192,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById("editMemberId").value = member.$id;
         document.getElementById("editFullName").value = data.fullName;
         document.getElementById("editPhone").value = data.phone;
-        document.getElementById("editResetEmail").checked = false;
         document.getElementById("editNationalId").value = data.nationalId;
         document.getElementById("editRing").value = data.ring;
         document.getElementById("editStatus").value = data.status;
+        document.getElementById("editRole").value = data.role;
 
         showMessage(editMessage, "");
         editPanel.hidden = false;
@@ -191,7 +219,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             phone: normalizeDigits(document.getElementById("editPhone").value.trim()),
             nationalId: normalizeDigits(document.getElementById("editNationalId").value.trim()),
             ring: document.getElementById("editRing").value,
-            status: document.getElementById("editStatus").value
+            status: document.getElementById("editStatus").value,
+            role: document.getElementById("editRole").value
         };
 
         const problem = validate(data);
@@ -207,12 +236,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         try {
             await callWorker("updateMember", {
                 rowId,
-                resetEmail: document.getElementById("editResetEmail").checked,
                 name: data.fullName,
                 phone: data.phone,
                 nationalId: data.nationalId,
                 ring: data.ring,
-                status: data.status
+                status: data.status,
+                role: data.role
             });
 
             showMessage(editMessage, "تغییرات ذخیره شد.", "#22c55e");
@@ -262,6 +291,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         for (const member of membersCache) {
             const data = getMemberData(member);
+            if (!isAdmin && data.role === "manager") continue;
             showMessage(syncMessage, `در حال همگام‌سازی ${ok + failed.length + 1} از ${membersCache.length}...`, "#f59e0b");
 
             try {
@@ -271,7 +301,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                     phone: data.phone,
                     nationalId: data.nationalId,
                     ring: data.ring,
-                    status: data.status
+                    status: data.status,
+                role: data.role
                 });
                 ok++;
             } catch (error) {
@@ -299,7 +330,8 @@ document.addEventListener("DOMContentLoaded", async function () {
             phone: normalizeDigits(document.getElementById("phone").value.trim()),
             nationalId: normalizeDigits(document.getElementById("nationalId").value.trim()),
             ring: document.getElementById("ring").value,
-            status: document.getElementById("status").value
+            status: document.getElementById("status").value,
+            role: document.getElementById("role").value
         };
 
         const problem = validate(data);
@@ -318,7 +350,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 phone: data.phone,
                 nationalId: data.nationalId,
                 ring: data.ring,
-                status: data.status
+                status: data.status,
+                role: data.role
             });
 
             showMessage(message, "عضو و حساب ورود با موفقیت ساخته شد.", "#22c55e");

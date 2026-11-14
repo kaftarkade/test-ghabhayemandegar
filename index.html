@@ -8,6 +8,7 @@
     <title>پیام‌رسان حلقات صالحین</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="social.css">
 </head>
 <body class="messenger-page">
 
@@ -77,9 +78,20 @@
             <span class="section-symbol">💬</span>
         </div>
 
-        <div class="empty-hint">
+        <div class="dm-search">
+            <input id="dmSearch" type="search" autocomplete="off"
+                   placeholder="جستجوی اسم اکانت..." aria-label="جستجوی اکانت">
+            <p id="dmSearchStatus" class="dm-status" role="status"></p>
+        </div>
+
+        <div id="dmResults"></div>
+
+        <div id="dmListTitle" class="dm-section-title" hidden>گفت‌وگوهای من</div>
+        <div id="dmList"></div>
+
+        <div class="empty-hint" id="dmHint">
             <span>✉️</span>
-            <p>پیام‌های شخصی به‌زودی فعال می‌شود.</p>
+            <p>هنوز گفت‌وگوی شخصی نداری؛ اسم یک اکانت را جستجو کن و پیام بده.</p>
         </div>
     </section>
 
@@ -91,7 +103,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
 <script src="config.js"></script>
+<script src="media.js"></script>
 <script src="app.js"></script>
 
 </body>
-</html>
+</html> 

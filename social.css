@@ -1,0 +1,132 @@
+/* آواتار دایره‌ای */
+.avatar,
+.conversation-avatar.has-img {
+    background-size: cover;
+    background-position: center;
+}
+
+.avatar {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border: none;
+    padding: 0;
+    border-radius: 50%;
+    background-color: var(--green-light);
+    color: var(--green);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.avatar.has-img { color: transparent; }
+
+/* پنجرهٔ پروفایل */
+.pc-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, .55);
+}
+
+.pc-card {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    padding: 28px 20px 22px;
+    border-radius: 24px;
+    background: #fff;
+    color: var(--text);
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .3);
+}
+
+.pc-close {
+    position: absolute;
+    top: 12px;
+    inset-inline-start: 12px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: var(--green-light);
+    color: var(--green-dark);
+    cursor: pointer;
+}
+
+.pc-avatar {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background-color: var(--green-light);
+    background-size: cover;
+    background-position: center;
+    color: var(--green);
+    font-size: 56px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+}
+
+.pc-avatar.has-img { color: transparent; }
+
+.pc-card h2 { margin: 0 0 6px; font-size: 20px; }
+
+.pc-bio {
+    margin: 0 0 18px;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.pc-bio.empty { color: var(--muted); }
+
+.pc-dm {
+    display: block;
+    padding: 12px;
+    border-radius: 16px;
+    background: var(--green);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* جستجو در پیام‌های شخصی */
+.dm-search { margin: 0 0 12px; }
+
+.dm-search input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    font: inherit;
+    background: #fff;
+    color: var(--text);
+    outline: none;
+}
+
+.dm-search input:focus { border-color: var(--green); }
+
+.dm-status {
+    min-height: 18px;
+    margin: 6px 4px 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.dm-section-title {
+    margin: 14px 4px 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green-dark);
+}

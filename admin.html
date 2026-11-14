@@ -13,10 +13,10 @@
             <h2>ورود مدیر</h2>
 
             <form id="adminLoginForm">
-                <label for="adminEmail">ایمیل مدیر</label>
-                <input id="adminEmail" type="email" autocomplete="username" required>
+                <label for="adminEmail">ایمیل مدیر کل یا شماره موبایل مدیر حلقه</label>
+                <input id="adminEmail" type="text" dir="ltr" autocomplete="username" required>
 
-                <label for="adminPassword">رمز عبور</label>
+                <label for="adminPassword">رمز عبور (مدیر حلقه: کد ملی)</label>
                 <input id="adminPassword" type="password" autocomplete="current-password" required>
 
                 <button type="submit">ورود به پنل مدیریت</button>
@@ -26,7 +26,7 @@
 
         <header class="header">
             <h1>پنل مدیریت حلقات صالحین</h1>
-            <p>مدیریت اعضا و حلقه‌ها</p>
+            <p id="panelSubtitle">مدیریت اعضا و حلقه‌ها</p>
             <p>
                 <a href="index.html">💬 پیام‌رسان</a> ·
                 <button id="adminLogout" type="button">خروج</button>
@@ -43,7 +43,7 @@
                 <label for="phone">شماره تلفن</label>
                 <input id="phone" type="tel" inputmode="numeric" placeholder="09123456789" required>
 
-                <label for="nationalId">کد ملی (برای تأیید هویت در ورود)</label>
+                <label for="nationalId">کد ملی (رمز ورود عضو)</label>
                 <input id="nationalId" type="text" inputmode="numeric" maxlength="10"
                        pattern="[0-9]{10}" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" required>
 
@@ -55,6 +55,14 @@
                     <option value="ring4">حلقه چهارم</option>
                     <option value="ring5">حلقه پنجم</option>
                 </select>
+
+                <div data-admin-only>
+                    <label for="role">نقش</label>
+                    <select id="role">
+                        <option value="member">عضو عادی</option>
+                        <option value="manager">مدیر حلقه (پنل مدیریت + پیام در کانال پایگاه)</option>
+                    </select>
+                </div>
 
                 <label for="status">وضعیت عضویت</label>
                 <select id="status">
@@ -94,7 +102,7 @@
                     <label for="editPhone">شماره تلفن</label>
                     <input id="editPhone" type="tel" inputmode="numeric" required>
 
-                    <label for="editNationalId">کد ملی (برای تأیید هویت در ورود)</label>
+                    <label for="editNationalId">کد ملی (رمز ورود عضو)</label>
                     <input id="editNationalId" type="text" inputmode="numeric"
                            maxlength="10" pattern="[0-9]{10}" required>
 
@@ -107,16 +115,19 @@
                         <option value="ring5">حلقه پنجم</option>
                     </select>
 
-                    <label for="editStatus">وضعیت عضویت</label>
+                    <div data-admin-only>
+                    <label for="editRole">نقش</label>
+                    <select id="editRole">
+                        <option value="member">عضو عادی</option>
+                        <option value="manager">مدیر حلقه (پنل مدیریت + پیام در کانال پایگاه)</option>
+                    </select>
+                </div>
+
+                <label for="editStatus">وضعیت عضویت</label>
                     <select id="editStatus">
                         <option value="active">فعال</option>
                         <option value="inactive">غیرفعال (امکان ورود ندارد)</option>
                     </select>
-
-                    <label>
-                        <input id="editResetEmail" type="checkbox">
-                        ریست ایمیل (کاربر دفعهٔ بعد ایمیل خودش را دوباره ثبت می‌کند)
-                    </label>
 
                     <button type="submit">ذخیره تغییرات</button>
                     <button id="cancelEdit" type="button">انصراف</button>

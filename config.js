@@ -11,6 +11,9 @@ const APPWRITE_TABLE_ID = "fani_data";
 // پیام‌ها هم در همین جدول ذخیره می‌شوند (نسخهٔ رایگان فقط یک جدول دارد)
 const APPWRITE_MESSAGES_TABLE_ID = APPWRITE_TABLE_ID;
 
+// فضای ذخیرهٔ عکس و ویدیو (Storage)
+const APPWRITE_BUCKET_ID = "media";
+
 // شناسهٔ حساب مدیر
 const ADMIN_USER_ID = "6adb4b2600227975bf32";
 
@@ -36,6 +39,9 @@ const appwriteAccount = new Appwrite.Account(appwriteClient);
 
 // سرویس جدول‌ها
 const appwriteTablesDB = new Appwrite.TablesDB(appwriteClient);
+
+// سرویس فایل‌ها
+const appwriteStorage = new Appwrite.Storage(appwriteClient);
 
 // سرویس توابع
 const appwriteFunctions = new Appwrite.Functions(appwriteClient);

@@ -40,7 +40,7 @@
 
     const faDigits = "۰۱۲۳۴۵۶۷۸۹";
 
-    function conversationItem({ href, avatarClass, avatarText, title, badge, description }) {
+    function conversationItem({ href, avatarClass, avatarText, title, badge, description, userId }) {
         const link = document.createElement("a");
         link.href = href;
         link.className = "conversation-item";
@@ -48,6 +48,7 @@
         const avatar = document.createElement("div");
         avatar.className = "conversation-avatar " + avatarClass;
         avatar.textContent = avatarText;
+        if (userId) avatar.dataset.user = userId;
 
         const details = document.createElement("div");
         details.className = "conversation-details";
@@ -58,11 +59,13 @@
         const h2 = document.createElement("h2");
         h2.textContent = title;
 
-        const status = document.createElement("span");
-        status.className = "member-status";
-        status.textContent = badge;
-
-        titleBox.append(h2, status);
+        titleBox.append(h2);
+        if (badge) {
+            const status = document.createElement("span");
+            status.className = "member-status";
+            status.textContent = badge;
+            titleBox.append(status);
+        }
 
         const p = document.createElement("p");
         p.textContent = description;
@@ -131,6 +134,8 @@
                 "هنوز به حلقه‌ای اختصاص داده نشده‌ای؛ با مدیر تماس بگیر.";
         }
 
+        const isManager = labels.some(l => /^manager[1-5]$/.test(l));
+
         // کانال اطلاع‌رسانی پایگاه
         channelsList.replaceChildren();
         if (isMember) {
@@ -143,5 +148,143 @@
                 description: "اخبار، برنامه‌ها و اطلاعیه‌های پایگاه"
             }));
         }
+
+        // پنل مدیریت برای مدیر کل و مدیران حلقه
+        if (isAdmin || isManager) {
+            channelsList.appendChild(conversationItem({
+                href: "admin.html",
+                avatarClass: "channel-avatar",
+                avatarText: "⚙️",
+                title: "پنل مدیریت",
+                badge: isAdmin ? "مدیر کل" : "مدیر حلقه",
+                description: isAdmin ? "مدیریت اعضا و حلقه‌ها" : "مدیریت اعضای حلقهٔ خودت"
+            }));
+        }
+
+        initPersonal(account);
     })();
+
+    /* ---------------- پیام‌های شخصی ---------------- */
+
+    function initPersonal(account) {
+        const searchInput = document.getElementById("dmSearch");
+        const searchStatus = document.getElementById("dmSearchStatus");
+        const resultsBox = document.getElementById("dmResults");
+        const listBox = document.getElementById("dmList");
+        const listTitle = document.getElementById("dmListTitle");
+        const hint = document.getElementById("dmHint");
+
+        const myKey = convListKey(account.$id);
+
+        function dmItem(userId, name, description) {
+            return conversationItem({
+                href: "chat.html?type=dm&user=" + encodeURIComponent(userId),
+                avatarClass: "ring-avatar",
+                avatarText: (name || "?").trim().charAt(0) || "?",
+                title: name || "کاربر",
+                badge: "",
+                description,
+                userId
+            });
+        }
+
+        /* ---- فهرست گفت‌وگوها ---- */
+
+        async function loadConversations() {
+            try {
+                const result = await appwriteTablesDB.listRows({
+                    databaseId: APPWRITE_DATABASE_ID,
+                    tableId: APPWRITE_TABLE_ID,
+                    queries: [
+                        Appwrite.Query.equal("group_id", [myKey]),
+                        Appwrite.Query.orderDesc("$updatedAt"),
+                        Appwrite.Query.limit(50)
+                    ]
+                });
+
+                const rows = result.rows.filter(r => r.record_type === "conv");
+
+                listBox.replaceChildren();
+                const ids = [];
+
+                rows.forEach(row => {
+                    let info = {};
+                    try { info = JSON.parse(row.content || "{}"); } catch (_) {}
+                    if (!info.w) return;
+
+                    ids.push(info.w);
+                    listBox.appendChild(dmItem(info.w, row.display_name, info.l || "گفت‌وگوی شخصی"));
+                });
+
+                listTitle.hidden = !ids.length;
+                hint.hidden = !!ids.length || !!searchInput.value.trim();
+
+                if (ids.length) {
+                    await loadProfiles(ids);
+                    paintAvatars(listBox);
+                }
+            } catch (error) {
+                console.warn("loadConversations failed", error && error.message);
+            }
+        }
+
+        loadConversations();
+
+        // تازه‌سازی دوره‌ای و لحظه‌ای
+        setInterval(() => { if (!document.hidden) loadConversations(); }, 10000);
+
+        try {
+            appwriteClient.subscribe([
+                `tablesdb.${APPWRITE_DATABASE_ID}.tables.${APPWRITE_TABLE_ID}.rows`,
+                `databases.${APPWRITE_DATABASE_ID}.collections.${APPWRITE_TABLE_ID}.documents`
+            ], event => {
+                const row = event && event.payload;
+                if (row && row.record_type === "conv" && row.group_id === myKey) loadConversations();
+            });
+        } catch (_) {}
+
+        /* ---- جستجوی اکانت ---- */
+
+        let timer = null;
+        let counter = 0;
+
+        searchInput.addEventListener("input", () => {
+            clearTimeout(timer);
+            const q = searchInput.value.trim();
+
+            if (q.length < 2) {
+                resultsBox.replaceChildren();
+                searchStatus.textContent = q ? "حداقل ۲ حرف بنویس." : "";
+                hint.hidden = !!listBox.children.length || !!q;
+                return;
+            }
+
+            searchStatus.textContent = "در حال جستجو...";
+            timer = setTimeout(async () => {
+                const ticket = ++counter;
+
+                try {
+                    const data = await callServer({ action: "searchUsers", q });
+                    if (ticket !== counter) return; // نتیجهٔ قدیمی
+
+                    resultsBox.replaceChildren();
+
+                    (data.users || []).forEach(user => {
+                        resultsBox.appendChild(dmItem(user.id, user.name, "شروع پیام شخصی"));
+                    });
+
+                    searchStatus.textContent = data.users && data.users.length
+                        ? ""
+                        : "اکانتی با این اسم پیدا نشد.";
+                    hint.hidden = true;
+
+                    await loadProfiles((data.users || []).map(u => u.id));
+                    paintAvatars(resultsBox);
+                } catch (error) {
+                    if (ticket !== counter) return;
+                    searchStatus.textContent = error.message || "جستجو ناموفق بود.";
+                }
+            }, 300);
+        });
+    }
 })();

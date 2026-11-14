@@ -7,6 +7,7 @@
     <title>گفت‌وگو | حلقات صالحین</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="social.css">
     <link rel="stylesheet" href="chat.css">
 </head>
 <body class="messenger-page chat-page">
@@ -37,9 +38,17 @@
     <p id="chatStatus" class="chat-status" role="status"></p>
 
     <form id="chatForm" class="chat-composer" hidden>
-        <textarea id="chatInput" rows="1" maxlength="2000" dir="auto"
-                  placeholder="پیامت را بنویس..." aria-label="متن پیام"></textarea>
-        <button type="submit" id="chatSend">ارسال</button>
+        <div id="chatAttachment" class="chat-attachment" hidden></div>
+
+        <div class="chat-composer-row">
+            <button type="button" id="chatAttachBtn" class="chat-attach"
+                    aria-label="ارسال عکس یا ویدیو">📎</button>
+            <textarea id="chatInput" rows="1" maxlength="1000" dir="auto"
+                      placeholder="پیامت را بنویس..." aria-label="متن پیام"></textarea>
+            <button type="submit" id="chatSend">ارسال</button>
+        </div>
+
+        <input type="file" id="chatFile" accept="image/*,video/*" hidden>
     </form>
 
     <p id="chatReadonly" class="chat-readonly" hidden></p>
@@ -47,6 +56,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
 <script src="config.js"></script>
+<script src="media.js"></script>
 <script src="chat.js"></script>
 
 </body>

@@ -95,6 +95,11 @@ async function saveAvatarToAccount(avatar) {
 
     await updateMyPrefs({ avatar: avatar });
 
+    // نسخهٔ عمومی عکس برای نمایش کنار پیام‌ها و پنجرهٔ پروفایل
+    if (typeof publishPublicProfile === "function") {
+        await publishPublicProfile({ avatarDataUrl: avatar });
+    }
+
 }
 
 // بیوگرافی و عکس در prefs حساب فعلی Appwrite ذخیره می‌شوند؛
@@ -542,6 +547,10 @@ if (saveEdit) {
                 try {
 
                     await updateMyPrefs({ bio: bio });
+
+                    if (typeof publishPublicProfile === "function") {
+                        publishPublicProfile({ bio: bio });
+                    }
 
                     user.bio = bio;
 
@@ -2318,6 +2327,11 @@ function goBack() {
 (async function loadShalihinMemberProfile() {
     try {
         const account = await appwriteAccount.get();
+
+        // عکس و بیوگرافی قبلی را یک بار برای بقیه منتشر می‌کند
+        if (typeof ensurePublicProfileSynced === "function") {
+            ensurePublicProfileSynced(account.prefs || {});
+        }
 
         // حلقه و وضعیت مستقیماً از برچسب‌ها و وضعیت حساب خوانده می‌شود
         // (توسط مدیر از طریق Worker تنظیم می‌شود؛ نیازی به خواندن جدول اعضا نیست)
