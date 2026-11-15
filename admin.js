@@ -63,6 +63,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // فقط مدیر اجازهٔ استفاده دارد
     let isAdmin = false;
     let managerRing = null;
+    let currentName = "";
 
     try {
         const currentUser = await account.get();
@@ -70,6 +71,18 @@ document.addEventListener("DOMContentLoaded", async function () {
         const mgrLabel = (currentUser.labels || []).find(l => /^manager[1-5]$/.test(l));
         managerRing = mgrLabel ? "ring" + mgrLabel.slice(7) : null;
         if (!isAdmin && !managerRing) return;
+
+        currentName = currentUser.name || "";
+
+        // برای باز شدن صفحهٔ پروفایل و پیام‌رسان با همین نشست
+        if (localStorage.getItem("loggedIn") !== "true" || !localStorage.getItem("memoryUser")) {
+            localStorage.setItem("memoryUser", JSON.stringify({
+                name: currentName,
+                phone: (currentUser.prefs && currentUser.prefs.phone) || "",
+                email: ""
+            }));
+            localStorage.setItem("loggedIn", "true");
+        }
     } catch (_) {
         membersList.textContent = "ابتدا وارد حساب مدیر شو.";
         return;
@@ -90,6 +103,75 @@ document.addEventListener("DOMContentLoaded", async function () {
         const subtitle = document.getElementById("panelSubtitle");
         if (subtitle) subtitle.textContent = "مدیریت اعضای " + ringNames[managerRing];
     }
+
+    function renderDashboard() {
+        const welcome = document.getElementById("dashWelcome");
+        const role = document.getElementById("dashRole");
+        const linksBox = document.getElementById("dashLinks");
+        if (!welcome || !linksBox) return;
+
+        welcome.textContent = "خوش آمدی" + (currentName ? "، " + currentName : "");
+        role.textContent = isAdmin ? "مدیر کل پایگاه" : "مدیر " + ringNames[managerRing];
+
+        const links = [
+            ["💬", "پیام‌رسان", "index.html"],
+            ["📢", "کانال اطلاع‌رسانی", "chat.html?type=announcements"]
+        ];
+        (isAdmin ? Object.keys(ringNames) : [managerRing]).forEach(key => {
+            links.push(["👥", ringNames[key], "chat.html?type=ring&group=" + key]);
+        });
+        links.push(["✉️", "پیام‌های شخصی", "index.html"], ["👤", "پروفایل من", "profile.html"]);
+
+        linksBox.replaceChildren();
+        links.forEach(([icon, label, href]) => {
+            const link = document.createElement("a");
+            link.className = "dash-link";
+            link.href = href;
+
+            const i = document.createElement("span");
+            i.textContent = icon;
+            const t = document.createElement("strong");
+            t.textContent = label;
+
+            link.append(i, t);
+            linksBox.appendChild(link);
+        });
+    }
+
+    function renderStats() {
+        const box = document.getElementById("dashStats");
+        if (!box) return;
+
+        const all = membersCache.map(getMemberData);
+        const items = [
+            ["کل اعضا", all.length],
+            ["فعال", all.filter(m => m.status === "active").length],
+            ["غیرفعال", all.filter(m => m.status !== "active").length],
+            ["مدیران حلقه", all.filter(m => m.role === "manager").length]
+        ];
+
+        if (isAdmin) {
+            Object.keys(ringNames).forEach(key => {
+                items.push([ringNames[key], all.filter(m => m.ring === key).length]);
+            });
+        }
+
+        box.replaceChildren();
+        items.forEach(([label, value]) => {
+            const stat = document.createElement("div");
+            stat.className = "dash-stat";
+
+            const b = document.createElement("b");
+            b.textContent = value.toLocaleString("fa-IR");
+            const small = document.createElement("small");
+            small.textContent = label;
+
+            stat.append(b, small);
+            box.appendChild(stat);
+        });
+    }
+
+    renderDashboard();
 
     function renderMembers() {
         const query = normalizeDigits(searchInput.value.trim().toLowerCase());
@@ -178,6 +260,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             membersCache = rows.filter(row => row.record_type === "member");
             renderMembers();
+            renderStats();
         } catch (error) {
             console.error("Load members error:", error);
             membersList.textContent = "خطا در دریافت اعضا؛ مجوزهای جدول را بررسی کن.";

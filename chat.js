@@ -113,7 +113,7 @@
             // با لمس عنوان یا آیکون، پروفایل طرف مقابل باز می‌شود
             [el.title, el.icon].forEach(node => {
                 node.style.cursor = "pointer";
-                node.addEventListener("click", () => openProfileCard(otherId, contact.name));
+                node.addEventListener("click", () => openProfileCard(otherId, contact.name, { hideDm: true }));
             });
         } catch (_) {
             showBlocked("کاربر پیدا نشد", "این کاربر وجود ندارد یا عضو نیست.", "🔍");
@@ -212,8 +212,9 @@
                 holder.textContent = "در حال بارگذاری تصویر...";
                 wrap.appendChild(holder);
 
-                fileBlobUrl(info.fileId).then(setImage).catch(() => {
-                    holder.textContent = "تصویر بارگذاری نشد";
+                fileBlobUrl(info.fileId).then(setImage).catch(error => {
+                    holder.textContent = "تصویر بارگذاری نشد" +
+                        (error && error.code ? " (کد " + error.code + ")" : "");
                 });
             }
         } else if (info.kind === "video") {
@@ -230,9 +231,10 @@
                     try {
                         const url = await fileBlobUrl(info.fileId);
                         setVideo(url).play().catch(() => {});
-                    } catch (_) {
+                    } catch (error) {
                         button.disabled = false;
-                        button.textContent = "دریافت ناموفق بود؛ دوباره بزن";
+                        button.textContent = "دریافت ناموفق بود" +
+                            (error && error.code ? " (کد " + error.code + ")" : "") + "؛ دوباره بزن";
                     }
                 });
                 wrap.appendChild(button);
@@ -348,7 +350,11 @@
 
     el.box.addEventListener("click", event => {
         const avatar = event.target.closest(".avatar");
-        if (avatar) openProfileCard(avatar.dataset.user, avatar.dataset.name);
+        if (avatar) {
+            openProfileCard(avatar.dataset.user, avatar.dataset.name, {
+                hideDm: !!otherId && avatar.dataset.user === otherId
+            });
+        }
     });
 
     /* ---------- دریافت از سرور ---------- */

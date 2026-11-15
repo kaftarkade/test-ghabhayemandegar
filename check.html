@@ -36,6 +36,7 @@ if (typeof Appwrite === "undefined") add("کتابخانهٔ Appwrite بارگذ
 else add("کتابخانهٔ Appwrite بارگذاری شد", true);
 </script>
 <script src="config.js"></script>
+<script src="media.js"></script>
 <script>
 (async function () {
     if (typeof appwriteClient === "undefined") { add("config.js اجرا نشد (فایل جایگزین نشده یا خطا دارد)", false); return; }
@@ -66,6 +67,34 @@ else add("کتابخانهٔ Appwrite بارگذاری شد", true);
         });
         add("جدول پیام‌ها (" + APPWRITE_MESSAGES_TABLE_ID + ") سالم است", true, "پیام‌های قابل‌دیدن در کانال: " + r.total);
     } catch (e) { add("جدول پیام‌ها مشکل دارد", false, errText(e)); }
+
+    // فضای ذخیره‌سازی (آپلود و خواندن یک تصویر ۱×۱)
+    if (acc) {
+        let testId = null;
+        try {
+            const bytes = Uint8Array.from(atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="), ch => ch.charCodeAt(0));
+            testId = await uploadToBucket(new File([bytes], "t.png", { type: "image/png" }));
+            add("آپلود در Storage موفق بود", true, "bucket=" + APPWRITE_BUCKET_ID + "\nid=" + testId);
+
+            const url = APPWRITE_ENDPOINT + "/storage/buckets/" + APPWRITE_BUCKET_ID + "/files/" + testId + "/view";
+
+            try {
+                const buf = await appwriteClient.call("get", new URL(url), {}, {}, "arrayBuffer");
+                add("خواندن فایل (روش SDK) موفق بود", true, "bytes=" + buf.byteLength);
+            } catch (e) { add("خواندن فایل (روش SDK) ناموفق", false, errText(e)); }
+
+            try {
+                const jwt = await getJwt();
+                const r = await fetch(url, { headers: { "X-Appwrite-Project": APPWRITE_PROJECT_ID, "X-Appwrite-JWT": jwt } });
+                add(r.ok ? "خواندن فایل (روش JWT) موفق بود" : "خواندن فایل (روش JWT) ناموفق", r.ok,
+                    "http=" + r.status + (r.ok ? "" : "\n" + (await r.text()).slice(0, 200)));
+            } catch (e) { add("خواندن فایل (روش JWT) ناموفق", false, String(e && e.message)); }
+        } catch (e) {
+            add("آپلود در Storage ناموفق (bucket یا دسترسی Create را بررسی کن)", false, errText(e));
+        } finally {
+            if (testId) { try { await appwriteStorage.deleteFile({ bucketId: APPWRITE_BUCKET_ID, fileId: testId }); } catch (_) {} }
+        }
+    }
 
     // تابع
     try {

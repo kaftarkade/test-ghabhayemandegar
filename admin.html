@@ -13,10 +13,10 @@
             <h2>ورود مدیر</h2>
 
             <form id="adminLoginForm">
-                <label for="adminEmail">ایمیل مدیر کل یا شماره موبایل مدیر حلقه</label>
+                <label for="adminEmail">ایمیل (شماره تلفن)</label>
                 <input id="adminEmail" type="text" dir="ltr" autocomplete="username" required>
 
-                <label for="adminPassword">رمز عبور (مدیر حلقه: کد ملی)</label>
+                <label for="adminPassword">رمز عبور (کد ملی)</label>
                 <input id="adminPassword" type="password" autocomplete="current-password" required>
 
                 <button type="submit">ورود به پنل مدیریت</button>
@@ -24,7 +24,7 @@
             </form>
         </section>
 
-        <header class="header">
+        <header class="header" hidden>
             <h1>پنل مدیریت حلقات صالحین</h1>
             <p id="panelSubtitle">مدیریت اعضا و حلقه‌ها</p>
             <p>
@@ -33,7 +33,15 @@
             </p>
         </header>
 
-        <section class="panel">
+        <section class="panel" id="dashboard" hidden>
+            <h2 class="dash-welcome" id="dashWelcome">خوش آمدی</h2>
+            <p class="dash-role" id="dashRole"></p>
+
+            <div class="dash-links" id="dashLinks"></div>
+            <div class="dash-stats" id="dashStats"></div>
+        </section>
+
+        <section class="panel" hidden>
             <h2>افزودن عضو</h2>
 
             <form id="memberForm">
@@ -76,7 +84,7 @@
             <p id="formMessage" role="status"></p>
         </section>
 
-        <section class="panel">
+        <section class="panel" hidden>
             <div class="list-header">
                 <h2>اعضای ثبت‌شده</h2>
                 <button id="refreshButton" type="button">به‌روزرسانی</button>

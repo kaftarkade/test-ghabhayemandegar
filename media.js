@@ -34,24 +34,62 @@ const _blobUrls = new Map();
 // آدرس آماده (اگر قبلاً دانلود شده)
 const fileUrlIfReady = fileId => _blobUrls.get(fileId) || null;
 
+// نوع فایل را از روی چند بایت اول حدس می‌زند
+function sniffMime(buffer) {
+    const b = new Uint8Array(buffer.slice(0, 16));
+    const ascii = (from, to) => String.fromCharCode(...b.slice(from, to));
+    if (b[0] === 0x89 && ascii(1, 4) === "PNG") return "image/png";
+    if (b[0] === 0xff && b[1] === 0xd8) return "image/jpeg";
+    if (ascii(0, 3) === "GIF") return "image/gif";
+    if (ascii(0, 4) === "RIFF" && ascii(8, 12) === "WEBP") return "image/webp";
+    if (ascii(4, 8) === "ftyp") return ascii(8, 12) === "qt  " ? "video/quicktime" : "video/mp4";
+    if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return "video/webm";
+    return "application/octet-stream";
+}
+
+// دریافت بایت‌های فایل: اول با خود SDK، بعد با توکن JWT
+async function fetchFileBytes(fileId) {
+    const url = `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/view`;
+    let firstError = null;
+
+    if (typeof appwriteClient.call === "function") {
+        try {
+            const data = await appwriteClient.call("get", new URL(url), {}, {}, "arrayBuffer");
+            if (data && data.byteLength) return data;
+        } catch (error) {
+            firstError = error;
+        }
+    }
+
+    const jwt = await getJwt();
+    const response = await fetch(url, {
+        headers: { "X-Appwrite-Project": APPWRITE_PROJECT_ID, "X-Appwrite-JWT": jwt }
+    });
+
+    if (!response.ok) {
+        const error = new Error("file " + response.status);
+        error.code = response.status || (firstError && firstError.code) || 0;
+        throw error;
+    }
+    return response.arrayBuffer();
+}
+
 // دانلود امن فایل و تبدیل به آدرس قابل نمایش
 function fileBlobUrl(fileId) {
     if (_blobPromises.has(fileId)) return _blobPromises.get(fileId);
 
     const promise = (async () => {
-        const jwt = await getJwt();
-        const response = await fetch(
-            `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/view`,
-            { headers: { "X-Appwrite-Project": APPWRITE_PROJECT_ID, "X-Appwrite-JWT": jwt } }
-        );
-        if (!response.ok) throw new Error("file " + response.status);
-        const url = URL.createObjectURL(await response.blob());
+        const buffer = await fetchFileBytes(fileId);
+        const url = URL.createObjectURL(new Blob([buffer], { type: sniffMime(buffer) }));
         _blobUrls.set(fileId, url);
         return url;
     })();
 
     _blobPromises.set(fileId, promise);
-    promise.catch(() => _blobPromises.delete(fileId));
+    promise.catch(error => {
+        _blobPromises.delete(fileId);
+        console.warn("file load failed", fileId, error && error.code, error && error.message);
+    });
     return promise;
 }
 
@@ -163,7 +201,8 @@ function createAvatar(userId, name, extraClass) {
 
 /* ---------- پنجرهٔ پروفایل ---------- */
 
-async function openProfileCard(userId, nameHint) {
+async function openProfileCard(userId, nameHint, options) {
+    options = options || {};
     const selfId = await myId();
 
     const overlay = document.createElement("div");
@@ -193,7 +232,7 @@ async function openProfileCard(userId, nameHint) {
 
     card.append(close, big, nameEl, bioEl);
 
-    if (userId !== selfId) {
+    if (userId !== selfId && !options.hideDm) {
         const dmButton = document.createElement("a");
         dmButton.className = "pc-dm";
         dmButton.href = "chat.html?type=dm&user=" + encodeURIComponent(userId);
@@ -241,6 +280,7 @@ async function publishPublicProfile(patch) {
         profileCache.delete(await myId());
         return true;
     } catch (error) {
+        publishPublicProfile.lastError = (error && error.message) || "خطای نامشخص";
         console.warn("publishPublicProfile failed:", error && error.message);
         return false;
     }

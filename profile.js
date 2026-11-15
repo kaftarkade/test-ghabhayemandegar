@@ -97,7 +97,12 @@ async function saveAvatarToAccount(avatar) {
 
     // نسخهٔ عمومی عکس برای نمایش کنار پیام‌ها و پنجرهٔ پروفایل
     if (typeof publishPublicProfile === "function") {
-        await publishPublicProfile({ avatarDataUrl: avatar });
+        const published = await publishPublicProfile({ avatarDataUrl: avatar });
+
+        if (published === false) {
+            alert("عکس روی حسابت ذخیره شد، ولی برای بقیه منتشر نشد: " +
+                (publishPublicProfile.lastError || "خطای نامشخص"));
+        }
     }
 
 }
