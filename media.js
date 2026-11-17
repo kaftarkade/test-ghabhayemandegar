@@ -135,6 +135,63 @@ async function compressImage(file, maxSide = 1280, quality = 0.8) {
     }
 }
 
+/* ---------- دانلود و نمایش بزرگ عکس ---------- */
+
+async function downloadFromUrl(url, baseName) {
+    try {
+        const blob = await (await fetch(url)).blob();
+        const ext = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" }[blob.type] || "jpg";
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = (baseName || "image") + "." + ext;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (_) {
+        window.open(url, "_blank");
+    }
+}
+
+function openImageViewer(url, baseName) {
+    const box = document.createElement("div");
+    box.className = "viewer";
+
+    const bar = document.createElement("div");
+    bar.className = "viewer-bar";
+
+    const download = document.createElement("button");
+    download.type = "button";
+    download.className = "viewer-btn";
+    download.textContent = "⬇";
+    download.setAttribute("aria-label", "دانلود تصویر");
+    download.addEventListener("click", event => {
+        event.stopPropagation();
+        downloadFromUrl(url, baseName);
+    });
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "viewer-btn";
+    close.textContent = "✕";
+    close.setAttribute("aria-label", "بستن");
+
+    bar.append(download, close);
+
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "";
+    img.addEventListener("click", event => event.stopPropagation());
+
+    box.append(bar, img);
+    document.body.appendChild(box);
+
+    const remove = () => { box.remove(); document.removeEventListener("keydown", onKey); };
+    const onKey = event => { if (event.key === "Escape") remove(); };
+    document.addEventListener("keydown", onKey);
+    close.addEventListener("click", remove);
+    box.addEventListener("click", remove);
+}
+
 /* ---------- پروفایل‌ها ---------- */
 
 const profileCache = new Map(); // userId -> { name, bio, avatar } یا {}
@@ -244,6 +301,16 @@ async function openProfileCard(userId, nameHint, options) {
     document.body.appendChild(overlay);
 
     const remove = () => { overlay.remove(); document.removeEventListener("keydown", onKey); };
+
+    // دکمهٔ اضافه (مثلاً «ویرایش پروفایل» برای مدیران کانال/گروه)
+    if (options.actionLabel && options.onAction) {
+        const action = document.createElement("button");
+        action.type = "button";
+        action.className = "pc-dm pc-action";
+        action.textContent = options.actionLabel;
+        action.addEventListener("click", () => { remove(); options.onAction(); });
+        card.appendChild(action);
+    }
     const onKey = event => { if (event.key === "Escape") remove(); };
     document.addEventListener("keydown", onKey);
     close.addEventListener("click", remove);
@@ -256,6 +323,18 @@ async function openProfileCard(userId, nameHint, options) {
     bioEl.textContent = profile.bio || "بیوگرافی ثبت نشده است.";
     bioEl.classList.toggle("empty", !profile.bio);
     paintAvatar(big);
+
+    if (profile.avatar) {
+        big.style.cursor = "zoom-in";
+        big.setAttribute("role", "button");
+        big.setAttribute("aria-label", "بزرگ‌نمایی عکس پروفایل");
+        big.addEventListener("click", async () => {
+            try {
+                const url = await fileBlobUrl(profile.avatar);
+                openImageViewer(url, "profile-" + (profile.name || "user"));
+            } catch (_) {}
+        });
+    }
 }
 
 /* ---------- انتشار پروفایل خود کاربر (برای صفحهٔ پروفایل) ---------- */

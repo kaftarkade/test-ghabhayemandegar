@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#176b45">
+    <title>گزارش‌ها | حلقات صالحین</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="responsive.css">
+    <link rel="stylesheet" href="social.css">
+    <link rel="stylesheet" href="reports.css">
+</head>
+<body class="messenger-page">
+
+<header class="messenger-header">
+    <a href="index.html" class="messenger-brand">
+        <span class="brand-icon">ح</span>
+        <span>
+            <strong>حلقات صالحین</strong>
+            <small>بررسی گزارش‌ها</small>
+        </span>
+    </a>
+    <a href="index.html" class="account-button">← بازگشت</a>
+</header>
+
+<main class="rp-main">
+    <div class="rp-title">
+        <h1>🛡️ پیام‌های گزارش‌شده</h1>
+        <p>گزارش درست است؟ پیام حذف می‌شود. نادرست است؟ گزارش را رد کن.</p>
+    </div>
+
+    <div class="rp-tabs" role="tablist">
+        <button type="button" class="rp-tab active" data-tab="open">در انتظار بررسی <span id="openCount"></span></button>
+        <button type="button" class="rp-tab" data-tab="done">بررسی‌شده</button>
+    </div>
+
+    <p id="rpStatus" class="rp-status" role="status"></p>
+    <div id="rpList"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
+<script src="config.js"></script>
+<script src="media.js"></script>
+<script src="reports.js"></script>
+</body>
+</html>

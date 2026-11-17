@@ -1,0 +1,47 @@
+.rp-main { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 12px 40px; }
+.rp-title h1 { margin: 14px 0 4px; font-size: 18px; }
+.rp-title p { margin: 0 0 12px; font-size: 13px; color: var(--muted); }
+
+.rp-tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+.rp-tab {
+    flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 14px;
+    background: #fff; font: inherit; cursor: pointer; color: var(--text);
+}
+.rp-tab.active { background: var(--green); border-color: var(--green); color: #fff; }
+
+.rp-status { min-height: 18px; margin: 4px 4px 8px; font-size: 13px; color: var(--muted); text-align: center; }
+.rp-empty { padding: 30px 10px; text-align: center; color: var(--muted); }
+
+.rp-card {
+    margin-bottom: 12px; padding: 14px; border: 1px solid var(--border);
+    border-radius: 18px; background: #fff;
+}
+.rp-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.rp-badge { padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #fef3c7; color: #92400e; }
+.rp-badge.approved { background: #fee2e2; color: #991b1b; }
+.rp-badge.rejected { background: var(--green-light); color: var(--green-dark); }
+
+.rp-info { margin: 10px 0 6px; font-size: 13px; line-height: 1.9; }
+.rp-info b { color: var(--green-dark); }
+
+.rp-quote {
+    margin: 8px 0; padding: 10px 12px; border-radius: 12px; background: var(--green-light);
+    font-size: 14px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+
+.rp-media { margin: 8px 0; max-width: 260px; border-radius: 12px; overflow: hidden; background: var(--green-light); }
+.rp-media img, .rp-media video { display: block; width: 100%; max-height: 300px; object-fit: cover; cursor: zoom-in; }
+.rp-media button { width: 100%; padding: 40px 10px; border: none; background: none; font: inherit; cursor: pointer; color: var(--green-dark); }
+
+.rp-reporters { margin: 6px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--muted); }
+
+.rp-actions { display: flex; gap: 8px; margin-top: 12px; }
+.rp-actions button {
+    flex: 1; padding: 11px 6px; border: none; border-radius: 14px;
+    font: inherit; font-weight: 700; cursor: pointer; color: #fff;
+}
+.rp-approve { background: #dc2626; }
+.rp-reject { background: var(--green); }
+.rp-actions button:disabled { opacity: .6; cursor: wait; }
+
+.rp-result { margin: 10px 0 0; font-size: 12px; color: var(--muted); }

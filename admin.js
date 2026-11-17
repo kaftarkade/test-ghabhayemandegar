@@ -115,7 +115,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const links = [
             ["💬", "پیام‌رسان", "index.html"],
-            ["📢", "کانال اطلاع‌رسانی", "chat.html?type=announcements"]
+            ["📢", "کانال اطلاع‌رسانی", "chat.html?type=announcements"],
+            ["🛡️", "گزارش‌ها", "reports.html"]
         ];
         (isAdmin ? Object.keys(ringNames) : [managerRing]).forEach(key => {
             links.push(["👥", ringNames[key], "chat.html?type=ring&group=" + key]);

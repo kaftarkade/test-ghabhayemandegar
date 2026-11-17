@@ -149,6 +149,18 @@
             }));
         }
 
+        // بررسی گزارش‌ها (مدیران)
+        if (isAdmin || isManager) {
+            channelsList.appendChild(conversationItem({
+                href: "reports.html",
+                avatarClass: "channel-avatar",
+                avatarText: "🛡️",
+                title: "گزارش‌ها",
+                badge: isAdmin ? "مدیر کل" : "مدیر حلقه",
+                description: "بررسی پیام‌های گزارش‌شده"
+            }));
+        }
+
         // پنل مدیریت برای مدیر کل و مدیران حلقه
         if (isAdmin || isManager) {
             channelsList.appendChild(conversationItem({
