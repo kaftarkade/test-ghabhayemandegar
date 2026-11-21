@@ -4,7 +4,384 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>پنل مدیریت | حلقات صالحین</title>
-    <link rel="stylesheet" href="admin.css">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
+
+:root {
+  color-scheme: dark;
+  --bg: #0b1020;
+  --surface: #131b2e;
+  --surface-2: #19243a;
+  --border: rgba(255, 255, 255, .09);
+  --text: #f2f5ff;
+  --muted: #9ba9c2;
+  --primary: #8b7cff;
+  --primary-hover: #a095ff;
+  --success: #36d6a0;
+  --danger: #ff6b81;
+  --radius: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Vazirmatn", Tahoma, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(103, 84, 255, .15), transparent 35%),
+    radial-gradient(ellipse at 90% 15%, rgba(54, 214, 160, .08), transparent 30%),
+    var(--bg);
+  line-height: 1.8;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease,
+    border-color .18s ease, opacity .18s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+a {
+  color: var(--primary-hover);
+  text-decoration: none;
+}
+
+header,
+main,
+footer {
+  width: min(1120px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1,
+header h2 {
+  margin: 0;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-weight: 800;
+}
+
+header p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+main {
+  padding-block: 28px 48px;
+}
+
+section,
+.card,
+.panel,
+form,
+#membersList,
+#editPanel {
+  min-width: 0;
+}
+
+section,
+.card,
+.panel,
+#editPanel {
+  margin-bottom: 22px;
+  padding: clamp(18px, 3vw, 28px);
+  background: linear-gradient(
+    145deg,
+    rgba(25, 36, 58, .96),
+    rgba(17, 25, 43, .96)
+  );
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, .16);
+}
+
+h2,
+h3 {
+  margin-top: 0;
+  font-weight: 800;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+h3 {
+  font-size: 1.05rem;
+}
+
+p {
+  color: var(--muted);
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  color: #dce4f7;
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 11px 14px;
+  color: var(--text);
+  background: rgba(7, 12, 25, .65);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #72809a;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(139, 124, 255, .13);
+}
+
+select option {
+  color: var(--text);
+  background: var(--surface);
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+}
+
+form > button,
+form > .form-message,
+form > #formMessage,
+form > #editMessage {
+  grid-column: 1 / -1;
+}
+
+button,
+.btn {
+  min-height: 44px;
+  padding: 10px 18px;
+  color: white;
+  background: linear-gradient(135deg, #7968f5, #9a75ff);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+button.secondary,
+#refreshButton,
+#cancelEdit {
+  color: #dce4f7;
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+button.danger {
+  color: #ffdce2;
+  background: rgba(255, 107, 129, .12);
+  border-color: rgba(255, 107, 129, .25);
+}
+
+#refreshButton {
+  margin-bottom: 16px;
+}
+
+#searchMember {
+  margin-bottom: 20px;
+}
+
+#membersList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+#membersList > * {
+  min-width: 0;
+  padding: 18px;
+  background: rgba(8, 14, 27, .52);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  overflow-wrap: anywhere;
+}
+
+#membersList h3,
+#membersList h4 {
+  margin: 0 0 10px;
+}
+
+#membersList p {
+  margin: 6px 0;
+  font-size: .9rem;
+}
+
+#membersList button {
+  margin: 10px 5px 0 0;
+}
+
+#editPanel[hidden] {
+  display: none !important;
+}
+
+#formMessage,
+#editMessage,
+#membersList:empty::after {
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+#membersList:empty::after {
+  content: "هنوز عضوی برای نمایش وجود ندارد.";
+  display: block;
+  grid-column: 1 / -1;
+  padding: 24px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+}
+
+footer {
+  padding: 0 0 28px;
+  color: var(--muted);
+  text-align: center;
+  font-size: .85rem;
+}
+
+@media (max-width: 650px) {
+  header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  header,
+  main,
+  footer {
+    width: calc(100% - 22px);
+  }
+
+  main {
+    padding-top: 18px;
+  }
+
+  section,
+  .card,
+  .panel,
+  #editPanel {
+    padding: 17px;
+    border-radius: 15px;
+  }
+
+  form,
+  #membersList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  form > button {
+    width: 100%;
+  }
+}
+
+/* مخفی‌بودن همیشه رعایت شود (header و panel نباید hidden را نادیده بگیرند) */
+[hidden] { display: none !important; }
+
+/* داشبورد بعد از ورود */
+.dash-welcome { margin: 0 0 4px; font-size: 1.3rem; font-weight: 800; }
+.dash-role { margin: 0 0 18px; color: var(--muted); font-size: .95rem; }
+
+.dash-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.dash-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 10px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .04);
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+}
+
+.dash-link span { font-size: 1.6rem; }
+.dash-link strong { font-size: .9rem; }
+
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.dash-stat {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.dash-stat b { display: block; font-size: 1.4rem; }
+.dash-stat small { color: var(--muted); }
+
+</style>
 </head>
 <body>
     <main class="container">
@@ -13,10 +390,10 @@
             <h2>ورود مدیر</h2>
 
             <form id="adminLoginForm">
-                <label for="adminEmail">ایمیل (شماره تلفن)</label>
+                <label for="adminEmail">ایمیل مدیر کل یا شماره موبایل مدیر حلقه</label>
                 <input id="adminEmail" type="text" dir="ltr" autocomplete="username" required>
 
-                <label for="adminPassword">رمز عبور (کد ملی)</label>
+                <label for="adminPassword">رمز عبور (مدیر حلقه: کد ملی)</label>
                 <input id="adminPassword" type="password" autocomplete="current-password" required>
 
                 <button type="submit">ورود به پنل مدیریت</button>
@@ -148,8 +525,642 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
-    <script src="config.js"></script>
-    <script src="admin-auth.js"></script>
-    <script src="admin.js"></script>
+    <script>
+"use strict";
+
+// تنظیمات اتصال به Appwrite
+const APPWRITE_ENDPOINT = "https://cloud.appwrite.io/v1";
+const APPWRITE_PROJECT_ID = "6ad8c664000392442826";
+const APPWRITE_DATABASE_ID = "6ad8cb9d003bd982b313";
+
+// جدول اعضا (همان جدول قبلی)
+const APPWRITE_TABLE_ID = "fani_data";
+
+// پیام‌ها هم در همین جدول ذخیره می‌شوند (نسخهٔ رایگان فقط یک جدول دارد)
+const APPWRITE_MESSAGES_TABLE_ID = APPWRITE_TABLE_ID;
+
+// فضای ذخیرهٔ عکس و ویدیو (Storage)
+const APPWRITE_BUCKET_ID = "media";
+
+// شناسهٔ حساب مدیر
+const ADMIN_USER_ID = "6adb4b2600227975bf32";
+
+// شناسهٔ تابع Appwrite (بعد از ساخت تابع، همین‌جا بنویس)
+const FUNCTION_ID = "fani-admin";
+
+// نام حلقه‌ها
+const RING_NAMES = {
+    ring1: "حلقه اول",
+    ring2: "حلقه دوم",
+    ring3: "حلقه سوم",
+    ring4: "حلقه چهارم",
+    ring5: "حلقه پنجم"
+};
+
+// ساخت اتصال مشترک
+const appwriteClient = new Appwrite.Client()
+    .setEndpoint(APPWRITE_ENDPOINT)
+    .setProject(APPWRITE_PROJECT_ID);
+
+// سرویس حساب کاربری
+const appwriteAccount = new Appwrite.Account(appwriteClient);
+
+// سرویس جدول‌ها
+const appwriteTablesDB = new Appwrite.TablesDB(appwriteClient);
+
+// سرویس فایل‌ها
+const appwriteStorage = new Appwrite.Storage(appwriteClient);
+
+// سرویس توابع
+const appwriteFunctions = new Appwrite.Functions(appwriteClient);
+
+// اجرای تابع سمت سرور؛ هویت کاربر را خود Appwrite تأیید می‌کند
+async function callServer(payload) {
+    const execution = await appwriteFunctions.createExecution({
+        functionId: FUNCTION_ID,
+        body: JSON.stringify(payload),
+        async: false,
+        method: "POST",
+        headers: { "content-type": "application/json" }
+    });
+
+    let data = {};
+    try { data = JSON.parse(execution.responseBody || "{}"); } catch (_) {}
+
+    if (execution.status === "failed" || !data.success) {
+        throw new Error(data.error || "درخواست ناموفق بود.");
+    }
+    return data;
+}
+
+</script>
+    <script>
+
+"use strict";
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const panel = document.getElementById("adminLoginPanel");
+    const form = document.getElementById("adminLoginForm");
+    const message = document.getElementById("adminLoginMessage");
+
+    const protectedSections = [
+        document.querySelector(".header"),
+        ...document.querySelectorAll("main.container > .panel")
+    ].filter(section => section && section !== panel);
+
+    const account = new Appwrite.Account(appwriteClient);
+
+    function showAdmin(isLoggedIn) {
+        panel.hidden = isLoggedIn;
+        protectedSections.forEach(section => {
+            section.hidden = !isLoggedIn;
+        });
+    }
+
+    const checkStaff = user =>
+        user.$id === ADMIN_USER_ID || (user.labels || []).some(l => /^manager[1-5]$/.test(l));
+
+    try {
+        const currentUser = await account.get();
+
+const isStaff = checkStaff(currentUser);
+
+if (!isStaff) {
+    await account.deleteSession({ sessionId: "current" });
+    showAdmin(false);
+    message.textContent = "این حساب اجازهٔ ورود به پنل مدیریت را ندارد.";
+    message.style.color = "#ef4444";
+} else {
+    showAdmin(true);
+}
+    } catch (_) {
+        showAdmin(false);
+    }
+
+    const logoutButton = document.getElementById("adminLogout");
+    if (logoutButton) {
+        logoutButton.addEventListener("click", async () => {
+            try { await account.deleteSession({ sessionId: "current" }); } catch (_) {}
+            window.location.reload();
+        });
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        message.textContent = "در حال ورود...";
+        message.style.color = "#f59e0b";
+
+        try {
+            // مدیر کل: ایمیل + رمز | مدیر حلقه: شماره موبایل + کد ملی
+            const norm = v => v
+                .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+                .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+
+            let identifier = norm(document.getElementById("adminEmail").value.trim());
+            let password = document.getElementById("adminPassword").value;
+
+            if (/^09\d{9}$/.test(identifier)) {
+                identifier = identifier + "@fani.com";
+                password = norm(password);
+            }
+
+            // اگر نشست قدیمی (مثلاً عضو عادی) باز مانده، اول بسته می‌شود
+            try { await account.deleteSession({ sessionId: "current" }); } catch (_) {}
+
+            await account.createEmailPasswordSession({ email: identifier, password });
+
+            // مطمئن می‌شویم نشست واقعاً ساخته شده و این حساب اجازهٔ ورود دارد
+            const user = await account.get();
+
+            if (!checkStaff(user)) {
+                try { await account.deleteSession({ sessionId: "current" }); } catch (_) {}
+                message.textContent = "این حساب اجازهٔ ورود به پنل مدیریت را ندارد.";
+                message.style.color = "#ef4444";
+                button.disabled = false;
+                return;
+            }
+
+            message.textContent = "ورود موفق بود.";
+            message.style.color = "#22c55e";
+
+            window.location.reload();
+        } catch (error) {
+            console.error("Admin login error:", error);
+
+            if (error && error.code === 401) {
+                message.textContent = "ایمیل (یا شماره) یا رمز اشتباه است.";
+            } else if (error && error.code === 429) {
+                message.textContent = "تلاش‌های زیاد؛ چند دقیقه صبر کن و دوباره امتحان کن.";
+            } else if (error && error.type === "user_blocked") {
+                message.textContent = "این حساب غیرفعال است.";
+            } else {
+                message.textContent = "ورود ناموفق بود: " + ((error && error.message) || "خطای نامشخص") +
+                    " (کد: " + ((error && error.code) || "-") + ")";
+            }
+            message.style.color = "#ef4444";
+            button.disabled = false;
+        }
+    });
+});
+</script>
+    <script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const form = document.getElementById("memberForm");
+    const message = document.getElementById("formMessage");
+    const membersList = document.getElementById("membersList");
+    const refreshButton = document.getElementById("refreshButton");
+    const syncButton = document.getElementById("syncButton");
+    const syncMessage = document.getElementById("syncMessage");
+    const searchInput = document.getElementById("searchMember");
+
+    const editPanel = document.getElementById("editPanel");
+    const editForm = document.getElementById("editMemberForm");
+    const editMessage = document.getElementById("editMessage");
+    const cancelEdit = document.getElementById("cancelEdit");
+
+    const account = appwriteAccount;
+    const tablesDB = appwriteTablesDB;
+    const ringNames = RING_NAMES;
+
+    let membersCache = [];
+
+    function showMessage(element, text, color = "#f8fafc") {
+        element.textContent = text;
+        element.style.color = color;
+    }
+
+    function normalizeDigits(value = "") {
+        return value
+            .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+            .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+    }
+
+    function getMemberData(member) {
+        let content = {};
+        try { content = JSON.parse(member.content || "{}"); } catch (_) {}
+
+        return {
+            phone: content.phone || "",
+            nationalId: member.national_id || "",
+            fullName: member.display_name || "",
+            ring: member.group_id || "ring1",
+            status: member.status || "active",
+            role: content.role === "manager" ? "manager" : "member"
+        };
+    }
+
+    // همهٔ درخواست‌های مدیریتی از طریق تابع Appwrite انجام می‌شود
+    function callWorker(action, payload) {
+        return callServer({ action, ...payload });
+    }
+
+    function validate(data) {
+        if (!data.fullName) return "نام را وارد کن.";
+        if (!/^09[0-9]{9}$/.test(data.phone)) return "شمارهٔ موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد.";
+        if (!/^[0-9]{10}$/.test(data.nationalId)) return "کد ملی باید ۱۰ رقم باشد.";
+        if (!ringNames[data.ring] || !["active", "inactive"].includes(data.status)) {
+            return "اطلاعات انتخاب‌شده معتبر نیست.";
+        }
+        return "";
+    }
+
+    // فقط مدیر اجازهٔ استفاده دارد
+    let isAdmin = false;
+    let managerRing = null;
+    let currentName = "";
+
+    try {
+        const currentUser = await account.get();
+        isAdmin = currentUser.$id === ADMIN_USER_ID;
+        const mgrLabel = (currentUser.labels || []).find(l => /^manager[1-5]$/.test(l));
+        managerRing = mgrLabel ? "ring" + mgrLabel.slice(7) : null;
+        if (!isAdmin && !managerRing) return;
+
+        currentName = currentUser.name || "";
+
+        // برای باز شدن صفحهٔ پروفایل و پیام‌رسان با همین نشست
+        if (localStorage.getItem("loggedIn") !== "true" || !localStorage.getItem("memoryUser")) {
+            localStorage.setItem("memoryUser", JSON.stringify({
+                name: currentName,
+                phone: (currentUser.prefs && currentUser.prefs.phone) || "",
+                email: ""
+            }));
+            localStorage.setItem("loggedIn", "true");
+        }
+    } catch (_) {
+        membersList.textContent = "ابتدا وارد حساب مدیر شو.";
+        return;
+    }
+
+    if (!isAdmin) {
+        // مدیر حلقه فقط اعضای حلقهٔ خودش را مدیریت می‌کند
+        document.querySelectorAll("[data-admin-only]").forEach(node => { node.hidden = true; });
+
+        ["ring", "editRing"].forEach(id => {
+            const select = document.getElementById(id);
+            Array.from(select.options).forEach(option => {
+                if (option.value !== managerRing) option.remove();
+            });
+            select.value = managerRing;
+        });
+
+        const subtitle = document.getElementById("panelSubtitle");
+        if (subtitle) subtitle.textContent = "مدیریت اعضای " + ringNames[managerRing];
+    }
+
+    function renderDashboard() {
+        const welcome = document.getElementById("dashWelcome");
+        const role = document.getElementById("dashRole");
+        const linksBox = document.getElementById("dashLinks");
+        if (!welcome || !linksBox) return;
+
+        welcome.textContent = "خوش آمدی" + (currentName ? "، " + currentName : "");
+        role.textContent = isAdmin ? "مدیر کل پایگاه" : "مدیر " + ringNames[managerRing];
+
+        const links = [
+            ["💬", "پیام‌رسان", "index.html"],
+            ["📢", "کانال اطلاع‌رسانی", "chat.html?type=announcements"],
+            ["🛡️", "گزارش‌ها", "reports.html"]
+        ];
+        (isAdmin ? Object.keys(ringNames) : [managerRing]).forEach(key => {
+            links.push(["👥", ringNames[key], "chat.html?type=ring&group=" + key]);
+        });
+        links.push(["✉️", "پیام‌های شخصی", "index.html"], ["👤", "پروفایل من", "profile.html"]);
+
+        linksBox.replaceChildren();
+        links.forEach(([icon, label, href]) => {
+            const link = document.createElement("a");
+            link.className = "dash-link";
+            link.href = href;
+
+            const i = document.createElement("span");
+            i.textContent = icon;
+            const t = document.createElement("strong");
+            t.textContent = label;
+
+            link.append(i, t);
+            linksBox.appendChild(link);
+        });
+    }
+
+    function renderStats() {
+        const box = document.getElementById("dashStats");
+        if (!box) return;
+
+        const all = membersCache.map(getMemberData);
+        const items = [
+            ["کل اعضا", all.length],
+            ["فعال", all.filter(m => m.status === "active").length],
+            ["غیرفعال", all.filter(m => m.status !== "active").length],
+            ["مدیران حلقه", all.filter(m => m.role === "manager").length]
+        ];
+
+        if (isAdmin) {
+            Object.keys(ringNames).forEach(key => {
+                items.push([ringNames[key], all.filter(m => m.ring === key).length]);
+            });
+        }
+
+        box.replaceChildren();
+        items.forEach(([label, value]) => {
+            const stat = document.createElement("div");
+            stat.className = "dash-stat";
+
+            const b = document.createElement("b");
+            b.textContent = value.toLocaleString("fa-IR");
+            const small = document.createElement("small");
+            small.textContent = label;
+
+            stat.append(b, small);
+            box.appendChild(stat);
+        });
+    }
+
+    renderDashboard();
+
+    function renderMembers() {
+        const query = normalizeDigits(searchInput.value.trim().toLowerCase());
+
+        const filtered = membersCache.filter(member => {
+            const data = getMemberData(member);
+            return [data.fullName, data.phone, data.nationalId, ringNames[data.ring]]
+                .some(value => normalizeDigits(String(value).toLowerCase()).includes(query));
+        });
+
+        membersList.replaceChildren();
+
+        if (!filtered.length) {
+            membersList.textContent = query
+                ? "عضوی با این مشخصات پیدا نشد."
+                : "هنوز عضوی ثبت نشده است.";
+            return;
+        }
+
+        filtered.forEach(member => {
+            const data = getMemberData(member);
+            const card = document.createElement("article");
+            card.className = "member";
+
+            const name = document.createElement("h3");
+            name.textContent = data.fullName || "بدون نام";
+
+            const phone = document.createElement("p");
+            phone.textContent = "تلفن: " + (data.phone || "ثبت نشده");
+
+            const ring = document.createElement("p");
+            ring.textContent = "حلقه: " + (ringNames[data.ring] || "نامشخص");
+
+            const status = document.createElement("p");
+            status.textContent = "وضعیت: " + (data.status === "active" ? "فعال" : "غیرفعال") +
+                (data.role === "manager" ? " — مدیر حلقه" : "");
+
+            const actions = document.createElement("div");
+            actions.className = "member-actions";
+
+            const editButton = document.createElement("button");
+            editButton.type = "button";
+            editButton.className = "edit-button";
+            editButton.textContent = "ویرایش";
+            editButton.addEventListener("click", () => openEdit(member));
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "delete-button";
+            deleteButton.textContent = "حذف";
+            deleteButton.addEventListener("click", () => deleteMember(member));
+
+            // مدیر حلقه نمی‌تواند مدیران دیگر را ویرایش یا حذف کند
+            if (isAdmin || data.role !== "manager") actions.append(editButton, deleteButton);
+            card.append(name, phone, ring, status, actions);
+            membersList.appendChild(card);
+        });
+    }
+
+    async function loadMembers() {
+        refreshButton.disabled = true;
+        membersList.textContent = "در حال دریافت اعضا...";
+
+        try {
+            const rows = [];
+            let cursor = null;
+
+            // صفحه‌به‌صفحه می‌خوانیم تا بیشتر از ۲۵ عضو هم نمایش داده شود
+            for (;;) {
+                const queries = [
+                    Appwrite.Query.equal("group_id", Object.keys(ringNames)),
+                    Appwrite.Query.limit(100)
+                ];
+                if (cursor) queries.push(Appwrite.Query.cursorAfter(cursor));
+
+                const page = await tablesDB.listRows({
+                    databaseId: APPWRITE_DATABASE_ID,
+                    tableId: APPWRITE_TABLE_ID,
+                    queries
+                });
+
+                rows.push(...page.rows);
+                if (page.rows.length < 100) break;
+                cursor = page.rows[page.rows.length - 1].$id;
+            }
+
+            membersCache = rows.filter(row => row.record_type === "member");
+            renderMembers();
+            renderStats();
+        } catch (error) {
+            console.error("Load members error:", error);
+            membersList.textContent = "خطا در دریافت اعضا؛ مجوزهای جدول را بررسی کن.";
+        } finally {
+            refreshButton.disabled = false;
+        }
+    }
+
+    function openEdit(member) {
+        const data = getMemberData(member);
+
+        document.getElementById("editMemberId").value = member.$id;
+        document.getElementById("editFullName").value = data.fullName;
+        document.getElementById("editPhone").value = data.phone;
+        document.getElementById("editNationalId").value = data.nationalId;
+        document.getElementById("editRing").value = data.ring;
+        document.getElementById("editStatus").value = data.status;
+        document.getElementById("editRole").value = data.role;
+
+        showMessage(editMessage, "");
+        editPanel.hidden = false;
+        editPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    cancelEdit.addEventListener("click", () => {
+        editPanel.hidden = true;
+        editForm.reset();
+    });
+
+    searchInput.addEventListener("input", renderMembers);
+    refreshButton.addEventListener("click", loadMembers);
+
+    editForm.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const rowId = document.getElementById("editMemberId").value;
+        const data = {
+            fullName: document.getElementById("editFullName").value.trim(),
+            phone: normalizeDigits(document.getElementById("editPhone").value.trim()),
+            nationalId: normalizeDigits(document.getElementById("editNationalId").value.trim()),
+            ring: document.getElementById("editRing").value,
+            status: document.getElementById("editStatus").value,
+            role: document.getElementById("editRole").value
+        };
+
+        const problem = validate(data);
+        if (problem) {
+            showMessage(editMessage, problem, "#ef4444");
+            return;
+        }
+
+        const saveButton = editForm.querySelector('button[type="submit"]');
+        saveButton.disabled = true;
+        showMessage(editMessage, "در حال ذخیره...", "#f59e0b");
+
+        try {
+            await callWorker("updateMember", {
+                rowId,
+                name: data.fullName,
+                phone: data.phone,
+                nationalId: data.nationalId,
+                ring: data.ring,
+                status: data.status,
+                role: data.role
+            });
+
+            showMessage(editMessage, "تغییرات ذخیره شد.", "#22c55e");
+            editPanel.hidden = true;
+            editForm.reset();
+            await loadMembers();
+        } catch (error) {
+            console.error("Update member failed.");
+            showMessage(editMessage, error.message || "ویرایش ناموفق بود.", "#ef4444");
+        } finally {
+            saveButton.disabled = false;
+        }
+    });
+
+    async function deleteMember(member) {
+        const data = getMemberData(member);
+
+        const confirmed = confirm(
+            `عضو «${data.fullName}» و حساب ورود او برای همیشه حذف می‌شود. ادامه می‌دهی؟`
+        );
+        if (!confirmed) return;
+
+        try {
+            await callWorker("deleteMember", { rowId: member.$id });
+
+            if (document.getElementById("editMemberId").value === member.$id) {
+                editPanel.hidden = true;
+                editForm.reset();
+            }
+
+            showMessage(message, "عضو و حساب او حذف شد.", "#22c55e");
+            await loadMembers();
+        } catch (error) {
+            console.error("Delete member failed.");
+            showMessage(message, error.message || "حذف ناموفق بود.", "#ef4444");
+        }
+    }
+
+    // اعمال دوبارهٔ اطلاعات همهٔ اعضا روی حساب‌ها (برچسب حلقه، رمز، وضعیت)
+    syncButton.addEventListener("click", async () => {
+        if (!membersCache.length) return;
+        if (!confirm("اطلاعات همهٔ اعضا دوباره روی حساب‌های ورودشان اعمال شود؟")) return;
+
+        syncButton.disabled = true;
+        let ok = 0;
+        const failed = [];
+
+        for (const member of membersCache) {
+            const data = getMemberData(member);
+            if (!isAdmin && data.role === "manager") continue;
+            showMessage(syncMessage, `در حال همگام‌سازی ${ok + failed.length + 1} از ${membersCache.length}...`, "#f59e0b");
+
+            try {
+                await callWorker("updateMember", {
+                    rowId: member.$id,
+                    name: data.fullName,
+                    phone: data.phone,
+                    nationalId: data.nationalId,
+                    ring: data.ring,
+                    status: data.status,
+                role: data.role
+                });
+                ok++;
+            } catch (error) {
+                failed.push((data.fullName || data.phone) + ": " + error.message);
+            }
+        }
+
+        showMessage(
+            syncMessage,
+            failed.length
+                ? `${ok} مورد موفق، ${failed.length} مورد ناموفق — ` + failed.join(" | ")
+                : `همهٔ ${ok} حساب همگام شد.`,
+            failed.length ? "#ef4444" : "#22c55e"
+        );
+
+        syncButton.disabled = false;
+        await loadMembers();
+    });
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        const data = {
+            fullName: document.getElementById("fullName").value.trim(),
+            phone: normalizeDigits(document.getElementById("phone").value.trim()),
+            nationalId: normalizeDigits(document.getElementById("nationalId").value.trim()),
+            ring: document.getElementById("ring").value,
+            status: document.getElementById("status").value,
+            role: document.getElementById("role").value
+        };
+
+        const problem = validate(data);
+        if (problem) {
+            showMessage(message, problem, "#ef4444");
+            return;
+        }
+
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        showMessage(message, "در حال ساخت حساب و ثبت عضو...", "#f59e0b");
+
+        try {
+            await callWorker("createMember", {
+                name: data.fullName,
+                phone: data.phone,
+                nationalId: data.nationalId,
+                ring: data.ring,
+                status: data.status,
+                role: data.role
+            });
+
+            showMessage(message, "عضو و حساب ورود با موفقیت ساخته شد.", "#22c55e");
+            form.reset();
+            await loadMembers();
+        } catch (error) {
+            console.error("Create member failed.");
+            showMessage(message, error.message || "ثبت عضو ناموفق بود.", "#ef4444");
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+
+    await loadMembers();
+});
+
+</script>
 </body>
 </html>

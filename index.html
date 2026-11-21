@@ -6,9 +6,970 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#176b45">
     <title>پیام‌رسان حلقات صالحین</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="responsive.css">
-    <link rel="stylesheet" href="social.css">
+    <style>
+
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("./Vazirmatn-Bold.woff2") format("woff2");
+    font-weight: 700 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --green: #176b45;
+    --green-dark: #104d33;
+    --green-light: #e8f4ed;
+    --page: #f3f7f4;
+    --text: #1c2922;
+    --muted: #78857d;
+    --border: #e3ebe5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, sans-serif;
+    color: var(--text);
+    background: var(--page);
+    line-height: 1.9;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+}
+
+/* سربرگ */
+
+.messenger-header {
+    min-height: 82px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+}
+
+.messenger-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 17px;
+    color: white;
+    background: linear-gradient(145deg, #27885b, #125437);
+    font-size: 27px;
+    font-weight: 900;
+}
+
+.brand-copy {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-copy strong {
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.brand-copy small {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.account-button {
+    padding: 9px 13px;
+    border: 1px solid #dce8df;
+    border-radius: 13px;
+    background: #f8fbf9;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* صفحه اصلی */
+
+.messenger-main {
+    width: min(850px, calc(100% - 24px));
+    margin: 22px auto;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: white;
+    box-shadow: 0 8px 28px rgba(22, 73, 47, 0.06);
+}
+
+/* سه تب در یک ردیف */
+
+.messenger-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    flex-direction: row !important;
+    gap: 6px;
+    width: 100%;
+    padding: 8px;
+    background: #f8fbf9;
+    border-bottom: 1px solid var(--border);
+}
+
+.messenger-tab {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 46px;
+    margin: 0;
+    padding: 8px 4px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: #6f7e73;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.messenger-tab.active {
+    background: var(--green-light);
+    color: var(--green);
+    border-color: #cfe4d5;
+}
+
+.messenger-tab:active {
+    transform: scale(0.98);
+}
+
+/* محتوای تب‌ها */
+
+.panels-container {
+    padding: 24px;
+}
+
+.tab-panel {
+    margin-bottom: 26px;
+}
+
+.tab-panel[hidden] {
+    display: none !important;
+}
+
+.list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.list-heading h1 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 900;
+}
+
+.list-heading p {
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.section-symbol {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    background: var(--green-light);
+    font-size: 22px;
+}
+
+.channel-symbol,
+.channel-avatar {
+    background: #fff2dc;
+}
+
+/* کارت گروه و کانال */
+
+.conversation-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: #fff;
+}
+
+.conversation-item:active {
+    background: #f8fbf9;
+}
+
+.conversation-avatar {
+    width: 54px;
+    height: 54px;
+    flex: 0 0 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    font-size: 21px;
+}
+
+.ring-avatar {
+    color: #fff;
+    background: linear-gradient(145deg, #27885b, #125437);
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.conversation-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.conversation-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.conversation-title h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.member-status {
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.channel-status {
+    background: #fff2dc;
+    color: #98611a;
+}
+
+.conversation-details p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.conversation-arrow {
+    flex-shrink: 0;
+    color: var(--green);
+    font-size: 21px;
+}
+
+/* پیام راهنما */
+
+.empty-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #f5f8f6;
+    color: #69796e;
+    font-size: 12px;
+    line-height: 2.1;
+}
+
+.empty-hint p {
+    margin: 0;
+}
+
+.security-notice {
+    margin-top: 0;
+    background: #f4f8f5;
+}
+
+/* پایین صفحه */
+
+.messenger-footer {
+    padding: 18px 12px 25px;
+    color: #839087;
+    text-align: center;
+    font-size: 11px;
+}
+
+/* موبایل */
+
+@media (max-width: 520px) {
+    .messenger-header {
+        min-height: 74px;
+        padding: 10px 14px;
+        gap: 8px;
+    }
+
+    .brand-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+        border-radius: 14px;
+        font-size: 24px;
+    }
+
+    .brand-copy strong {
+        font-size: 13px;
+    }
+
+    .brand-copy small {
+        font-size: 10px;
+    }
+
+    .account-button {
+        padding: 8px 9px;
+        font-size: 11px;
+    }
+
+    .messenger-main {
+        margin: 16px auto;
+        border-radius: 19px;
+    }
+
+    .messenger-tabs {
+        gap: 4px;
+        padding: 6px;
+    }
+
+    .messenger-tab {
+        min-height: 44px;
+        gap: 4px;
+        padding: 7px 2px;
+        font-size: 12px;
+    }
+
+    .panels-container {
+        padding: 18px 14px;
+    }
+
+    .list-heading h1 {
+        font-size: 17px;
+    }
+
+    .list-heading p {
+        font-size: 11px;
+    }
+
+    .conversation-item {
+        gap: 9px;
+        padding: 11px 9px;
+    }
+
+    .conversation-avatar {
+        width: 45px;
+        height: 45px;
+        flex-basis: 45px;
+        font-size: 18px;
+    }
+
+    .ring-avatar {
+        font-size: 14px;
+    }
+
+    .conversation-title h2 {
+        font-size: 12px;
+    }
+
+    .conversation-details p {
+        font-size: 10px;
+    }
+
+    .empty-hint {
+        padding: 12px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 350px) {
+    .messenger-tab {
+        gap: 3px;
+        font-size: 11px;
+    }
+
+    .account-button {
+        font-size: 10px;
+        padding: 7px;
+    }
+}
+</style>
+    <style>
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("./Vazirmatn-Bold.woff2") format("woff2");
+    font-weight: 700 900;
+    font-style: normal;
+    font-display: swap;
+}
+/* ========================================
+   واکنش‌گرایی پیام‌رسان
+======================================== */
+
+@media (min-width: 1400px) {
+    .container {
+        width: min(1120px, 84%);
+    }
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        min-height: 72px;
+        padding: 12px 5%;
+    }
+
+    .brand {
+        gap: 9px;
+    }
+
+    .brand-icon {
+        width: 43px;
+        height: 43px;
+        border-radius: 13px;
+    }
+
+    .brand-text h1 {
+        font-size: 14px;
+    }
+
+    .brand-text p {
+        font-size: 10px;
+    }
+
+    .login-button {
+        padding: 8px 13px;
+        font-size: 12px;
+    }
+
+    .container {
+        width: 90%;
+        margin-top: 24px;
+    }
+
+    .welcome-card {
+        padding: 30px 24px;
+        border-radius: 23px;
+    }
+
+    .welcome-card h2 {
+        font-size: 27px;
+    }
+
+    .welcome-card > p {
+        font-size: 12px;
+    }
+
+    .welcome-decoration {
+        left: -60px;
+        bottom: -105px;
+        opacity: 0.7;
+    }
+
+    .section-heading {
+        margin-top: 32px;
+    }
+
+    .section-heading h2 {
+        font-size: 18px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .feature-card {
+        padding: 17px;
+        gap: 12px;
+        border-radius: 17px;
+    }
+
+    .feature-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        font-size: 22px;
+    }
+
+    .feature-info h3 {
+        font-size: 13px;
+    }
+
+    .feature-info p {
+        font-size: 10px;
+    }
+
+    .security-notice {
+        padding: 17px;
+    }
+
+    .security-notice h3 {
+        font-size: 12px;
+    }
+
+    .security-notice p {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 380px) {
+    .brand-text h1 {
+        font-size: 12px;
+    }
+
+    .brand-text p {
+        font-size: 9px;
+    }
+
+    .login-button {
+        padding: 7px 10px;
+        font-size: 11px;
+    }
+
+    .welcome-card {
+        padding: 25px 18px;
+    }
+
+    .welcome-card h2 {
+        font-size: 23px;
+    }
+
+    .welcome-label {
+        font-size: 10px;
+    }
+
+    .primary-button {
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+@media (max-width: 600px) {
+    .messenger-header {
+        min-height: 68px;
+        padding: 10px 4%;
+    }
+
+    .messenger-brand {
+        gap: 8px;
+    }
+
+    .messenger-brand .brand-icon {
+        width: 41px;
+        height: 41px;
+    }
+
+    .messenger-brand strong {
+        font-size: 12px;
+    }
+
+    .messenger-brand small {
+        font-size: 9px;
+    }
+
+    .account-button {
+        gap: 5px;
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .messenger-main {
+        width: 94%;
+        min-height: 430px;
+        margin: 16px auto;
+        border-radius: 17px;
+    }
+
+    .messenger-tab {
+        min-height: 56px;
+        font-size: 12px;
+    }
+
+    .tab-panel {
+        padding: 17px 13px;
+    }
+
+    .list-heading h1 {
+        font-size: 17px;
+    }
+
+    .conversation-item {
+        gap: 10px;
+        padding: 13px 10px;
+        border-radius: 14px;
+    }
+
+    .conversation-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        font-size: 20px;
+    }
+
+    .conversation-title h2 {
+        font-size: 12px;
+    }
+
+    .conversation-details p {
+        font-size: 10px;
+    }
+
+    .conversation-arrow {
+        font-size: 18px;
+    }
+}
+</style>
+    <style>
+/* آواتار دایره‌ای */
+.avatar,
+.conversation-avatar.has-img {
+    background-size: cover;
+    background-position: center;
+}
+
+.avatar {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border: none;
+    padding: 0;
+    border-radius: 50%;
+    background-color: var(--green-light);
+    color: var(--green);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.avatar.has-img { color: transparent; }
+
+/* پنجرهٔ پروفایل */
+.pc-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, .55);
+}
+
+.pc-card {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    padding: 28px 20px 22px;
+    border-radius: 24px;
+    background: #fff;
+    color: var(--text);
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .3);
+}
+
+.pc-close {
+    position: absolute;
+    top: 12px;
+    inset-inline-start: 12px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: var(--green-light);
+    color: var(--green-dark);
+    cursor: pointer;
+}
+
+.pc-avatar {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background-color: var(--green-light);
+    background-size: cover;
+    background-position: center;
+    color: var(--green);
+    font-size: 56px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+}
+
+.pc-avatar.has-img { color: transparent; }
+
+.pc-card h2 { margin: 0 0 6px; font-size: 20px; }
+
+.pc-bio {
+    margin: 0 0 18px;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.pc-bio.empty { color: var(--muted); }
+
+.pc-dm {
+    display: block;
+    padding: 12px;
+    border-radius: 16px;
+    background: var(--green);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* جستجو در پیام‌های شخصی */
+.dm-search { margin: 0 0 12px; }
+
+.dm-search input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    font: inherit;
+    background: #fff;
+    color: var(--text);
+    outline: none;
+}
+
+.dm-search input:focus { border-color: var(--green); }
+
+.dm-status {
+    min-height: 18px;
+    margin: 6px 4px 0;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.dm-section-title {
+    margin: 14px 4px 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green-dark);
+}
+
+
+/* نمایش بزرگ عکس */
+.viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, .92);
+}
+
+.viewer img {
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: contain;
+}
+
+.viewer-bar {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 14px;
+    z-index: 1;
+}
+
+.viewer-btn {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .18);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* صفحهٔ گزارش‌ها */
+.rep-card {
+    margin: 0 0 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: #fff;
+}
+
+.rep-card header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.rep-badge {
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.rep-badge.approved { background: #dcfce7; color: #166534; }
+.rep-badge.rejected { background: #e5e7eb; color: #374151; }
+
+.rep-msg {
+    margin: 8px 0;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: var(--green-light);
+    line-height: 1.9;
+    font-size: 14px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.rep-msg img { display: block; max-width: 100%; max-height: 240px; border-radius: 10px; margin-bottom: 6px; cursor: zoom-in; }
+
+.rep-meta { margin: 4px 0; font-size: 12.5px; color: var(--muted); line-height: 1.9; }
+
+.rep-actions { display: flex; gap: 8px; margin-top: 10px; }
+
+.rep-actions button {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: 14px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rep-actions .approve { background: #dc2626; color: #fff; }
+.rep-actions .reject  { background: var(--green-light); color: var(--green-dark); }
+.rep-actions button:disabled { opacity: .6; cursor: wait; }
+
+
+/* عکس کانال/گروه در عنوان صفحه */
+.section-symbol.has-img {
+    background-size: cover;
+    background-position: center;
+    color: transparent;
+}
+
+.pc-textarea {
+    width: 100%;
+    margin: 0 0 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font: inherit;
+    resize: none;
+    background: #fff;
+    color: var(--text);
+}
+
+.pc-action { margin-top: 10px; background: var(--green-dark); border: none; width: 100%; font: inherit; cursor: pointer; }
+.pc-secondary { margin-top: 8px; background: var(--green-light); color: var(--green-dark); border: none; width: 100%; font: inherit; cursor: pointer; }
+button.pc-dm { width: 100%; border: none; font: inherit; cursor: pointer; }
+
+
+/* ====== اعلان پیام: بنر، نشان خوانده‌نشده (پررنگ) ====== */
+.nb-wrap { position: fixed; top: 10px; inset-inline: 10px; z-index: 200; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+
+.nb {
+    pointer-events: auto; display: flex; align-items: center; gap: 12px;
+    width: 100%; max-width: 560px; margin: 0 auto; padding: 12px 14px;
+    border-radius: 20px; border-inline-start: 7px solid #facc15;
+    background: linear-gradient(135deg, #0b3d2a, #176b45); color: #fff;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .4); cursor: pointer; animation: nb-in .28s ease-out;
+}
+
+.nb-av {
+    flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(255, 255, 255, .18); display: grid; place-items: center;
+    font-size: 20px; font-weight: 800;
+}
+
+.nb-body { flex: 1; min-width: 0; }
+.nb-body strong { display: block; font-size: 16px; font-weight: 800; }
+.nb-body p { margin: 3px 0 0; font-size: 14px; font-weight: 700; opacity: .95; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.nb-close { border: none; background: rgba(255, 255, 255, .18); color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+
+@keyframes nb-in { from { transform: translateY(-120%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.unread-badge {
+    flex: 0 0 auto; min-width: 26px; height: 26px; padding: 0 8px; border-radius: 999px;
+    background: #dc2626; color: #fff; font-size: 13px; font-weight: 800;
+    display: grid; place-items: center; box-shadow: 0 0 0 4px rgba(220, 38, 38, .22);
+    animation: badge-pulse 1.8s ease-in-out infinite;
+}
+.unread-badge[hidden] { display: none; }
+
+@keyframes badge-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+.conversation-item.has-unread { border-color: #dc2626; background: #fff5f5; }
+.conversation-item.has-unread h2 { font-weight: 800; }
+.conversation-item.has-unread p { font-weight: 800; color: var(--text); }
+
+.nb-permission {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin: 0 0 12px; padding: 12px 14px; border-radius: 16px;
+    background: #fef3c7; color: #78350f; font-size: 13px; font-weight: 700;
+}
+.nb-permission button { border: none; border-radius: 12px; padding: 8px 14px; background: #92400e; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+
+</style>
 </head>
 <body class="messenger-page">
 
@@ -102,9 +1063,1116 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
-<script src="config.js"></script>
-<script src="media.js"></script>
-<script src="app.js"></script>
+<script>
+"use strict";
+
+// تنظیمات اتصال به Appwrite
+const APPWRITE_ENDPOINT = "https://cloud.appwrite.io/v1";
+const APPWRITE_PROJECT_ID = "6ad8c664000392442826";
+const APPWRITE_DATABASE_ID = "6ad8cb9d003bd982b313";
+
+// جدول اعضا (همان جدول قبلی)
+const APPWRITE_TABLE_ID = "fani_data";
+
+// پیام‌ها هم در همین جدول ذخیره می‌شوند (نسخهٔ رایگان فقط یک جدول دارد)
+const APPWRITE_MESSAGES_TABLE_ID = APPWRITE_TABLE_ID;
+
+// فضای ذخیرهٔ عکس و ویدیو (Storage)
+const APPWRITE_BUCKET_ID = "media";
+
+// شناسهٔ حساب مدیر
+const ADMIN_USER_ID = "6adb4b2600227975bf32";
+
+// شناسهٔ تابع Appwrite (بعد از ساخت تابع، همین‌جا بنویس)
+const FUNCTION_ID = "fani-admin";
+
+// نام حلقه‌ها
+const RING_NAMES = {
+    ring1: "حلقه اول",
+    ring2: "حلقه دوم",
+    ring3: "حلقه سوم",
+    ring4: "حلقه چهارم",
+    ring5: "حلقه پنجم"
+};
+
+// ساخت اتصال مشترک
+const appwriteClient = new Appwrite.Client()
+    .setEndpoint(APPWRITE_ENDPOINT)
+    .setProject(APPWRITE_PROJECT_ID);
+
+// سرویس حساب کاربری
+const appwriteAccount = new Appwrite.Account(appwriteClient);
+
+// سرویس جدول‌ها
+const appwriteTablesDB = new Appwrite.TablesDB(appwriteClient);
+
+// سرویس فایل‌ها
+const appwriteStorage = new Appwrite.Storage(appwriteClient);
+
+// سرویس توابع
+const appwriteFunctions = new Appwrite.Functions(appwriteClient);
+
+// اجرای تابع سمت سرور؛ هویت کاربر را خود Appwrite تأیید می‌کند
+async function callServer(payload) {
+    const execution = await appwriteFunctions.createExecution({
+        functionId: FUNCTION_ID,
+        body: JSON.stringify(payload),
+        async: false,
+        method: "POST",
+        headers: { "content-type": "application/json" }
+    });
+
+    let data = {};
+    try { data = JSON.parse(execution.responseBody || "{}"); } catch (_) {}
+
+    if (execution.status === "failed" || !data.success) {
+        throw new Error(data.error || "درخواست ناموفق بود.");
+    }
+    return data;
+}
+
+</script>
+<script>
+"use strict";
+
+/* =========================================================
+   ابزارهای مشترک: هش گفت‌وگو، آپلود، نمایش فایل، پروفایل‌ها
+========================================================= */
+
+// هش کوتاه و ثابت (دقیقاً همان الگوریتم تابع سرور)
+function convHash(str) {
+    let h1 = 0x811c9dc5, h2 = 5381;
+    for (let i = 0; i < str.length; i++) {
+        const c = str.charCodeAt(i);
+        h1 ^= c; h1 = Math.imul(h1, 16777619) >>> 0;
+        h2 = (Math.imul(h2, 33) ^ c) >>> 0;
+    }
+    return h1.toString(16).padStart(8, "0") + h2.toString(16).padStart(8, "0");
+}
+const dmKey = (a, b) => "d:" + convHash([a, b].sort().join("|")).slice(0, 12);
+const convListKey = id => "c:" + convHash(id).slice(0, 12);
+
+/* ---------- توکن موقت برای خواندن فایل‌ها ---------- */
+
+let _jwt = null, _jwtAt = 0;
+async function getJwt() {
+    if (_jwt && Date.now() - _jwtAt < 10 * 60 * 1000) return _jwt;
+    const result = await appwriteAccount.createJWT();
+    _jwt = result.jwt;
+    _jwtAt = Date.now();
+    return _jwt;
+}
+
+const _blobPromises = new Map();
+const _blobUrls = new Map();
+
+// آدرس آماده (اگر قبلاً دانلود شده)
+const fileUrlIfReady = fileId => _blobUrls.get(fileId) || null;
+
+// نوع فایل را از روی چند بایت اول حدس می‌زند
+function sniffMime(buffer) {
+    const b = new Uint8Array(buffer.slice(0, 16));
+    const ascii = (from, to) => String.fromCharCode(...b.slice(from, to));
+    if (b[0] === 0x89 && ascii(1, 4) === "PNG") return "image/png";
+    if (b[0] === 0xff && b[1] === 0xd8) return "image/jpeg";
+    if (ascii(0, 3) === "GIF") return "image/gif";
+    if (ascii(0, 4) === "RIFF" && ascii(8, 12) === "WEBP") return "image/webp";
+    if (ascii(4, 8) === "ftyp") return ascii(8, 12) === "qt  " ? "video/quicktime" : "video/mp4";
+    if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return "video/webm";
+    return "application/octet-stream";
+}
+
+// دریافت بایت‌های فایل: اول با خود SDK، بعد با توکن JWT
+async function fetchFileBytes(fileId) {
+    const url = `${APPWRITE_ENDPOINT}/storage/buckets/${APPWRITE_BUCKET_ID}/files/${fileId}/view`;
+    let firstError = null;
+
+    if (typeof appwriteClient.call === "function") {
+        try {
+            const data = await appwriteClient.call("get", new URL(url), {}, {}, "arrayBuffer");
+            if (data && data.byteLength) return data;
+        } catch (error) {
+            firstError = error;
+        }
+    }
+
+    const jwt = await getJwt();
+    const response = await fetch(url, {
+        headers: { "X-Appwrite-Project": APPWRITE_PROJECT_ID, "X-Appwrite-JWT": jwt }
+    });
+
+    if (!response.ok) {
+        const error = new Error("file " + response.status);
+        error.code = response.status || (firstError && firstError.code) || 0;
+        throw error;
+    }
+    return response.arrayBuffer();
+}
+
+// دانلود امن فایل و تبدیل به آدرس قابل نمایش
+function fileBlobUrl(fileId) {
+    if (_blobPromises.has(fileId)) return _blobPromises.get(fileId);
+
+    const promise = (async () => {
+        const buffer = await fetchFileBytes(fileId);
+        const url = URL.createObjectURL(new Blob([buffer], { type: sniffMime(buffer) }));
+        _blobUrls.set(fileId, url);
+        return url;
+    })();
+
+    _blobPromises.set(fileId, promise);
+    promise.catch(error => {
+        _blobPromises.delete(fileId);
+        console.warn("file load failed", fileId, error && error.code, error && error.message);
+    });
+    return promise;
+}
+
+/* ---------- آپلود ---------- */
+
+let _meId = null;
+async function myId() {
+    if (!_meId) _meId = (await appwriteAccount.get()).$id;
+    return _meId;
+}
+
+// آپلود با دسترسی موقت فقط برای خود کاربر؛ تابع سرور دسترسی نهایی را تعیین می‌کند
+async function uploadToBucket(file, onProgress) {
+    const id = await myId();
+    const created = await appwriteStorage.createFile({
+        bucketId: APPWRITE_BUCKET_ID,
+        fileId: Appwrite.ID.unique(),
+        file,
+        permissions: [
+            Appwrite.Permission.read(Appwrite.Role.user(id)),
+            Appwrite.Permission.delete(Appwrite.Role.user(id))
+        ],
+        onProgress
+    });
+    return created.$id;
+}
+
+// کوچک‌کردن عکس قبل از آپلود (سرعت و حجم کمتر)
+async function compressImage(file, maxSide = 1280, quality = 0.8) {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file; // gif و غیره دست‌نخورده
+    try {
+        const bitmap = await createImageBitmap(file);
+        const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(bitmap.width * scale);
+        canvas.height = Math.round(bitmap.height * scale);
+        canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+        if (!blob || blob.size >= file.size) return file;
+        return new File([blob], "photo.jpg", { type: "image/jpeg" });
+    } catch (_) {
+        return file;
+    }
+}
+
+/* ---------- دانلود و نمایش بزرگ عکس ---------- */
+
+async function downloadFromUrl(url, baseName) {
+    try {
+        const blob = await (await fetch(url)).blob();
+        const ext = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" }[blob.type] || "jpg";
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = (baseName || "image") + "." + ext;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    } catch (_) {
+        window.open(url, "_blank");
+    }
+}
+
+function openImageViewer(url, baseName) {
+    const box = document.createElement("div");
+    box.className = "viewer";
+
+    const bar = document.createElement("div");
+    bar.className = "viewer-bar";
+
+    const download = document.createElement("button");
+    download.type = "button";
+    download.className = "viewer-btn";
+    download.textContent = "⬇";
+    download.setAttribute("aria-label", "دانلود تصویر");
+    download.addEventListener("click", event => {
+        event.stopPropagation();
+        downloadFromUrl(url, baseName);
+    });
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "viewer-btn";
+    close.textContent = "✕";
+    close.setAttribute("aria-label", "بستن");
+
+    bar.append(download, close);
+
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "";
+    img.addEventListener("click", event => event.stopPropagation());
+
+    box.append(bar, img);
+    document.body.appendChild(box);
+
+    const remove = () => { box.remove(); document.removeEventListener("keydown", onKey); };
+    const onKey = event => { if (event.key === "Escape") remove(); };
+    document.addEventListener("keydown", onKey);
+    close.addEventListener("click", remove);
+    box.addEventListener("click", remove);
+}
+
+/* ---------- پروفایل‌ها ---------- */
+
+const profileCache = new Map(); // userId -> { name, bio, avatar } یا {}
+
+async function loadProfiles(ids) {
+    const missing = [...new Set(ids)].filter(id => id && !profileCache.has(id));
+
+    for (let i = 0; i < missing.length; i += 50) {
+        const chunk = missing.slice(i, i + 50);
+        try {
+            const result = await appwriteTablesDB.listRows({
+                databaseId: APPWRITE_DATABASE_ID,
+                tableId: APPWRITE_TABLE_ID,
+                queries: [Appwrite.Query.equal("$id", chunk), Appwrite.Query.limit(50)]
+            });
+
+            const found = new Set();
+            result.rows.forEach(row => {
+                if (row.record_type !== "profile") return;
+                let content = {};
+                try { content = JSON.parse(row.content || "{}"); } catch (_) {}
+                profileCache.set(row.$id, {
+                    name: row.display_name || "",
+                    bio: content.bio || "",
+                    avatar: content.avatar || ""
+                });
+                found.add(row.$id);
+            });
+            chunk.forEach(id => { if (!found.has(id)) profileCache.set(id, {}); });
+        } catch (error) {
+            console.warn("loadProfiles failed", error && error.message);
+        }
+    }
+}
+
+// عکس یک عنصر (دایره‌ای) را از روی پروفایل می‌گذارد
+async function paintAvatar(element) {
+    const profile = profileCache.get(element.dataset.user);
+    if (!profile || !profile.avatar || element.dataset.painted === profile.avatar) return;
+
+    element.dataset.painted = profile.avatar;
+    try {
+        const url = await fileBlobUrl(profile.avatar);
+        element.style.backgroundImage = `url("${url}")`;
+        element.classList.add("has-img");
+        element.textContent = "";
+    } catch (_) { /* همان حرف اول اسم می‌ماند */ }
+}
+
+function paintAvatars(root) {
+    (root || document).querySelectorAll("[data-user]").forEach(paintAvatar);
+}
+
+function createAvatar(userId, name, extraClass) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "avatar " + (extraClass || "");
+    button.dataset.user = userId;
+    button.dataset.name = name || "";
+    button.setAttribute("aria-label", "پروفایل " + (name || ""));
+    button.textContent = (name || "?").trim().charAt(0) || "?";
+    return button;
+}
+
+/* ---------- پنجرهٔ پروفایل ---------- */
+
+async function openProfileCard(userId, nameHint, options) {
+    options = options || {};
+    const selfId = await myId();
+
+    const overlay = document.createElement("div");
+    overlay.className = "pc-overlay";
+
+    const card = document.createElement("div");
+    card.className = "pc-card";
+    card.setAttribute("role", "dialog");
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "pc-close";
+    close.textContent = "✕";
+    close.setAttribute("aria-label", "بستن");
+
+    const big = document.createElement("div");
+    big.className = "pc-avatar";
+    big.dataset.user = userId;
+    big.textContent = (nameHint || "?").trim().charAt(0) || "?";
+
+    const nameEl = document.createElement("h2");
+    nameEl.textContent = nameHint || "کاربر";
+
+    const bioEl = document.createElement("p");
+    bioEl.className = "pc-bio";
+    bioEl.textContent = "در حال بارگذاری...";
+
+    card.append(close, big, nameEl, bioEl);
+
+    if (userId !== selfId && !options.hideDm) {
+        const dmButton = document.createElement("a");
+        dmButton.className = "pc-dm";
+        dmButton.href = "chat.html?type=dm&user=" + encodeURIComponent(userId);
+        dmButton.textContent = "✉️ پیام شخصی";
+        card.appendChild(dmButton);
+    }
+
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    const remove = () => { overlay.remove(); document.removeEventListener("keydown", onKey); };
+
+    // دکمهٔ اضافه (مثلاً «ویرایش پروفایل» برای مدیران کانال/گروه)
+    if (options.actionLabel && options.onAction) {
+        const action = document.createElement("button");
+        action.type = "button";
+        action.className = "pc-dm pc-action";
+        action.textContent = options.actionLabel;
+        action.addEventListener("click", () => { remove(); options.onAction(); });
+        card.appendChild(action);
+    }
+    const onKey = event => { if (event.key === "Escape") remove(); };
+    document.addEventListener("keydown", onKey);
+    close.addEventListener("click", remove);
+    overlay.addEventListener("click", event => { if (event.target === overlay) remove(); });
+
+    await loadProfiles([userId]);
+    const profile = profileCache.get(userId) || {};
+
+    nameEl.textContent = profile.name || nameHint || "کاربر";
+    bioEl.textContent = profile.bio || "بیوگرافی ثبت نشده است.";
+    bioEl.classList.toggle("empty", !profile.bio);
+    paintAvatar(big);
+
+    if (profile.avatar) {
+        big.style.cursor = "zoom-in";
+        big.setAttribute("role", "button");
+        big.setAttribute("aria-label", "بزرگ‌نمایی عکس پروفایل");
+        big.addEventListener("click", async () => {
+            try {
+                const url = await fileBlobUrl(profile.avatar);
+                openImageViewer(url, "profile-" + (profile.name || "user"));
+            } catch (_) {}
+        });
+    }
+}
+
+/* ---------- انتشار پروفایل خود کاربر (برای صفحهٔ پروفایل) ---------- */
+
+async function publishPublicProfile(patch) {
+    try {
+        const payload = { action: "updateProfile" };
+
+        if ("bio" in patch) payload.bio = patch.bio || "";
+
+        if ("avatarDataUrl" in patch) {
+            if (!patch.avatarDataUrl) {
+                payload.removeAvatar = true;
+            } else {
+                const blob = await (await fetch(patch.avatarDataUrl)).blob();
+                const file = new File([blob], "avatar.jpg", { type: blob.type || "image/jpeg" });
+                payload.avatarFileId = await uploadToBucket(file);
+            }
+        }
+
+        await callServer(payload);
+        profileCache.delete(await myId());
+        return true;
+    } catch (error) {
+        publishPublicProfile.lastError = (error && error.message) || "خطای نامشخص";
+        console.warn("publishPublicProfile failed:", error && error.message);
+        return false;
+    }
+}
+
+// اگر عکس/بیوگرافی قبلاً فقط در prefs بوده، یک بار برای بقیه منتشر می‌شود
+async function ensurePublicProfileSynced(prefs) {
+    try {
+        const key = ((prefs && prefs.avatar) || "").length + ":" + ((prefs && prefs.bio) || "");
+        if (localStorage.getItem("pubProfileKey") === key) return;
+
+        const patch = { bio: (prefs && prefs.bio) || "" };
+        if (prefs && prefs.avatar) patch.avatarDataUrl = prefs.avatar;
+
+        if (await publishPublicProfile(patch)) localStorage.setItem("pubProfileKey", key);
+    } catch (_) {}
+}
+
+</script>
+<script>
+"use strict";
+
+/* =========================================================
+   اعلان پیام: شمارندهٔ خوانده‌نشده، صدا، لرزش، بنر، عنوان صفحه
+========================================================= */
+
+const Notifier = (() => {
+    const UNREAD_KEY = "unreadCounts";
+    const READ_KEY = "lastReadTimes";
+
+    let me = null;
+    let baseTitle = document.title;
+    let flashTimer = null;
+
+    const load = name => { try { return JSON.parse(localStorage.getItem(name) || "{}"); } catch (_) { return {}; } };
+    const save = (name, value) => { try { localStorage.setItem(name, JSON.stringify(value)); } catch (_) {} };
+
+    /* ---------- شمارنده‌ها ---------- */
+
+    const getUnread = key => load(UNREAD_KEY)[key] || 0;
+    const getLastRead = key => load(READ_KEY)[key] || "";
+    const totalUnread = () => Object.values(load(UNREAD_KEY)).reduce((a, b) => a + b, 0);
+
+    function refreshTitle() {
+        const n = totalUnread();
+        if (!flashTimer) document.title = (n ? "(" + n + ") " : "") + baseTitle;
+    }
+
+    function setUnread(key, count) {
+        const map = load(UNREAD_KEY);
+        if (count > 0) map[key] = count; else delete map[key];
+        save(UNREAD_KEY, map);
+        refreshTitle();
+    }
+
+    function markRead(key, iso) {
+        const map = load(READ_KEY);
+        const time = iso || new Date().toISOString();
+        if (!map[key] || time > map[key]) map[key] = time;
+        save(READ_KEY, map);
+        setUnread(key, 0);
+    }
+
+    function init(options) {
+        me = options.me;
+        baseTitle = options.baseTitle || document.title;
+        refreshTitle();
+    }
+
+    function setBaseTitle(title) { baseTitle = title; refreshTitle(); }
+
+    /* ---------- صدا و لرزش ---------- */
+
+    let audio = null;
+
+    function unlock() {
+        try {
+            if (!audio) {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (AC) audio = new AC();
+            }
+            if (audio && audio.state === "suspended") audio.resume();
+        } catch (_) {}
+    }
+    ["pointerdown", "keydown", "touchstart"].forEach(name =>
+        window.addEventListener(name, unlock, { passive: true }));
+
+    function ping(strong) {
+        if (!audio || audio.state !== "running") return;
+        const t0 = audio.currentTime;
+        const tones = strong ? [880, 1175, 1568] : [988];
+
+        tones.forEach((freq, i) => {
+            const osc = audio.createOscillator();
+            const gain = audio.createGain();
+            const start = t0 + i * 0.13;
+
+            osc.type = "sine";
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.0001, start);
+            gain.gain.exponentialRampToValueAtTime(strong ? 0.4 : 0.12, start + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.28);
+
+            osc.connect(gain);
+            gain.connect(audio.destination);
+            osc.start(start);
+            osc.stop(start + 0.32);
+        });
+    }
+
+    function buzz(strong) {
+        try { if (navigator.vibrate) navigator.vibrate(strong ? [140, 70, 140] : 30); } catch (_) {}
+    }
+
+    /* ---------- چشمک‌زدن عنوان صفحه ---------- */
+
+    function startFlash() {
+        if (flashTimer || !document.hidden) return;
+        let on = false;
+        flashTimer = setInterval(() => {
+            on = !on;
+            document.title = on ? "🔔 پیام جدید!" : baseTitle;
+        }, 1000);
+    }
+
+    function stopFlash() {
+        if (flashTimer) { clearInterval(flashTimer); flashTimer = null; }
+        refreshTitle();
+    }
+
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) stopFlash(); });
+
+    /* ---------- بنر درون‌برنامه‌ای (پررنگ و بزرگ) ---------- */
+
+    function banner({ title, text, href, letter }) {
+        let wrap = document.getElementById("nbWrap");
+        if (!wrap) {
+            wrap = document.createElement("div");
+            wrap.id = "nbWrap";
+            wrap.className = "nb-wrap";
+            document.body.appendChild(wrap);
+        }
+        while (wrap.children.length >= 3) wrap.firstChild.remove();
+
+        const card = document.createElement("div");
+        card.className = "nb";
+        card.setAttribute("role", "alert");
+
+        const av = document.createElement("div");
+        av.className = "nb-av";
+        av.textContent = letter || "💬";
+
+        const body = document.createElement("div");
+        body.className = "nb-body";
+        const strong = document.createElement("strong");
+        strong.textContent = title;
+        const p = document.createElement("p");
+        p.textContent = text;
+        body.append(strong, p);
+
+        const close = document.createElement("button");
+        close.type = "button";
+        close.className = "nb-close";
+        close.textContent = "✕";
+        close.setAttribute("aria-label", "بستن");
+
+        card.append(av, body, close);
+        wrap.appendChild(card);
+
+        const remove = () => card.remove();
+        close.addEventListener("click", event => { event.stopPropagation(); remove(); });
+        card.addEventListener("click", () => { if (href) window.location.href = href; });
+        setTimeout(remove, 7000);
+    }
+
+    /* ---------- اعلان سیستم (وقتی صفحه در پس‌زمینه است) ---------- */
+
+    function systemNotify(title, body, href, tag) {
+        if (!("Notification" in window) || Notification.permission !== "granted") return;
+        try {
+            const n = new Notification(title, { body, tag, renotify: true });
+            n.onclick = () => { window.focus(); if (href) window.location.href = href; n.close(); };
+        } catch (_) { /* برخی مرورگرهای موبایل اجازهٔ ساخت مستقیم را نمی‌دهند */ }
+    }
+
+    function permissionBar(before) {
+        if (!("Notification" in window) || Notification.permission !== "default") return;
+
+        const bar = document.createElement("div");
+        bar.className = "nb-permission";
+
+        const text = document.createElement("span");
+        text.textContent = "🔔 برای دریافت اعلان پیام‌ها، اعلان را فعال کن.";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "فعال‌سازی";
+        button.addEventListener("click", async () => {
+            unlock();
+            try { await Notification.requestPermission(); } catch (_) {}
+            bar.remove();
+        });
+
+        bar.append(text, button);
+        before.parentNode.insertBefore(bar, before);
+    }
+
+    /* ---------- پیام‌های ورودی ---------- */
+
+    function previewOf(row) {
+        const raw = String(row.content || "");
+        if (raw.startsWith('{"_m":1')) {
+            try {
+                const o = JSON.parse(raw);
+                if (o.t) return String(o.t).slice(0, 90);
+                return o.k === "video" ? "🎬 ویدیو" : "📷 تصویر";
+            } catch (_) {}
+        }
+        return raw.slice(0, 90);
+    }
+
+    function routeOf(row) {
+        const key = String(row.group_id || "");
+        if (key === "m:ann") {
+            return { href: "chat.html?type=announcements", title: "📢 اطلاع‌رسانی پایگاه", letter: "📢" };
+        }
+        if (key.startsWith("m:ring")) {
+            const ring = key.slice(2);
+            return { href: "chat.html?type=ring&group=" + ring, title: "👥 " + (RING_NAMES[ring] || "گروه"), letter: "👥" };
+        }
+        if (key.startsWith("d:")) {
+            const name = row.display_name || "پیام شخصی";
+            return {
+                href: "chat.html?type=dm&user=" + encodeURIComponent(row.owner_id),
+                title: "💬 " + name,
+                letter: name.trim().charAt(0) || "💬"
+            };
+        }
+        return null;
+    }
+
+    /**
+     * هر رویداد Realtime جدول را بده؛ اگر پیام تازه از دیگران باشد اعلان می‌دهد.
+     * viewingKey: گفت‌وگویی که کاربر همین الان در آن است (یا null)
+     */
+    function handleRealtime(event, options) {
+        options = options || {};
+        const row = event && event.payload;
+
+        if (!row || row.record_type !== "message" || !me || row.owner_id === me) return;
+        if (!(event.events || []).some(name => /\.create$/.test(name))) return;
+
+        const route = routeOf(row);
+        if (!route) return;
+
+        const key = row.group_id;
+        const preview = previewOf(row);
+        const visible = !document.hidden;
+
+        if (options.viewingKey === key) {
+            if (visible) {
+                markRead(key, row.$createdAt);
+                ping(false);
+                buzz(false);
+            } else {
+                setUnread(key, getUnread(key) + 1);
+                ping(true);
+                buzz(true);
+                startFlash();
+                systemNotify(route.title, preview, route.href, key);
+            }
+        } else {
+            setUnread(key, getUnread(key) + 1);
+            ping(true);
+            buzz(true);
+            if (visible) banner({ title: route.title, text: preview, href: route.href, letter: route.letter });
+            else { startFlash(); systemNotify(route.title, preview, route.href, key); }
+        }
+
+        if (options.onChange) options.onChange(key);
+    }
+
+    /* ---------- شمارش پیام‌های خوانده‌نشده از سرور ---------- */
+
+    // latest: { key: زمان آخرین پیام } برای رد کردن گفت‌وگوهایی که چیز تازه‌ای ندارند
+    async function recount(keys, options) {
+        options = options || {};
+        const latest = options.latest || {};
+
+        await Promise.all(keys.map(async key => {
+            try {
+                const last = getLastRead(key);
+
+                if (!last && options.firstTime !== "all") { markRead(key); return; }
+                if (last && latest[key] && latest[key] <= last) { setUnread(key, 0); return; }
+
+                const queries = [Appwrite.Query.equal("group_id", [key])];
+                if (last) queries.push(Appwrite.Query.greaterThan("$createdAt", last));
+                queries.push(Appwrite.Query.limit(50));
+
+                const result = await appwriteTablesDB.listRows({
+                    databaseId: APPWRITE_DATABASE_ID,
+                    tableId: APPWRITE_TABLE_ID,
+                    queries
+                });
+
+                const n = result.rows.filter(r => r.record_type === "message" && r.owner_id !== me).length;
+                setUnread(key, n);
+            } catch (error) {
+                console.warn("recount failed", key, error && error.message);
+            }
+        }));
+    }
+
+    /* ---------- نشان روی آیتم‌های فهرست ---------- */
+
+    function paintBadges(root) {
+        (root || document).querySelectorAll("[data-key]").forEach(item => {
+            const count = getUnread(item.dataset.key);
+            const badge = item.querySelector(".unread-badge");
+            if (!badge) return;
+
+            if (count > 0) {
+                badge.hidden = false;
+                badge.textContent = count > 99 ? "۹۹+" : count.toLocaleString("fa-IR");
+                item.classList.add("has-unread");
+            } else {
+                badge.hidden = true;
+                item.classList.remove("has-unread");
+            }
+        });
+    }
+
+    return {
+        init, setBaseTitle, getUnread, getLastRead, setUnread, markRead,
+        totalUnread, handleRealtime, recount, paintBadges, permissionBar,
+        stopFlash, ping, buzz
+    };
+})();
+
+</script>
+<script>
+(function () {
+    "use strict";
+
+    const tabs = document.querySelectorAll(".messenger-tab");
+    const groupsPanel = document.getElementById("groups-panel");
+    const channelsPanel = document.getElementById("channels-panel");
+    const personalPanel = document.getElementById("personal-panel");
+
+    // اگر در صفحه‌ای غیر از صفحهٔ اصلی اجرا شد، بدون خطا خارج شو.
+    if (!tabs.length || !groupsPanel || !channelsPanel || !personalPanel) return;
+
+    /* ---------------- تب‌ها ---------------- */
+
+    const panels = { groups: groupsPanel, channels: channelsPanel, personal: personalPanel };
+    const tabSections = {
+        all: ["groups", "channels", "personal"],
+        base: ["groups", "channels"],
+        personal: ["personal"]
+    };
+
+    function showTab(name) {
+        const visible = tabSections[name];
+        if (!visible) return;
+
+        tabs.forEach(tab => {
+            const active = tab.dataset.tab === name;
+            tab.classList.toggle("active", active);
+            tab.setAttribute("aria-selected", String(active));
+        });
+
+        Object.keys(panels).forEach(key => {
+            panels[key].hidden = !visible.includes(key);
+        });
+    }
+
+    tabs.forEach(tab => tab.addEventListener("click", () => showTab(tab.dataset.tab)));
+    showTab("all");
+
+    /* ---------------- ساخت آیتم گفت‌وگو ---------------- */
+
+    const faDigits = "۰۱۲۳۴۵۶۷۸۹";
+
+    function conversationItem({ href, avatarClass, avatarText, title, badge, description, userId, key }) {
+        const link = document.createElement("a");
+        link.href = href;
+        link.className = "conversation-item";
+        if (key) link.dataset.key = key;
+
+        const avatar = document.createElement("div");
+        avatar.className = "conversation-avatar " + avatarClass;
+        avatar.textContent = avatarText;
+        if (userId) avatar.dataset.user = userId;
+
+        const details = document.createElement("div");
+        details.className = "conversation-details";
+
+        const titleBox = document.createElement("div");
+        titleBox.className = "conversation-title";
+
+        const h2 = document.createElement("h2");
+        h2.textContent = title;
+
+        titleBox.append(h2);
+        if (badge) {
+            const status = document.createElement("span");
+            status.className = "member-status";
+            status.textContent = badge;
+            titleBox.append(status);
+        }
+
+        const p = document.createElement("p");
+        p.textContent = description;
+
+        details.append(titleBox, p);
+
+        const arrow = document.createElement("span");
+        arrow.className = "conversation-arrow";
+        arrow.textContent = "←";
+
+        const unread = document.createElement("span");
+        unread.className = "unread-badge";
+        unread.hidden = true;
+
+        link.append(avatar, details, unread, arrow);
+        return link;
+    }
+
+    /* ---------------- ورود و نمایش بر اساس دسترسی ---------------- */
+
+    (async function init() {
+        let account;
+
+        try {
+            account = await appwriteAccount.get();
+        } catch (_) {
+            localStorage.removeItem("loggedIn");
+            localStorage.removeItem("memoryUser");
+            window.location.replace("login.html");
+            return;
+        }
+
+        // برای صفحهٔ پروفایل که از localStorage استفاده می‌کند
+        if (localStorage.getItem("loggedIn") !== "true" || !localStorage.getItem("memoryUser")) {
+            localStorage.setItem("memoryUser", JSON.stringify({
+                name: account.name || "",
+                phone: (account.prefs && account.prefs.phone) || "",
+                email: ""
+            }));
+            localStorage.setItem("loggedIn", "true");
+        }
+
+        const isAdmin = account.$id === ADMIN_USER_ID;
+        const labels = account.labels || [];
+        const isMember = isAdmin || labels.includes("member");
+
+        const groupsList = document.getElementById("groupsList");
+        const channelsList = document.getElementById("channelsList");
+        const groupsHint = document.getElementById("groupsHint");
+
+        // گروه‌ها: فقط حلقهٔ خود کاربر (مدیر همه را می‌بیند)
+        const myRings = Object.keys(RING_NAMES).filter(key => isAdmin || labels.includes(key));
+
+        groupsList.replaceChildren();
+        myRings.forEach(key => {
+            const number = Number(key.replace("ring", ""));
+            groupsList.appendChild(conversationItem({
+                href: "chat.html?type=ring&group=" + key,
+                avatarClass: "ring-avatar",
+                avatarText: faDigits[number],
+                title: RING_NAMES[key],
+                badge: "گروه",
+                description: "گروه گفت‌وگوی " + RING_NAMES[key],
+                key: "m:" + key
+            }));
+        });
+
+        if (!myRings.length) {
+            groupsHint.hidden = false;
+            groupsHint.querySelector("p").textContent =
+                "هنوز به حلقه‌ای اختصاص داده نشده‌ای؛ با مدیر تماس بگیر.";
+        }
+
+        const isManager = labels.some(l => /^manager[1-5]$/.test(l));
+
+        // کانال اطلاع‌رسانی پایگاه
+        channelsList.replaceChildren();
+        if (isMember) {
+            channelsList.appendChild(conversationItem({
+                href: "chat.html?type=announcements",
+                avatarClass: "channel-avatar",
+                avatarText: "📢",
+                title: "اطلاع‌رسانی پایگاه",
+                badge: "کانال",
+                description: "اخبار، برنامه‌ها و اطلاعیه‌های پایگاه",
+                key: "m:ann"
+            }));
+        }
+
+        // بررسی گزارش‌ها (مدیران)
+        if (isAdmin || isManager) {
+            channelsList.appendChild(conversationItem({
+                href: "reports.html",
+                avatarClass: "channel-avatar",
+                avatarText: "🛡️",
+                title: "گزارش‌ها",
+                badge: isAdmin ? "مدیر کل" : "مدیر حلقه",
+                description: "بررسی پیام‌های گزارش‌شده"
+            }));
+        }
+
+        // پنل مدیریت برای مدیر کل و مدیران حلقه
+        if (isAdmin || isManager) {
+            channelsList.appendChild(conversationItem({
+                href: "admin.html",
+                avatarClass: "channel-avatar",
+                avatarText: "⚙️",
+                title: "پنل مدیریت",
+                badge: isAdmin ? "مدیر کل" : "مدیر حلقه",
+                description: isAdmin ? "مدیریت اعضا و حلقه‌ها" : "مدیریت اعضای حلقهٔ خودت"
+            }));
+        }
+
+        /* ---- اعلان پیام‌ها ---- */
+        Notifier.init({ me: account.$id, baseTitle: document.title });
+        Notifier.permissionBar(groupsPanel);
+
+        const baseKeys = (isMember ? ["m:ann"] : []).concat(myRings.map(k => "m:" + k));
+        Notifier.paintBadges(document);
+        Notifier.recount(baseKeys).then(() => Notifier.paintBadges(document));
+
+        try {
+            appwriteClient.subscribe([
+                `tablesdb.${APPWRITE_DATABASE_ID}.tables.${APPWRITE_TABLE_ID}.rows`,
+                `databases.${APPWRITE_DATABASE_ID}.collections.${APPWRITE_TABLE_ID}.documents`
+            ], event => Notifier.handleRealtime(event, {
+                viewingKey: null,
+                onChange: () => Notifier.paintBadges(document)
+            }));
+        } catch (_) {}
+
+        initPersonal(account);
+    })();
+
+    /* ---------------- پیام‌های شخصی ---------------- */
+
+    function initPersonal(account) {
+        const searchInput = document.getElementById("dmSearch");
+        const searchStatus = document.getElementById("dmSearchStatus");
+        const resultsBox = document.getElementById("dmResults");
+        const listBox = document.getElementById("dmList");
+        const listTitle = document.getElementById("dmListTitle");
+        const hint = document.getElementById("dmHint");
+
+        const myKey = convListKey(account.$id);
+
+        function dmItem(userId, name, description) {
+            return conversationItem({
+                key: dmKey(account.$id, userId),
+                href: "chat.html?type=dm&user=" + encodeURIComponent(userId),
+                avatarClass: "ring-avatar",
+                avatarText: (name || "?").trim().charAt(0) || "?",
+                title: name || "کاربر",
+                badge: "",
+                description,
+                userId
+            });
+        }
+
+        /* ---- فهرست گفت‌وگوها ---- */
+
+        async function loadConversations() {
+            try {
+                const result = await appwriteTablesDB.listRows({
+                    databaseId: APPWRITE_DATABASE_ID,
+                    tableId: APPWRITE_TABLE_ID,
+                    queries: [
+                        Appwrite.Query.equal("group_id", [myKey]),
+                        Appwrite.Query.orderDesc("$updatedAt"),
+                        Appwrite.Query.limit(50)
+                    ]
+                });
+
+                const rows = result.rows.filter(r => r.record_type === "conv");
+
+                listBox.replaceChildren();
+                const ids = [];
+                const latest = {};
+
+                rows.forEach(row => {
+                    let info = {};
+                    try { info = JSON.parse(row.content || "{}"); } catch (_) {}
+                    if (!info.w) return;
+
+                    ids.push(info.w);
+                    latest[dmKey(account.$id, info.w)] = row.$updatedAt;
+                    listBox.appendChild(dmItem(info.w, row.display_name, info.l || "گفت‌وگوی شخصی"));
+                });
+
+                Notifier.paintBadges(listBox);
+                Notifier.recount(Object.keys(latest), { firstTime: "all", latest })
+                    .then(() => Notifier.paintBadges(listBox));
+
+                listTitle.hidden = !ids.length;
+                hint.hidden = !!ids.length || !!searchInput.value.trim();
+
+                if (ids.length) {
+                    await loadProfiles(ids);
+                    paintAvatars(listBox);
+                }
+            } catch (error) {
+                console.warn("loadConversations failed", error && error.message);
+            }
+        }
+
+        loadConversations();
+
+        // تازه‌سازی دوره‌ای و لحظه‌ای
+        setInterval(() => { if (!document.hidden) loadConversations(); }, 10000);
+
+        try {
+            appwriteClient.subscribe([
+                `tablesdb.${APPWRITE_DATABASE_ID}.tables.${APPWRITE_TABLE_ID}.rows`,
+                `databases.${APPWRITE_DATABASE_ID}.collections.${APPWRITE_TABLE_ID}.documents`
+            ], event => {
+                const row = event && event.payload;
+                if (row && row.record_type === "conv" && row.group_id === myKey) loadConversations();
+            });
+        } catch (_) {}
+
+        /* ---- جستجوی اکانت ---- */
+
+        let timer = null;
+        let counter = 0;
+
+        searchInput.addEventListener("input", () => {
+            clearTimeout(timer);
+            const q = searchInput.value.trim();
+
+            if (q.length < 2) {
+                resultsBox.replaceChildren();
+                searchStatus.textContent = q ? "حداقل ۲ حرف بنویس." : "";
+                hint.hidden = !!listBox.children.length || !!q;
+                return;
+            }
+
+            searchStatus.textContent = "در حال جستجو...";
+            timer = setTimeout(async () => {
+                const ticket = ++counter;
+
+                try {
+                    const data = await callServer({ action: "searchUsers", q });
+                    if (ticket !== counter) return; // نتیجهٔ قدیمی
+
+                    resultsBox.replaceChildren();
+
+                    (data.users || []).forEach(user => {
+                        resultsBox.appendChild(dmItem(user.id, user.name, "شروع پیام شخصی"));
+                    });
+
+                    searchStatus.textContent = data.users && data.users.length
+                        ? ""
+                        : "اکانتی با این اسم پیدا نشد.";
+                    hint.hidden = true;
+
+                    await loadProfiles((data.users || []).map(u => u.id));
+                    paintAvatars(resultsBox);
+                } catch (error) {
+                    if (ticket !== counter) return;
+                    searchStatus.textContent = error.message || "جستجو ناموفق بود.";
+                }
+            }, 300);
+        });
+    }
+})();
+
+</script>
 
 </body>
-</html> 
+</html>

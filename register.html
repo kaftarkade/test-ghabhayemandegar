@@ -5,9 +5,800 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0b0d12">
     <title>عضویت | حلقات صالحین</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="responsive.css">
-    <link rel="stylesheet" href="auth.css">
+    <style>
+
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("./Vazirmatn-Bold.woff2") format("woff2");
+    font-weight: 700 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --green: #176b45;
+    --green-dark: #104d33;
+    --green-light: #e8f4ed;
+    --page: #f3f7f4;
+    --text: #1c2922;
+    --muted: #78857d;
+    --border: #e3ebe5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    font-family: "Vazirmatn", Tahoma, sans-serif;
+    color: var(--text);
+    background: var(--page);
+    line-height: 1.9;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+}
+
+/* سربرگ */
+
+.messenger-header {
+    min-height: 82px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+}
+
+.messenger-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 17px;
+    color: white;
+    background: linear-gradient(145deg, #27885b, #125437);
+    font-size: 27px;
+    font-weight: 900;
+}
+
+.brand-copy {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-copy strong {
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.brand-copy small {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.account-button {
+    padding: 9px 13px;
+    border: 1px solid #dce8df;
+    border-radius: 13px;
+    background: #f8fbf9;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* صفحه اصلی */
+
+.messenger-main {
+    width: min(850px, calc(100% - 24px));
+    margin: 22px auto;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background: white;
+    box-shadow: 0 8px 28px rgba(22, 73, 47, 0.06);
+}
+
+/* سه تب در یک ردیف */
+
+.messenger-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    flex-direction: row !important;
+    gap: 6px;
+    width: 100%;
+    padding: 8px;
+    background: #f8fbf9;
+    border-bottom: 1px solid var(--border);
+}
+
+.messenger-tab {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 46px;
+    margin: 0;
+    padding: 8px 4px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: #6f7e73;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.messenger-tab.active {
+    background: var(--green-light);
+    color: var(--green);
+    border-color: #cfe4d5;
+}
+
+.messenger-tab:active {
+    transform: scale(0.98);
+}
+
+/* محتوای تب‌ها */
+
+.panels-container {
+    padding: 24px;
+}
+
+.tab-panel {
+    margin-bottom: 26px;
+}
+
+.tab-panel[hidden] {
+    display: none !important;
+}
+
+.list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.list-heading h1 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 900;
+}
+
+.list-heading p {
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.section-symbol {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    background: var(--green-light);
+    font-size: 22px;
+}
+
+.channel-symbol,
+.channel-avatar {
+    background: #fff2dc;
+}
+
+/* کارت گروه و کانال */
+
+.conversation-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    background: #fff;
+}
+
+.conversation-item:active {
+    background: #f8fbf9;
+}
+
+.conversation-avatar {
+    width: 54px;
+    height: 54px;
+    flex: 0 0 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    font-size: 21px;
+}
+
+.ring-avatar {
+    color: #fff;
+    background: linear-gradient(145deg, #27885b, #125437);
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.conversation-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.conversation-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.conversation-title h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.member-status {
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.channel-status {
+    background: #fff2dc;
+    color: #98611a;
+}
+
+.conversation-details p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.conversation-arrow {
+    flex-shrink: 0;
+    color: var(--green);
+    font-size: 21px;
+}
+
+/* پیام راهنما */
+
+.empty-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #f5f8f6;
+    color: #69796e;
+    font-size: 12px;
+    line-height: 2.1;
+}
+
+.empty-hint p {
+    margin: 0;
+}
+
+.security-notice {
+    margin-top: 0;
+    background: #f4f8f5;
+}
+
+/* پایین صفحه */
+
+.messenger-footer {
+    padding: 18px 12px 25px;
+    color: #839087;
+    text-align: center;
+    font-size: 11px;
+}
+
+/* موبایل */
+
+@media (max-width: 520px) {
+    .messenger-header {
+        min-height: 74px;
+        padding: 10px 14px;
+        gap: 8px;
+    }
+
+    .brand-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+        border-radius: 14px;
+        font-size: 24px;
+    }
+
+    .brand-copy strong {
+        font-size: 13px;
+    }
+
+    .brand-copy small {
+        font-size: 10px;
+    }
+
+    .account-button {
+        padding: 8px 9px;
+        font-size: 11px;
+    }
+
+    .messenger-main {
+        margin: 16px auto;
+        border-radius: 19px;
+    }
+
+    .messenger-tabs {
+        gap: 4px;
+        padding: 6px;
+    }
+
+    .messenger-tab {
+        min-height: 44px;
+        gap: 4px;
+        padding: 7px 2px;
+        font-size: 12px;
+    }
+
+    .panels-container {
+        padding: 18px 14px;
+    }
+
+    .list-heading h1 {
+        font-size: 17px;
+    }
+
+    .list-heading p {
+        font-size: 11px;
+    }
+
+    .conversation-item {
+        gap: 9px;
+        padding: 11px 9px;
+    }
+
+    .conversation-avatar {
+        width: 45px;
+        height: 45px;
+        flex-basis: 45px;
+        font-size: 18px;
+    }
+
+    .ring-avatar {
+        font-size: 14px;
+    }
+
+    .conversation-title h2 {
+        font-size: 12px;
+    }
+
+    .conversation-details p {
+        font-size: 10px;
+    }
+
+    .empty-hint {
+        padding: 12px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 350px) {
+    .messenger-tab {
+        gap: 3px;
+        font-size: 11px;
+    }
+
+    .account-button {
+        font-size: 10px;
+        padding: 7px;
+    }
+}
+</style>
+    <style>
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("./Vazirmatn-Bold.woff2") format("woff2");
+    font-weight: 700 900;
+    font-style: normal;
+    font-display: swap;
+}
+/* ========================================
+   واکنش‌گرایی پیام‌رسان
+======================================== */
+
+@media (min-width: 1400px) {
+    .container {
+        width: min(1120px, 84%);
+    }
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        min-height: 72px;
+        padding: 12px 5%;
+    }
+
+    .brand {
+        gap: 9px;
+    }
+
+    .brand-icon {
+        width: 43px;
+        height: 43px;
+        border-radius: 13px;
+    }
+
+    .brand-text h1 {
+        font-size: 14px;
+    }
+
+    .brand-text p {
+        font-size: 10px;
+    }
+
+    .login-button {
+        padding: 8px 13px;
+        font-size: 12px;
+    }
+
+    .container {
+        width: 90%;
+        margin-top: 24px;
+    }
+
+    .welcome-card {
+        padding: 30px 24px;
+        border-radius: 23px;
+    }
+
+    .welcome-card h2 {
+        font-size: 27px;
+    }
+
+    .welcome-card > p {
+        font-size: 12px;
+    }
+
+    .welcome-decoration {
+        left: -60px;
+        bottom: -105px;
+        opacity: 0.7;
+    }
+
+    .section-heading {
+        margin-top: 32px;
+    }
+
+    .section-heading h2 {
+        font-size: 18px;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .feature-card {
+        padding: 17px;
+        gap: 12px;
+        border-radius: 17px;
+    }
+
+    .feature-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        font-size: 22px;
+    }
+
+    .feature-info h3 {
+        font-size: 13px;
+    }
+
+    .feature-info p {
+        font-size: 10px;
+    }
+
+    .security-notice {
+        padding: 17px;
+    }
+
+    .security-notice h3 {
+        font-size: 12px;
+    }
+
+    .security-notice p {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 380px) {
+    .brand-text h1 {
+        font-size: 12px;
+    }
+
+    .brand-text p {
+        font-size: 9px;
+    }
+
+    .login-button {
+        padding: 7px 10px;
+        font-size: 11px;
+    }
+
+    .welcome-card {
+        padding: 25px 18px;
+    }
+
+    .welcome-card h2 {
+        font-size: 23px;
+    }
+
+    .welcome-label {
+        font-size: 10px;
+    }
+
+    .primary-button {
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+@media (max-width: 600px) {
+    .messenger-header {
+        min-height: 68px;
+        padding: 10px 4%;
+    }
+
+    .messenger-brand {
+        gap: 8px;
+    }
+
+    .messenger-brand .brand-icon {
+        width: 41px;
+        height: 41px;
+    }
+
+    .messenger-brand strong {
+        font-size: 12px;
+    }
+
+    .messenger-brand small {
+        font-size: 9px;
+    }
+
+    .account-button {
+        gap: 5px;
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .messenger-main {
+        width: 94%;
+        min-height: 430px;
+        margin: 16px auto;
+        border-radius: 17px;
+    }
+
+    .messenger-tab {
+        min-height: 56px;
+        font-size: 12px;
+    }
+
+    .tab-panel {
+        padding: 17px 13px;
+    }
+
+    .list-heading h1 {
+        font-size: 17px;
+    }
+
+    .conversation-item {
+        gap: 10px;
+        padding: 13px 10px;
+        border-radius: 14px;
+    }
+
+    .conversation-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        font-size: 20px;
+    }
+
+    .conversation-title h2 {
+        font-size: 12px;
+    }
+
+    .conversation-details p {
+        font-size: 10px;
+    }
+
+    .conversation-arrow {
+        font-size: 18px;
+    }
+}
+</style>
+    <style>
+.auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: #0b0d12;
+            color: #f8fafc;
+            font-family: inherit;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 32px 24px;
+            border: 1px solid #252a35;
+            border-radius: 24px;
+            background: #131720;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-logo {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #22c55e, #0f766e);
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .auth-card h1 {
+            margin: 0 0 12px;
+            text-align: center;
+            font-size: 25px;
+        }
+
+        .auth-description {
+            margin: 0 0 28px;
+            text-align: center;
+            color: #aab2c0;
+            line-height: 1.9;
+            font-size: 14px;
+        }
+
+        .auth-card label {
+            display: block;
+            margin: 18px 0 9px;
+            font-size: 14px;
+            color: #e2e8f0;
+        }
+
+        .auth-card input {
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 49px;
+            padding: 12px 14px;
+            border: 1px solid #343b49;
+            border-radius: 12px;
+            outline: none;
+            background: #0c1018;
+            color: #f8fafc;
+            font: inherit;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .auth-card input:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
+        }
+
+        .auth-card input::placeholder {
+            color: #737d8d;
+        }
+
+        .auth-submit {
+            width: 100%;
+            min-height: 49px;
+            margin-top: 25px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #22c55e, #0f766e);
+            color: white;
+            font: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .auth-submit:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .form-message {
+            min-height: 24px;
+            margin: 16px 0 0;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        .auth-footer {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid #252a35;
+            text-align: center;
+            color: #aab2c0;
+            font-size: 13px;
+            line-height: 1.9;
+        }
+
+        .auth-footer p {
+            margin: 5px 0 0;
+        }
+
+        @media (max-width: 420px) {
+            .auth-page {
+                padding: 16px;
+            }
+
+            .auth-card {
+                padding: 26px 19px;
+            }
+        }
+
+.auth-footer a{color:#22c55e}
+.auth-footnote{margin:14px 0 0;text-align:center;color:#aab2c0;font-size:12px}
+
+</style>
 </head>
 <body class="auth-page">
     <main class="auth-card">
