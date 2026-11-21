@@ -968,6 +968,126 @@ button.pc-dm { width: 100%; border: none; font: inherit; cursor: pointer; }
 }
 .nb-permission button { border: none; border-radius: 12px; padding: 8px 14px; background: #92400e; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
 
+
+/* پنجرهٔ عملیات پیام (نگه‌داشتن روی پیام) */
+.sheet-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 130;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(0, 0, 0, .45);
+}
+
+.sheet {
+    width: 100%;
+    max-width: 460px;
+    padding: 10px 8px 16px;
+    border-radius: 24px 24px 0 0;
+    background: #fff;
+    color: var(--text);
+}
+
+.sheet-title { margin: 6px 14px 8px; font-size: 13px; color: var(--muted); }
+
+.sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 14px;
+    background: none;
+    font: inherit;
+    font-size: 15px;
+    text-align: start;
+    cursor: pointer;
+}
+
+.sheet-item:active { background: var(--green-light); }
+.sheet-item span { width: 26px; text-align: center; font-size: 20px; }
+.sheet-item.danger { color: #dc2626; }
+
+
+/* ====== صفحهٔ اصلی: فهرست گفتگوها ====== */
+.cl-actions { display: flex; gap: 8px; align-items: center; }
+
+.cl-icon-btn {
+    width: 42px; height: 42px; border: 1px solid var(--border); border-radius: 50%;
+    background: #fff; font-size: 18px; display: grid; place-items: center;
+    text-decoration: none; cursor: pointer; color: var(--text);
+}
+
+.cl-search { display: flex; gap: 8px; margin: 0 0 10px; }
+.cl-search[hidden] { display: none; }
+.cl-search input {
+    flex: 1; padding: 12px 16px; border: 1px solid var(--green); border-radius: 16px;
+    font: inherit; background: #fff; color: var(--text); outline: none;
+}
+.cl-search button {
+    width: 44px; border: none; border-radius: 14px; background: var(--green-light);
+    color: var(--green-dark); font-size: 16px; cursor: pointer;
+}
+
+.cl-tabs { display: flex; gap: 6px; margin: 0 0 8px; overflow-x: auto; padding-bottom: 2px; }
+.cl-tab {
+    flex: 1 0 auto; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 14px; border: 1px solid var(--border); border-radius: 999px;
+    background: #fff; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+.cl-tab.active { background: var(--green); border-color: var(--green); color: #fff; }
+.cl-count {
+    min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
+    background: #dc2626; color: #fff; font-size: 12px; font-weight: 800;
+    display: inline-grid; place-items: center;
+}
+.cl-count[hidden] { display: none; }
+
+.cl-list { display: flex; flex-direction: column; }
+.cl-section { margin: 14px 6px 4px; font-size: 12px; font-weight: 700; color: var(--green-dark); }
+.cl-empty { padding: 36px 10px; text-align: center; color: var(--muted); font-size: 14px; }
+
+.cl-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 6px;
+    border-bottom: 1px solid var(--border); color: inherit; text-decoration: none;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+.cl-item:active { background: var(--green-light); }
+
+.cl-avatar {
+    flex: 0 0 auto; width: 54px; height: 54px; border-radius: 50%;
+    background-color: var(--green-light); background-size: cover; background-position: center;
+    color: var(--green); font-size: 22px; font-weight: 800; display: grid; place-items: center;
+}
+.cl-avatar.has-img { color: transparent; }
+
+.cl-main { flex: 1; min-width: 0; }
+.cl-title-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.cl-kind { font-size: 14px; flex: 0 0 auto; }
+.cl-title {
+    margin: 0; font-size: 15px; font-weight: 800; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.cl-flag { font-size: 12px; flex: 0 0 auto; opacity: .85; }
+
+.cl-preview {
+    margin: 4px 0 0; font-size: 13px; color: var(--muted);
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.cl-item.has-unread .cl-preview { color: var(--text); font-weight: 700; }
+
+.cl-meta { flex: 0 0 auto; min-width: 52px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.cl-time { font-size: 12px; color: var(--muted); direction: ltr; }
+.cl-item.has-unread .cl-time { color: var(--green); font-weight: 700; }
+
+.cl-badge {
+    min-width: 26px; height: 26px; padding: 0 8px; border-radius: 999px;
+    background: #dc2626; color: #fff; font-size: 13px; font-weight: 800;
+    display: grid; place-items: center;
+}
+.cl-badge.muted { background: #9ca3af; }
+
 </style>
     <style>
 .chat-page {
@@ -1312,46 +1432,24 @@ button.pc-dm { width: 100%; border: none; font: inherit; cursor: pointer; }
 .chat-context span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); }
 .chat-context button { border: none; background: none; font-size: 18px; cursor: pointer; color: #dc2626; }
 
-/* پنجرهٔ عملیات پیام (نگه‌داشتن روی پیام) */
-.sheet-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 130;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    background: rgba(0, 0, 0, .45);
+
+
+
+/* بازارسال و بی‌صدا */
+.chat-fwd { margin: 0 6px 3px; font-size: 12px; font-weight: 700; color: var(--green-dark); }
+
+.chat-mute {
+    margin-inline-start: auto;
+    width: 42px; height: 42px; border: 1px solid var(--border); border-radius: 50%;
+    background: #fff; font-size: 18px; cursor: pointer;
 }
 
-.sheet {
-    width: 100%;
-    max-width: 460px;
-    padding: 10px 8px 16px;
-    border-radius: 24px 24px 0 0;
-    background: #fff;
-    color: var(--text);
+.sheet.fw { max-height: 78vh; display: flex; flex-direction: column; }
+.fw-search {
+    margin: 4px 8px 8px; padding: 11px 14px; border: 1px solid var(--border);
+    border-radius: 14px; font: inherit; background: #fff; color: var(--text); outline: none;
 }
-
-.sheet-title { margin: 6px 14px 8px; font-size: 13px; color: var(--muted); }
-
-.sheet-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-    padding: 14px 16px;
-    border: none;
-    border-radius: 14px;
-    background: none;
-    font: inherit;
-    font-size: 15px;
-    text-align: start;
-    cursor: pointer;
-}
-
-.sheet-item:active { background: var(--green-light); }
-.sheet-item span { width: 26px; text-align: center; font-size: 20px; }
-.sheet-item.danger { color: #dc2626; }
+.fw-list { overflow-y: auto; }
 
 </style>
 </head>
@@ -1376,6 +1474,7 @@ button.pc-dm { width: 100%; border: none; font: inherit; cursor: pointer; }
             <h1 id="chatTitle">گفت‌وگو</h1>
             <p id="chatDescription">در حال بارگذاری...</p>
         </div>
+        <button type="button" id="chatMute" class="chat-mute" aria-label="بی‌صدا کردن">🔔</button>
     </div>
 
     <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
@@ -1613,7 +1712,9 @@ async function compressImage(file, maxSide = 1280, quality = 0.8) {
 async function downloadFromUrl(url, baseName) {
     try {
         const blob = await (await fetch(url)).blob();
-        const ext = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" }[blob.type] || "jpg";
+        const ext = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif",
+                      "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov" }[blob.type] ||
+            (String(blob.type).startsWith("video/") ? "mp4" : "jpg");
         const link = document.createElement("a");
         link.href = url;
         link.download = (baseName || "image") + "." + ext;
@@ -1851,6 +1952,56 @@ async function ensurePublicProfileSynced(prefs) {
     } catch (_) {}
 }
 
+
+/* ---------- پنجرهٔ عملیات (منوی پایین صفحه) ---------- */
+
+let _activeSheet = null;
+
+function closeSheet() {
+    if (_activeSheet) { _activeSheet.remove(); _activeSheet = null; }
+}
+
+function sheetOpen() { return !!_activeSheet; }
+
+function showSheet(titleText, items) {
+    closeSheet();
+
+    const overlay = document.createElement("div");
+    overlay.className = "sheet-overlay";
+
+    const sheet = document.createElement("div");
+    sheet.className = "sheet";
+
+    if (titleText) {
+        const title = document.createElement("div");
+        title.className = "sheet-title";
+        title.textContent = titleText;
+        sheet.appendChild(title);
+    }
+
+    items.forEach(item => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "sheet-item" + (item.danger ? " danger" : "");
+
+        const icon = document.createElement("span");
+        icon.textContent = item.icon;
+        const label = document.createElement("b");
+        label.textContent = item.label;
+        label.style.fontWeight = "500";
+
+        button.append(icon, label);
+        button.addEventListener("click", () => { closeSheet(); item.run(); });
+        sheet.appendChild(button);
+    });
+
+    overlay.appendChild(sheet);
+    overlay.addEventListener("click", event => { if (event.target === overlay) closeSheet(); });
+    document.body.appendChild(overlay);
+    _activeSheet = overlay;
+    return sheet;
+}
+
 </script>
 <script>
 "use strict";
@@ -1858,6 +2009,32 @@ async function ensurePublicProfileSynced(prefs) {
 /* =========================================================
    اعلان پیام: شمارندهٔ خوانده‌نشده، صدا، لرزش، بنر، عنوان صفحه
 ========================================================= */
+
+/* ---------- تنظیمات هر گفت‌وگو: سنجاق، بی‌صدا، پاک‌شده ---------- */
+
+const ChatPrefs = (() => {
+    const NAME = "chatPrefs";
+    const load = () => { try { return JSON.parse(localStorage.getItem(NAME) || "{}"); } catch (_) { return {}; } };
+    const save = value => { try { localStorage.setItem(NAME, JSON.stringify(value)); } catch (_) {} };
+    const get = (kind, key) => (load()[kind] || {})[key];
+
+    function set(kind, key, value) {
+        const all = load();
+        all[kind] = all[kind] || {};
+        if (value === undefined || value === null || value === false) delete all[kind][key];
+        else all[kind][key] = value;
+        save(all);
+    }
+
+    return {
+        isMuted: key => !!get("muted", key),
+        setMuted: (key, on) => set("muted", key, on ? 1 : false),
+        pinnedAt: key => get("pinned", key) || 0,
+        setPinned: (key, on) => set("pinned", key, on ? Date.now() : false),
+        clearedAt: key => get("cleared", key) || "",
+        setCleared: (key, iso) => set("cleared", key, iso || new Date().toISOString())
+    };
+})();
 
 const Notifier = (() => {
     const UNREAD_KEY = "unreadCounts";
@@ -2091,6 +2268,15 @@ const Notifier = (() => {
         const key = row.group_id;
         const preview = previewOf(row);
         const visible = !document.hidden;
+        const muted = ChatPrefs.isMuted(key);
+
+        // گفت‌وگوی بی‌صدا: فقط شمارنده بالا می‌رود
+        if (muted) {
+            if (options.viewingKey === key && visible) markRead(key, row.$createdAt);
+            else setUnread(key, getUnread(key) + 1);
+            if (options.onChange) options.onChange(key);
+            return;
+        }
 
         if (options.viewingKey === key) {
             if (visible) {
@@ -2169,7 +2355,7 @@ const Notifier = (() => {
     return {
         init, setBaseTitle, getUnread, getLastRead, setUnread, markRead,
         totalUnread, handleRealtime, recount, paintBadges, permissionBar,
-        stopFlash, ping, buzz
+        stopFlash, ping, buzz, previewOf
     };
 })();
 
@@ -2339,7 +2525,7 @@ const Notifier = (() => {
     /* ---------- محتوای پیام ---------- */
 
     function parseContent(row) {
-        const info = { text: "", fileId: "", kind: "", size: 0, reply: null, edited: false };
+        const info = { text: "", fileId: "", kind: "", size: 0, reply: null, edited: false, fw: null };
         const raw = row.content || "";
 
         if (raw.startsWith('{"_m":1')) {
@@ -2351,6 +2537,7 @@ const Notifier = (() => {
                 info.size = o.s || 0;
                 info.reply = o.r || null;
                 info.edited = !!o.e;
+                info.fw = o.fw ? (o.fw.n || "پیام") : null;
             } catch (_) { info.text = raw; }
         } else {
             info.text = raw;
@@ -2521,23 +2708,34 @@ const Notifier = (() => {
             line.dataset.id = row.$id;
             if (row.pending) line.style.opacity = "0.6";
 
-            if (channelId === "announcements") {
-                line.appendChild(createAvatar("chan-ann", "اطلاع‌رسانی"));
-            } else {
+            // در کانال پایگاه آیکون پروفایل کنار پیام‌ها نیست
+            if (channelId !== "announcements") {
                 line.appendChild(createAvatar(row.owner_id, row.display_name || (mine ? account.name : "")));
             }
 
             const wrap = document.createElement("div");
             wrap.className = "chat-msg";
 
-            // در کانال اطلاع‌رسانی اسم فرستنده نمایش داده نمی‌شود
-            if (!mine && channelId !== "announcements" && row.owner_id !== lastSender) {
+            if (channelId === "announcements") {
+                // در کانال پایگاه، به‌جای اسم فرستنده، اسم کانال نوشته می‌شود
+                const sender = document.createElement("span");
+                sender.className = "chat-sender";
+                sender.textContent = channelTitle;
+                wrap.appendChild(sender);
+            } else if (!mine && row.owner_id !== lastSender) {
                 const sender = document.createElement("span");
                 sender.className = "chat-sender";
                 sender.textContent = row.display_name || "عضو";
                 wrap.appendChild(sender);
             }
             lastSender = row.owner_id;
+
+            if (info.fw) {
+                const fwd = document.createElement("div");
+                fwd.className = "chat-fwd";
+                fwd.textContent = "↪️ بازارسال‌شده از " + info.fw;
+                wrap.appendChild(fwd);
+            }
 
             if (info.reply) {
                 const quote = document.createElement("div");
@@ -2635,7 +2833,10 @@ const Notifier = (() => {
                 ]
             });
 
-            const serverRows = result.rows.filter(r => r.record_type === "message").reverse();
+            const cleared = ChatPrefs.clearedAt(channelKey);
+            const serverRows = result.rows
+                .filter(r => r.record_type === "message" && (!cleared || r.$createdAt > cleared))
+                .reverse();
             const serverIds = new Set(serverRows.map(r => r.$id));
             const newest = serverRows.length ? serverRows[serverRows.length - 1].$createdAt : "";
 
@@ -2837,63 +3038,173 @@ const Notifier = (() => {
 
     /* ---------- پنجرهٔ عملیات (نگه‌داشتن روی پیام) ---------- */
 
-    let activeSheet = null;
-
-    function closeSheet() {
-        if (activeSheet) { activeSheet.remove(); activeSheet = null; }
-    }
-
-    function showSheet(titleText, items) {
-        closeSheet();
-
-        const overlay = document.createElement("div");
-        overlay.className = "sheet-overlay";
-
-        const sheet = document.createElement("div");
-        sheet.className = "sheet";
-
-        if (titleText) {
-            const title = document.createElement("div");
-            title.className = "sheet-title";
-            title.textContent = titleText;
-            sheet.appendChild(title);
-        }
-
-        items.forEach(item => {
-            const button = document.createElement("button");
-            button.type = "button";
-            button.className = "sheet-item" + (item.danger ? " danger" : "");
-
-            const icon = document.createElement("span");
-            icon.textContent = item.icon;
-            const label = document.createElement("b");
-            label.textContent = item.label;
-            label.style.fontWeight = "500";
-
-            button.append(icon, label);
-            button.addEventListener("click", () => { closeSheet(); item.run(); });
-            sheet.appendChild(button);
-        });
-
-        overlay.appendChild(sheet);
-        overlay.addEventListener("click", event => { if (event.target === overlay) closeSheet(); });
-        document.body.appendChild(overlay);
-        activeSheet = overlay;
-    }
-
     function openActions(row) {
-        if (row.pending || activeSheet) return;
+        if (row.pending || sheetOpen()) return;
 
         const info = parseContent(row);
         const mine = row.owner_id === account.$id;
-        const items = [{ icon: "↩️", label: "پاسخ", run: () => startReply(row) }];
+        const inChannel = channelId === "announcements";
 
-        if (info.text) items.push({ icon: "📋", label: "کپی کردن پیام", run: () => copyText(info.text) });
-        if (mine) items.push({ icon: "✏️", label: "ویرایش", run: () => startEdit(row) });
-        if (mine || canModerate) items.push({ icon: "🗑️", label: "حذف", danger: true, run: () => deleteMessage(row) });
-        if (!mine) items.push({ icon: "🚩", label: "گزارش", run: () => chooseReportReason(row) });
+        const reply = { icon: "↩️", label: "پاسخ", run: () => startReply(row) };
+        const copy = { icon: "📋", label: "کپی کردن پیام", run: () => copyText(info.text) };
+        const edit = { icon: "✏️", label: "ویرایش", run: () => startEdit(row) };
+        const del = { icon: "🗑️", label: "حذف", danger: true, run: () => deleteMessage(row) };
+        const report = { icon: "🚩", label: "گزارش", run: () => chooseReportReason(row) };
+        const items = [];
+
+        if (inChannel) {
+            // کانال پایگاه: کپی و گزارش (مدیران برای مدیریت پیام‌ها، ویرایش/حذف هم دارند)
+            if (info.text) items.push(copy);
+            if (mine) items.push(edit);
+            if (mine || canModerate) items.push(del);
+            if (!mine) items.push(report);
+        } else {
+            if (canSend) items.push(reply);
+            items.push({ icon: "↪️", label: "بازارسال با نام فرستنده", run: () => openForwardPicker(row, true) });
+            items.push({ icon: "📨", label: "بازارسال بدون نام", run: () => openForwardPicker(row, false) });
+            if (info.text) items.push(copy);
+            if (info.kind && (info.fileId || info.localUrl)) {
+                items.push({ icon: "⬇️", label: "دانلود", run: () => downloadMedia(info) });
+            }
+            if (mine) items.push(edit);
+            if (mine || canModerate) items.push(del);
+            if (!mine) items.push(report);
+        }
 
         showSheet("", items);
+    }
+
+    async function downloadMedia(info) {
+        try {
+            const url = info.localUrl || await fileBlobUrl(info.fileId);
+            await downloadFromUrl(url, (info.kind === "video" ? "video-" : "photo-") + Date.now());
+        } catch (error) {
+            notify("دانلود ناموفق بود" + (error && error.code ? " (کد " + error.code + ")" : ""));
+        }
+    }
+
+    /* ---------- بازارسال ---------- */
+
+    const normalizeQuery = value => String(value || "")
+        .replace(/ي/g, "ی").replace(/ك/g, "ک")
+        .replace(/[\u200c\s]+/g, " ").trim().toLowerCase();
+
+    async function openForwardPicker(row, withName) {
+        const sheet = showSheet(
+            withName ? "بازارسال با نام فرستنده به..." : "بازارسال بدون نام فرستنده به...", []);
+        sheet.classList.add("fw");
+
+        const search = document.createElement("input");
+        search.type = "search";
+        search.className = "fw-search";
+        search.placeholder = "جستجوی گفت‌وگو یا اکانت...";
+        search.autocomplete = "off";
+
+        const list = document.createElement("div");
+        list.className = "fw-list";
+        sheet.append(search, list);
+
+        const targets = [];
+        Object.keys(RING_NAMES)
+            .filter(k => isAdmin || labels.includes(k))
+            .forEach(k => targets.push({ title: RING_NAMES[k], icon: "👥", payload: { groupId: k } }));
+        if (isAdmin || isManager) {
+            targets.push({ title: "اطلاع‌رسانی پایگاه", icon: "📢", payload: { groupId: "announcements" } });
+        }
+
+        let people = [];
+        let query = "";
+        let ticket = 0;
+        let timer = null;
+
+        function choose(target) {
+            closeSheet();
+            forwardTo(row, withName, target);
+        }
+
+        function draw() {
+            list.replaceChildren();
+            const q = normalizeQuery(query);
+
+            const shown = targets.filter(t => !q || normalizeQuery(t.title).includes(q));
+            const extra = people
+                .filter(p => !targets.some(t => t.payload.to === p.id))
+                .map(p => ({ title: p.name, icon: "👤", payload: { to: p.id } }));
+
+            [...shown, ...extra].forEach(target => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "sheet-item";
+                const icon = document.createElement("span");
+                icon.textContent = target.icon;
+                const label = document.createElement("b");
+                label.textContent = target.title;
+                label.style.fontWeight = "500";
+                button.append(icon, label);
+                button.addEventListener("click", () => choose(target));
+                list.appendChild(button);
+            });
+
+            if (!list.children.length) {
+                const empty = document.createElement("div");
+                empty.className = "sheet-title";
+                empty.textContent = "موردی پیدا نشد.";
+                list.appendChild(empty);
+            }
+        }
+
+        draw();
+
+        // گفت‌وگوهای شخصی قبلی
+        try {
+            const result = await appwriteTablesDB.listRows({
+                databaseId: APPWRITE_DATABASE_ID,
+                tableId: APPWRITE_TABLE_ID,
+                queries: [
+                    Appwrite.Query.equal("group_id", [convListKey(account.$id)]),
+                    Appwrite.Query.orderDesc("$updatedAt"),
+                    Appwrite.Query.limit(50)
+                ]
+            });
+            result.rows.filter(r => r.record_type === "conv").forEach(r => {
+                let info = {};
+                try { info = JSON.parse(r.content || "{}"); } catch (_) {}
+                if (info.w) targets.push({ title: r.display_name || "کاربر", icon: "💬", payload: { to: info.w } });
+            });
+            draw();
+        } catch (_) {}
+
+        search.addEventListener("input", () => {
+            query = search.value;
+            draw();
+            clearTimeout(timer);
+
+            if (query.trim().length < 2) { people = []; draw(); return; }
+
+            timer = setTimeout(async () => {
+                const mine = ++ticket;
+                try {
+                    const data = await callServer({ action: "searchUsers", q: query.trim() });
+                    if (mine !== ticket) return;
+                    people = data.users || [];
+                    draw();
+                } catch (_) {}
+            }, 300);
+        });
+    }
+
+    async function forwardTo(row, withName, target) {
+        try {
+            await callServer({
+                action: "forwardMessage",
+                messageId: row.$id,
+                withName,
+                ...target.payload
+            });
+            notify("به «" + target.title + "» بازارسال شد.", true);
+        } catch (error) {
+            notify(error.message || "بازارسال ناموفق بود.");
+        }
     }
 
     async function copyText(text) {
@@ -3258,6 +3569,22 @@ const Notifier = (() => {
 
     Notifier.init({ me: account.$id, baseTitle: document.title });
     Notifier.markRead(channelKey);
+
+    const muteBtn = document.getElementById("chatMute");
+    if (muteBtn) {
+        const paintMute = () => {
+            const muted = ChatPrefs.isMuted(channelKey);
+            muteBtn.textContent = muted ? "🔕" : "🔔";
+            muteBtn.setAttribute("aria-label", muted ? "فعال کردن صدا" : "بی‌صدا کردن");
+        };
+        paintMute();
+        muteBtn.addEventListener("click", () => {
+            const next = !ChatPrefs.isMuted(channelKey);
+            ChatPrefs.setMuted(channelKey, next);
+            paintMute();
+            notify(next ? "این گفت‌وگو بی‌صدا شد." : "صدای این گفت‌وگو فعال شد.", true);
+        });
+    }
 
     await loadMessages();
     startRealtime();

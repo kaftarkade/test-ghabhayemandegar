@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -969,6 +968,126 @@ button.pc-dm { width: 100%; border: none; font: inherit; cursor: pointer; }
 }
 .nb-permission button { border: none; border-radius: 12px; padding: 8px 14px; background: #92400e; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
 
+
+/* پنجرهٔ عملیات پیام (نگه‌داشتن روی پیام) */
+.sheet-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 130;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(0, 0, 0, .45);
+}
+
+.sheet {
+    width: 100%;
+    max-width: 460px;
+    padding: 10px 8px 16px;
+    border-radius: 24px 24px 0 0;
+    background: #fff;
+    color: var(--text);
+}
+
+.sheet-title { margin: 6px 14px 8px; font-size: 13px; color: var(--muted); }
+
+.sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 14px;
+    background: none;
+    font: inherit;
+    font-size: 15px;
+    text-align: start;
+    cursor: pointer;
+}
+
+.sheet-item:active { background: var(--green-light); }
+.sheet-item span { width: 26px; text-align: center; font-size: 20px; }
+.sheet-item.danger { color: #dc2626; }
+
+
+/* ====== صفحهٔ اصلی: فهرست گفتگوها ====== */
+.cl-actions { display: flex; gap: 8px; align-items: center; }
+
+.cl-icon-btn {
+    width: 42px; height: 42px; border: 1px solid var(--border); border-radius: 50%;
+    background: #fff; font-size: 18px; display: grid; place-items: center;
+    text-decoration: none; cursor: pointer; color: var(--text);
+}
+
+.cl-search { display: flex; gap: 8px; margin: 0 0 10px; }
+.cl-search[hidden] { display: none; }
+.cl-search input {
+    flex: 1; padding: 12px 16px; border: 1px solid var(--green); border-radius: 16px;
+    font: inherit; background: #fff; color: var(--text); outline: none;
+}
+.cl-search button {
+    width: 44px; border: none; border-radius: 14px; background: var(--green-light);
+    color: var(--green-dark); font-size: 16px; cursor: pointer;
+}
+
+.cl-tabs { display: flex; gap: 6px; margin: 0 0 8px; overflow-x: auto; padding-bottom: 2px; }
+.cl-tab {
+    flex: 1 0 auto; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 14px; border: 1px solid var(--border); border-radius: 999px;
+    background: #fff; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+.cl-tab.active { background: var(--green); border-color: var(--green); color: #fff; }
+.cl-count {
+    min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
+    background: #dc2626; color: #fff; font-size: 12px; font-weight: 800;
+    display: inline-grid; place-items: center;
+}
+.cl-count[hidden] { display: none; }
+
+.cl-list { display: flex; flex-direction: column; }
+.cl-section { margin: 14px 6px 4px; font-size: 12px; font-weight: 700; color: var(--green-dark); }
+.cl-empty { padding: 36px 10px; text-align: center; color: var(--muted); font-size: 14px; }
+
+.cl-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 6px;
+    border-bottom: 1px solid var(--border); color: inherit; text-decoration: none;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+}
+.cl-item:active { background: var(--green-light); }
+
+.cl-avatar {
+    flex: 0 0 auto; width: 54px; height: 54px; border-radius: 50%;
+    background-color: var(--green-light); background-size: cover; background-position: center;
+    color: var(--green); font-size: 22px; font-weight: 800; display: grid; place-items: center;
+}
+.cl-avatar.has-img { color: transparent; }
+
+.cl-main { flex: 1; min-width: 0; }
+.cl-title-row { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.cl-kind { font-size: 14px; flex: 0 0 auto; }
+.cl-title {
+    margin: 0; font-size: 15px; font-weight: 800; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.cl-flag { font-size: 12px; flex: 0 0 auto; opacity: .85; }
+
+.cl-preview {
+    margin: 4px 0 0; font-size: 13px; color: var(--muted);
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.cl-item.has-unread .cl-preview { color: var(--text); font-weight: 700; }
+
+.cl-meta { flex: 0 0 auto; min-width: 52px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.cl-time { font-size: 12px; color: var(--muted); direction: ltr; }
+.cl-item.has-unread .cl-time { color: var(--green); font-weight: 700; }
+
+.cl-badge {
+    min-width: 26px; height: 26px; padding: 0 8px; border-radius: 999px;
+    background: #dc2626; color: #fff; font-size: 13px; font-weight: 800;
+    display: grid; place-items: center;
+}
+.cl-badge.muted { background: #9ca3af; }
+
 </style>
 </head>
 <body class="messenger-page">
@@ -981,86 +1100,32 @@ button.pc-dm { width: 100%; border: none; font: inherit; cursor: pointer; }
             <small>پیام‌رسان پایگاه</small>
         </span>
     </a>
-    <a href="profile.html" class="account-button">
-        <span>👤</span>
-        <span>پروفایل من</span>
-    </a>
+
+    <div class="cl-actions">
+        <button type="button" id="searchToggle" class="cl-icon-btn" aria-label="جستجو">🔍</button>
+        <a href="profile.html" class="cl-icon-btn" aria-label="پروفایل من">👤</a>
+    </div>
 </header>
 
-<main class="messenger-main">
+<main class="messenger-main cl-main-wrap">
 
-    <nav class="messenger-tabs" aria-label="بخش‌های پیام‌رسان">
-        <button class="messenger-tab active" type="button"
-                data-tab="all" aria-selected="true">📋 همه</button>
-        <button class="messenger-tab" type="button"
-                data-tab="base" aria-selected="false">🏘️ پایگاه</button>
-        <button class="messenger-tab" type="button"
-                data-tab="personal" aria-selected="false">💬 شخصی</button>
+    <div id="searchBar" class="cl-search" hidden>
+        <input id="searchInput" type="search" autocomplete="off"
+               placeholder="جستجو بین همه گفتگوها..." aria-label="جستجو بین گفتگوها">
+        <button type="button" id="searchClose" aria-label="بستن جستجو">✕</button>
+    </div>
+
+    <nav class="cl-tabs" aria-label="دسته‌بندی گفتگوها">
+        <button type="button" class="cl-tab active" data-tab="all">همه <span class="cl-count" hidden></span></button>
+        <button type="button" class="cl-tab" data-tab="dm">شخصی <span class="cl-count" hidden></span></button>
+        <button type="button" class="cl-tab" data-tab="channel">کانال <span class="cl-count" hidden></span></button>
+        <button type="button" class="cl-tab" data-tab="group">گروه <span class="cl-count" hidden></span></button>
     </nav>
 
-    <!-- پنج گروه مستقل -->
-    <section class="tab-panel" id="groups-panel">
-        <div class="list-heading">
-            <div>
-                <h1>گروه‌های حلقات</h1>
-                <p>گفت‌وگوی اختصاصی هر حلقه</p>
-            </div>
-            <span class="section-symbol">👥</span>
-        </div>
-
-        <div id="groupsList"></div>
-
-        <div class="empty-hint" id="groupsHint" hidden>
-            <span>🔐</span>
-            <p></p>
-        </div>
-    </section>
-
-    <!-- کانال مستقل پایگاه -->
-    <section class="tab-panel" id="channels-panel">
-        <div class="list-heading">
-            <div>
-                <h1>کانال پایگاه</h1>
-                <p>اطلاعیه‌ها و برنامه‌های رسمی</p>
-            </div>
-            <span class="section-symbol">📢</span>
-        </div>
-
-        <div id="channelsList"></div>
-    </section>
-
-    <!-- پیام‌های خصوصی -->
-    <section class="tab-panel" id="personal-panel">
-        <div class="list-heading">
-            <div>
-                <h1>پیام‌های شخصی</h1>
-                <p>گفت‌وگوهای خصوصی اعضا</p>
-            </div>
-            <span class="section-symbol">💬</span>
-        </div>
-
-        <div class="dm-search">
-            <input id="dmSearch" type="search" autocomplete="off"
-                   placeholder="جستجوی اسم اکانت..." aria-label="جستجوی اکانت">
-            <p id="dmSearchStatus" class="dm-status" role="status"></p>
-        </div>
-
-        <div id="dmResults"></div>
-
-        <div id="dmListTitle" class="dm-section-title" hidden>گفت‌وگوهای من</div>
-        <div id="dmList"></div>
-
-        <div class="empty-hint" id="dmHint">
-            <span>✉️</span>
-            <p>هنوز گفت‌وگوی شخصی نداری؛ اسم یک اکانت را جستجو کن و پیام بده.</p>
-        </div>
-    </section>
+    <div id="chatList" class="cl-list"></div>
+    <div id="peopleBox" class="cl-list"></div>
 
 </main>
-
-<footer class="messenger-footer">
-    پیام‌رسان اختصاصی حلقات صالحین
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/appwrite@21.4.0"></script>
 <script>
@@ -1275,7 +1340,9 @@ async function compressImage(file, maxSide = 1280, quality = 0.8) {
 async function downloadFromUrl(url, baseName) {
     try {
         const blob = await (await fetch(url)).blob();
-        const ext = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" }[blob.type] || "jpg";
+        const ext = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif",
+                      "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov" }[blob.type] ||
+            (String(blob.type).startsWith("video/") ? "mp4" : "jpg");
         const link = document.createElement("a");
         link.href = url;
         link.download = (baseName || "image") + "." + ext;
@@ -1513,6 +1580,56 @@ async function ensurePublicProfileSynced(prefs) {
     } catch (_) {}
 }
 
+
+/* ---------- پنجرهٔ عملیات (منوی پایین صفحه) ---------- */
+
+let _activeSheet = null;
+
+function closeSheet() {
+    if (_activeSheet) { _activeSheet.remove(); _activeSheet = null; }
+}
+
+function sheetOpen() { return !!_activeSheet; }
+
+function showSheet(titleText, items) {
+    closeSheet();
+
+    const overlay = document.createElement("div");
+    overlay.className = "sheet-overlay";
+
+    const sheet = document.createElement("div");
+    sheet.className = "sheet";
+
+    if (titleText) {
+        const title = document.createElement("div");
+        title.className = "sheet-title";
+        title.textContent = titleText;
+        sheet.appendChild(title);
+    }
+
+    items.forEach(item => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "sheet-item" + (item.danger ? " danger" : "");
+
+        const icon = document.createElement("span");
+        icon.textContent = item.icon;
+        const label = document.createElement("b");
+        label.textContent = item.label;
+        label.style.fontWeight = "500";
+
+        button.append(icon, label);
+        button.addEventListener("click", () => { closeSheet(); item.run(); });
+        sheet.appendChild(button);
+    });
+
+    overlay.appendChild(sheet);
+    overlay.addEventListener("click", event => { if (event.target === overlay) closeSheet(); });
+    document.body.appendChild(overlay);
+    _activeSheet = overlay;
+    return sheet;
+}
+
 </script>
 <script>
 "use strict";
@@ -1520,6 +1637,32 @@ async function ensurePublicProfileSynced(prefs) {
 /* =========================================================
    اعلان پیام: شمارندهٔ خوانده‌نشده، صدا، لرزش، بنر، عنوان صفحه
 ========================================================= */
+
+/* ---------- تنظیمات هر گفت‌وگو: سنجاق، بی‌صدا، پاک‌شده ---------- */
+
+const ChatPrefs = (() => {
+    const NAME = "chatPrefs";
+    const load = () => { try { return JSON.parse(localStorage.getItem(NAME) || "{}"); } catch (_) { return {}; } };
+    const save = value => { try { localStorage.setItem(NAME, JSON.stringify(value)); } catch (_) {} };
+    const get = (kind, key) => (load()[kind] || {})[key];
+
+    function set(kind, key, value) {
+        const all = load();
+        all[kind] = all[kind] || {};
+        if (value === undefined || value === null || value === false) delete all[kind][key];
+        else all[kind][key] = value;
+        save(all);
+    }
+
+    return {
+        isMuted: key => !!get("muted", key),
+        setMuted: (key, on) => set("muted", key, on ? 1 : false),
+        pinnedAt: key => get("pinned", key) || 0,
+        setPinned: (key, on) => set("pinned", key, on ? Date.now() : false),
+        clearedAt: key => get("cleared", key) || "",
+        setCleared: (key, iso) => set("cleared", key, iso || new Date().toISOString())
+    };
+})();
 
 const Notifier = (() => {
     const UNREAD_KEY = "unreadCounts";
@@ -1753,6 +1896,15 @@ const Notifier = (() => {
         const key = row.group_id;
         const preview = previewOf(row);
         const visible = !document.hidden;
+        const muted = ChatPrefs.isMuted(key);
+
+        // گفت‌وگوی بی‌صدا: فقط شمارنده بالا می‌رود
+        if (muted) {
+            if (options.viewingKey === key && visible) markRead(key, row.$createdAt);
+            else setUnread(key, getUnread(key) + 1);
+            if (options.onChange) options.onChange(key);
+            return;
+        }
 
         if (options.viewingKey === key) {
             if (visible) {
@@ -1831,7 +1983,7 @@ const Notifier = (() => {
     return {
         init, setBaseTitle, getUnread, getLastRead, setUnread, markRead,
         totalUnread, handleRealtime, recount, paintBadges, permissionBar,
-        stopFlash, ping, buzz
+        stopFlash, ping, buzz, previewOf
     };
 })();
 
@@ -1840,91 +1992,429 @@ const Notifier = (() => {
 (function () {
     "use strict";
 
-    const tabs = document.querySelectorAll(".messenger-tab");
-    const groupsPanel = document.getElementById("groups-panel");
-    const channelsPanel = document.getElementById("channels-panel");
-    const personalPanel = document.getElementById("personal-panel");
-
-    // اگر در صفحه‌ای غیر از صفحهٔ اصلی اجرا شد، بدون خطا خارج شو.
-    if (!tabs.length || !groupsPanel || !channelsPanel || !personalPanel) return;
-
-    /* ---------------- تب‌ها ---------------- */
-
-    const panels = { groups: groupsPanel, channels: channelsPanel, personal: personalPanel };
-    const tabSections = {
-        all: ["groups", "channels", "personal"],
-        base: ["groups", "channels"],
-        personal: ["personal"]
-    };
-
-    function showTab(name) {
-        const visible = tabSections[name];
-        if (!visible) return;
-
-        tabs.forEach(tab => {
-            const active = tab.dataset.tab === name;
-            tab.classList.toggle("active", active);
-            tab.setAttribute("aria-selected", String(active));
-        });
-
-        Object.keys(panels).forEach(key => {
-            panels[key].hidden = !visible.includes(key);
-        });
-    }
-
-    tabs.forEach(tab => tab.addEventListener("click", () => showTab(tab.dataset.tab)));
-    showTab("all");
-
-    /* ---------------- ساخت آیتم گفت‌وگو ---------------- */
+    const listBox = document.getElementById("chatList");
+    const peopleBox = document.getElementById("peopleBox");
+    const tabs = document.querySelectorAll(".cl-tab");
+    const searchBar = document.getElementById("searchBar");
+    const searchInput = document.getElementById("searchInput");
 
     const faDigits = "۰۱۲۳۴۵۶۷۸۹";
+    const normalize = value => String(value || "")
+        .replace(/ي/g, "ی").replace(/ك/g, "ک")
+        .replace(/[\u200c\s]+/g, " ").trim().toLowerCase();
 
-    function conversationItem({ href, avatarClass, avatarText, title, badge, description, userId, key }) {
+    let me = null;
+    let currentTab = "all";
+    let query = "";
+    let people = [];
+    const chats = new Map();   // key -> چت
+
+    /* ---------------- زمان ---------------- */
+
+    function shortTime(iso) {
+        if (!iso) return "";
+        const d = new Date(iso);
+        const now = new Date();
+        if (d.toDateString() === now.toDateString()) {
+            return d.toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" });
+        }
+        const diff = (now - d) / 86400000;
+        if (diff < 7) return d.toLocaleDateString("fa-IR", { weekday: "short" });
+        return d.toLocaleDateString("fa-IR", { month: "numeric", day: "numeric" });
+    }
+
+    /* ---------------- ساخت ردیف گفتگو ---------------- */
+
+    function chatRow(chat) {
         const link = document.createElement("a");
-        link.href = href;
-        link.className = "conversation-item";
-        if (key) link.dataset.key = key;
+        link.className = "cl-item";
+        link.href = chat.href;
+        if (chat.kind !== "tool" && chat.kind !== "person") link.dataset.key = chat.key;
+        link.dataset.ckey = chat.key;
 
         const avatar = document.createElement("div");
-        avatar.className = "conversation-avatar " + avatarClass;
-        avatar.textContent = avatarText;
-        if (userId) avatar.dataset.user = userId;
+        avatar.className = "cl-avatar";
+        avatar.textContent = chat.letter;
+        if (chat.profileId) avatar.dataset.user = chat.profileId;
 
-        const details = document.createElement("div");
-        details.className = "conversation-details";
+        const main = document.createElement("div");
+        main.className = "cl-main";
 
-        const titleBox = document.createElement("div");
-        titleBox.className = "conversation-title";
+        const titleRow = document.createElement("div");
+        titleRow.className = "cl-title-row";
 
-        const h2 = document.createElement("h2");
-        h2.textContent = title;
-
-        titleBox.append(h2);
-        if (badge) {
-            const status = document.createElement("span");
-            status.className = "member-status";
-            status.textContent = badge;
-            titleBox.append(status);
+        const icon = { ring: "👥", ann: "📢", tool: "🛡️" }[chat.kind];
+        if (icon && chat.kind !== "tool") {
+            const k = document.createElement("span");
+            k.className = "cl-kind";
+            k.textContent = icon;
+            titleRow.appendChild(k);
         }
 
-        const p = document.createElement("p");
-        p.textContent = description;
+        const title = document.createElement("h2");
+        title.className = "cl-title";
+        title.textContent = chat.title;
+        titleRow.appendChild(title);
 
-        details.append(titleBox, p);
+        const muted = ChatPrefs.isMuted(chat.key);
+        if (ChatPrefs.pinnedAt(chat.key)) {
+            const f = document.createElement("span");
+            f.className = "cl-flag";
+            f.textContent = "📌";
+            titleRow.appendChild(f);
+        }
+        if (muted) {
+            const f = document.createElement("span");
+            f.className = "cl-flag";
+            f.textContent = "🔕";
+            titleRow.appendChild(f);
+        }
 
-        const arrow = document.createElement("span");
-        arrow.className = "conversation-arrow";
-        arrow.textContent = "←";
+        const preview = document.createElement("p");
+        preview.className = "cl-preview";
+        preview.dir = "auto";
+        preview.textContent = chat.preview || chat.hint || "";
 
-        const unread = document.createElement("span");
-        unread.className = "unread-badge";
-        unread.hidden = true;
+        main.append(titleRow, preview);
 
-        link.append(avatar, details, unread, arrow);
+        const meta = document.createElement("div");
+        meta.className = "cl-meta";
+
+        const time = document.createElement("span");
+        time.className = "cl-time";
+        time.textContent = chat.last ? shortTime(chat.last.time) : "";
+        meta.appendChild(time);
+
+        const unread = Notifier.getUnread(chat.key);
+        if (unread > 0 && chat.kind !== "tool") {
+            const badge = document.createElement("span");
+            badge.className = "cl-badge" + (muted ? " muted" : "");
+            badge.textContent = unread > 99 ? "۹۹+" : unread.toLocaleString("fa-IR");
+            meta.appendChild(badge);
+            link.classList.add("has-unread");
+        }
+
+        link.append(avatar, main, meta);
         return link;
     }
 
-    /* ---------------- ورود و نمایش بر اساس دسترسی ---------------- */
+    /* ---------------- فهرست و مرتب‌سازی ---------------- */
+
+    function previewText(chat) {
+        if (!chat.last || !chat.last.text) return "";
+        const { text, sender, mine } = chat.last;
+        if (chat.kind === "ring") return (mine ? "شما" : (sender || "عضو")) + ": " + text;
+        if (chat.kind === "dm" && mine) return "شما: " + text;
+        return text;
+    }
+
+    function inTab(chat) {
+        if (currentTab === "all") return true;
+        if (currentTab === "dm") return chat.kind === "dm";
+        if (currentTab === "group") return chat.kind === "ring";
+        if (currentTab === "channel") return chat.kind === "ann" || chat.kind === "tool";
+        return true;
+    }
+
+    function sortedChats() {
+        const time = chat => (chat.last && chat.last.time) ? new Date(chat.last.time).getTime() : 0;
+
+        return [...chats.values()].sort((a, b) => {
+            const ta = a.kind === "tool", tb = b.kind === "tool";
+            if (ta !== tb) return ta ? 1 : -1;                         // ابزارها آخر
+            const pa = ChatPrefs.pinnedAt(a.key), pb = ChatPrefs.pinnedAt(b.key);
+            if (!!pa !== !!pb) return pa ? -1 : 1;                     // سنجاق‌شده‌ها اول
+            if (pa && pb) return pb - pa;
+            return time(b) - time(a);                                  // تازه‌ترین پیام بالا
+        });
+    }
+
+    function updateCounts() {
+        const sums = { all: 0, dm: 0, channel: 0, group: 0 };
+
+        chats.forEach(chat => {
+            if (chat.kind === "tool") return;
+            const n = Notifier.getUnread(chat.key);
+            if (!n) return;
+            sums.all += n;
+            if (chat.kind === "dm") sums.dm += n;
+            if (chat.kind === "ann") sums.channel += n;
+            if (chat.kind === "ring") sums.group += n;
+        });
+
+        tabs.forEach(tab => {
+            const badge = tab.querySelector(".cl-count");
+            const n = sums[tab.dataset.tab] || 0;
+            badge.hidden = !n;
+            badge.textContent = n > 99 ? "۹۹+" : n.toLocaleString("fa-IR");
+        });
+    }
+
+    function render() {
+        const q = normalize(query);
+
+        listBox.replaceChildren();
+
+        sortedChats()
+            .filter(chat => inTab(chat))
+            .filter(chat => !q || normalize(chat.title).includes(q) || normalize(chat.preview).includes(q))
+            .forEach(chat => listBox.appendChild(chatRow(chat)));
+
+        if (!listBox.children.length) {
+            const empty = document.createElement("div");
+            empty.className = "cl-empty";
+            empty.textContent = q ? "نتیجه‌ای پیدا نشد." : "گفت‌وگویی وجود ندارد.";
+            listBox.appendChild(empty);
+        }
+
+        // افراد (نتیجهٔ جستجوی اکانت‌ها)
+        peopleBox.replaceChildren();
+        if (q && people.length) {
+            const head = document.createElement("div");
+            head.className = "cl-section";
+            head.textContent = "افراد";
+            peopleBox.appendChild(head);
+
+            people.forEach(person => {
+                peopleBox.appendChild(chatRow({
+                    key: "person:" + person.id, kind: "person",
+                    href: "chat.html?type=dm&user=" + encodeURIComponent(person.id),
+                    title: person.name, hint: "شروع پیام شخصی",
+                    letter: (person.name || "?").trim().charAt(0) || "?",
+                    profileId: person.id
+                }));
+            });
+        }
+
+        updateCounts();
+
+        const ids = [...chats.values()].map(c => c.profileId).concat(people.map(p => p.id)).filter(Boolean);
+        loadProfiles(ids).then(() => {
+            paintAvatars(listBox);
+            paintAvatars(peopleBox);
+        });
+    }
+
+    function refreshPreviews() {
+        chats.forEach(chat => { chat.preview = previewText(chat); });
+    }
+
+    function redraw() {
+        refreshPreviews();
+        render();
+    }
+
+    /* ---------------- تب‌ها و جستجو ---------------- */
+
+    tabs.forEach(tab => tab.addEventListener("click", () => {
+        currentTab = tab.dataset.tab;
+        tabs.forEach(t => t.classList.toggle("active", t === tab));
+        render();
+    }));
+
+    document.getElementById("searchToggle").addEventListener("click", () => {
+        searchBar.hidden = !searchBar.hidden;
+        if (!searchBar.hidden) searchInput.focus();
+        else closeSearch();
+    });
+
+    function closeSearch() {
+        searchBar.hidden = true;
+        searchInput.value = "";
+        query = "";
+        people = [];
+        render();
+    }
+
+    document.getElementById("searchClose").addEventListener("click", closeSearch);
+
+    let searchTimer = null;
+    let searchTicket = 0;
+
+    searchInput.addEventListener("input", () => {
+        query = searchInput.value;
+        render();
+        clearTimeout(searchTimer);
+
+        if (query.trim().length < 2) { people = []; render(); return; }
+
+        searchTimer = setTimeout(async () => {
+            const ticket = ++searchTicket;
+            try {
+                const data = await callServer({ action: "searchUsers", q: query.trim() });
+                if (ticket !== searchTicket) return;
+                const existing = new Set([...chats.values()].filter(c => c.kind === "dm").map(c => c.profileId));
+                people = (data.users || []).filter(u => !existing.has(u.id));
+                render();
+            } catch (_) {}
+        }, 300);
+    });
+
+    /* ---------------- نگه‌داشتن روی گفتگو ---------------- */
+
+    let holdTimer = null;
+    let holdStart = null;
+    let suppressUntil = 0;
+
+    function openChatMenu(chat) {
+        if (sheetOpen()) return;
+
+        const pinned = !!ChatPrefs.pinnedAt(chat.key);
+        const muted = ChatPrefs.isMuted(chat.key);
+
+        const items = [
+            {
+                icon: "📌", label: pinned ? "برداشتن سنجاق" : "سنجاق کردن",
+                run: () => { ChatPrefs.setPinned(chat.key, !pinned); redraw(); }
+            },
+            {
+                icon: "✅", label: "خواندن پیام‌ها",
+                run: () => {
+                    Notifier.markRead(chat.key, chat.last && chat.last.time);
+                    redraw();
+                }
+            },
+            {
+                icon: muted ? "🔔" : "🔕", label: muted ? "فعال کردن صدا" : "بی‌صدا کردن",
+                run: () => { ChatPrefs.setMuted(chat.key, !muted); redraw(); }
+            },
+            {
+                icon: "🗑️", danger: true,
+                label: chat.kind === "dm" ? "حذف گفتگو" : "پاک کردن پیام‌ها",
+                run: () => deleteChat(chat)
+            }
+        ];
+
+        showSheet(chat.title, items);
+    }
+
+    async function deleteChat(chat) {
+        const sure = chat.kind === "dm"
+            ? "این گفت‌وگو از فهرست تو حذف می‌شود. ادامه می‌دهی؟"
+            : "پیام‌های فعلی این گفت‌وگو فقط برای خودت پاک می‌شود. ادامه می‌دهی؟";
+        if (!confirm(sure)) return;
+
+        ChatPrefs.setCleared(chat.key, new Date().toISOString());
+        Notifier.markRead(chat.key);
+
+        if (chat.kind === "dm") {
+            chats.delete(chat.key);
+            try { await callServer({ action: "deleteConversation", withUser: chat.profileId }); } catch (_) {}
+        } else {
+            chat.last = null;
+        }
+        redraw();
+    }
+
+    listBox.addEventListener("pointerdown", event => {
+        const item = event.target.closest(".cl-item");
+        if (!item || !chats.has(item.dataset.ckey)) return;
+        const chat = chats.get(item.dataset.ckey);
+        if (chat.kind === "tool") return;
+
+        holdStart = { x: event.clientX, y: event.clientY };
+        clearTimeout(holdTimer);
+        holdTimer = setTimeout(() => {
+            suppressUntil = Date.now() + 800;
+            try { if (navigator.vibrate) navigator.vibrate(20); } catch (_) {}
+            openChatMenu(chat);
+        }, 480);
+    });
+
+    const cancelHold = () => { clearTimeout(holdTimer); holdStart = null; };
+    listBox.addEventListener("pointerup", cancelHold);
+    listBox.addEventListener("pointercancel", cancelHold);
+    listBox.addEventListener("pointermove", event => {
+        if (holdStart && (Math.abs(event.clientX - holdStart.x) > 10 || Math.abs(event.clientY - holdStart.y) > 10)) cancelHold();
+    });
+
+    listBox.addEventListener("click", event => {
+        if (Date.now() < suppressUntil) { event.preventDefault(); event.stopPropagation(); }
+    }, true);
+
+    listBox.addEventListener("contextmenu", event => {
+        const item = event.target.closest(".cl-item");
+        if (!item) return;
+        event.preventDefault();
+        const chat = chats.get(item.dataset.ckey);
+        if (chat && chat.kind !== "tool") openChatMenu(chat);
+    });
+
+    /* ---------------- بارگذاری داده‌ها ---------------- */
+
+    function lastFromRow(row) {
+        const cleared = ChatPrefs.clearedAt(row.group_id);
+        if (cleared && row.$createdAt <= cleared) return null;
+        return {
+            text: Notifier.previewOf(row),
+            sender: String(row.display_name || "").replace(/ \(مدیر حلقه\)$/, ""),
+            mine: row.owner_id === me,
+            time: row.$createdAt
+        };
+    }
+
+    async function loadLastMessage(chat) {
+        try {
+            const result = await appwriteTablesDB.listRows({
+                databaseId: APPWRITE_DATABASE_ID,
+                tableId: APPWRITE_TABLE_ID,
+                queries: [
+                    Appwrite.Query.equal("group_id", [chat.key]),
+                    Appwrite.Query.orderDesc("$createdAt"),
+                    Appwrite.Query.limit(1)
+                ]
+            });
+            const row = result.rows.find(r => r.record_type === "message");
+            chat.last = row ? lastFromRow(row) : null;
+        } catch (_) {}
+    }
+
+    async function loadConversations() {
+        try {
+            const result = await appwriteTablesDB.listRows({
+                databaseId: APPWRITE_DATABASE_ID,
+                tableId: APPWRITE_TABLE_ID,
+                queries: [
+                    Appwrite.Query.equal("group_id", [convListKey(me)]),
+                    Appwrite.Query.orderDesc("$updatedAt"),
+                    Appwrite.Query.limit(50)
+                ]
+            });
+
+            // گفت‌وگوهای شخصی قبلی را بازسازی می‌کنیم
+            [...chats.values()].filter(c => c.kind === "dm").forEach(c => chats.delete(c.key));
+            const latest = {};
+
+            result.rows.filter(r => r.record_type === "conv").forEach(row => {
+                let info = {};
+                try { info = JSON.parse(row.content || "{}"); } catch (_) {}
+                if (!info.w) return;
+
+                const key = dmKey(me, info.w);
+                const cleared = ChatPrefs.clearedAt(key);
+                latest[key] = row.$updatedAt;
+
+                chats.set(key, {
+                    key, kind: "dm",
+                    href: "chat.html?type=dm&user=" + encodeURIComponent(info.w),
+                    title: row.display_name || "کاربر",
+                    letter: (row.display_name || "?").trim().charAt(0) || "?",
+                    profileId: info.w,
+                    last: (cleared && row.$updatedAt <= cleared) ? null
+                        : { text: info.l || "", sender: "", mine: false, time: row.$updatedAt }
+                });
+            });
+
+            redraw();
+
+            await Notifier.recount(Object.keys(latest), { firstTime: "all", latest });
+            redraw();
+        } catch (error) {
+            console.warn("loadConversations failed", error && error.message);
+        }
+    }
+
+    /* ---------------- شروع ---------------- */
 
     (async function init() {
         let account;
@@ -1938,7 +2428,8 @@ const Notifier = (() => {
             return;
         }
 
-        // برای صفحهٔ پروفایل که از localStorage استفاده می‌کند
+        me = account.$id;
+
         if (localStorage.getItem("loggedIn") !== "true" || !localStorage.getItem("memoryUser")) {
             localStorage.setItem("memoryUser", JSON.stringify({
                 name: account.name || "",
@@ -1948,228 +2439,89 @@ const Notifier = (() => {
             localStorage.setItem("loggedIn", "true");
         }
 
-        const isAdmin = account.$id === ADMIN_USER_ID;
+        const isAdmin = me === ADMIN_USER_ID;
         const labels = account.labels || [];
         const isMember = isAdmin || labels.includes("member");
-
-        const groupsList = document.getElementById("groupsList");
-        const channelsList = document.getElementById("channelsList");
-        const groupsHint = document.getElementById("groupsHint");
-
-        // گروه‌ها: فقط حلقهٔ خود کاربر (مدیر همه را می‌بیند)
-        const myRings = Object.keys(RING_NAMES).filter(key => isAdmin || labels.includes(key));
-
-        groupsList.replaceChildren();
-        myRings.forEach(key => {
-            const number = Number(key.replace("ring", ""));
-            groupsList.appendChild(conversationItem({
-                href: "chat.html?type=ring&group=" + key,
-                avatarClass: "ring-avatar",
-                avatarText: faDigits[number],
-                title: RING_NAMES[key],
-                badge: "گروه",
-                description: "گروه گفت‌وگوی " + RING_NAMES[key],
-                key: "m:" + key
-            }));
-        });
-
-        if (!myRings.length) {
-            groupsHint.hidden = false;
-            groupsHint.querySelector("p").textContent =
-                "هنوز به حلقه‌ای اختصاص داده نشده‌ای؛ با مدیر تماس بگیر.";
-        }
-
         const isManager = labels.some(l => /^manager[1-5]$/.test(l));
 
-        // کانال اطلاع‌رسانی پایگاه
-        channelsList.replaceChildren();
+        Notifier.init({ me, baseTitle: document.title });
+        Notifier.permissionBar(listBox);
+
+        // کانال پایگاه
         if (isMember) {
-            channelsList.appendChild(conversationItem({
-                href: "chat.html?type=announcements",
-                avatarClass: "channel-avatar",
-                avatarText: "📢",
-                title: "اطلاع‌رسانی پایگاه",
-                badge: "کانال",
-                description: "اخبار، برنامه‌ها و اطلاعیه‌های پایگاه",
-                key: "m:ann"
-            }));
-        }
-
-        // بررسی گزارش‌ها (مدیران)
-        if (isAdmin || isManager) {
-            channelsList.appendChild(conversationItem({
-                href: "reports.html",
-                avatarClass: "channel-avatar",
-                avatarText: "🛡️",
-                title: "گزارش‌ها",
-                badge: isAdmin ? "مدیر کل" : "مدیر حلقه",
-                description: "بررسی پیام‌های گزارش‌شده"
-            }));
-        }
-
-        // پنل مدیریت برای مدیر کل و مدیران حلقه
-        if (isAdmin || isManager) {
-            channelsList.appendChild(conversationItem({
-                href: "admin.html",
-                avatarClass: "channel-avatar",
-                avatarText: "⚙️",
-                title: "پنل مدیریت",
-                badge: isAdmin ? "مدیر کل" : "مدیر حلقه",
-                description: isAdmin ? "مدیریت اعضا و حلقه‌ها" : "مدیریت اعضای حلقهٔ خودت"
-            }));
-        }
-
-        /* ---- اعلان پیام‌ها ---- */
-        Notifier.init({ me: account.$id, baseTitle: document.title });
-        Notifier.permissionBar(groupsPanel);
-
-        const baseKeys = (isMember ? ["m:ann"] : []).concat(myRings.map(k => "m:" + k));
-        Notifier.paintBadges(document);
-        Notifier.recount(baseKeys).then(() => Notifier.paintBadges(document));
-
-        try {
-            appwriteClient.subscribe([
-                `tablesdb.${APPWRITE_DATABASE_ID}.tables.${APPWRITE_TABLE_ID}.rows`,
-                `databases.${APPWRITE_DATABASE_ID}.collections.${APPWRITE_TABLE_ID}.documents`
-            ], event => Notifier.handleRealtime(event, {
-                viewingKey: null,
-                onChange: () => Notifier.paintBadges(document)
-            }));
-        } catch (_) {}
-
-        initPersonal(account);
-    })();
-
-    /* ---------------- پیام‌های شخصی ---------------- */
-
-    function initPersonal(account) {
-        const searchInput = document.getElementById("dmSearch");
-        const searchStatus = document.getElementById("dmSearchStatus");
-        const resultsBox = document.getElementById("dmResults");
-        const listBox = document.getElementById("dmList");
-        const listTitle = document.getElementById("dmListTitle");
-        const hint = document.getElementById("dmHint");
-
-        const myKey = convListKey(account.$id);
-
-        function dmItem(userId, name, description) {
-            return conversationItem({
-                key: dmKey(account.$id, userId),
-                href: "chat.html?type=dm&user=" + encodeURIComponent(userId),
-                avatarClass: "ring-avatar",
-                avatarText: (name || "?").trim().charAt(0) || "?",
-                title: name || "کاربر",
-                badge: "",
-                description,
-                userId
+            chats.set("m:ann", {
+                key: "m:ann", kind: "ann", href: "chat.html?type=announcements",
+                title: "اطلاع‌رسانی پایگاه", letter: "📢", profileId: "chan-ann", last: null
             });
         }
 
-        /* ---- فهرست گفت‌وگوها ---- */
+        // گروه‌ها: فقط حلقهٔ خود کاربر (مدیر کل همه را می‌بیند)
+        Object.keys(RING_NAMES).filter(k => isAdmin || labels.includes(k)).forEach(k => {
+            chats.set("m:" + k, {
+                key: "m:" + k, kind: "ring", href: "chat.html?type=ring&group=" + k,
+                title: RING_NAMES[k], letter: faDigits[Number(k.replace("ring", ""))],
+                profileId: "chan-" + k, last: null
+            });
+        });
 
-        async function loadConversations() {
-            try {
-                const result = await appwriteTablesDB.listRows({
-                    databaseId: APPWRITE_DATABASE_ID,
-                    tableId: APPWRITE_TABLE_ID,
-                    queries: [
-                        Appwrite.Query.equal("group_id", [myKey]),
-                        Appwrite.Query.orderDesc("$updatedAt"),
-                        Appwrite.Query.limit(50)
-                    ]
-                });
-
-                const rows = result.rows.filter(r => r.record_type === "conv");
-
-                listBox.replaceChildren();
-                const ids = [];
-                const latest = {};
-
-                rows.forEach(row => {
-                    let info = {};
-                    try { info = JSON.parse(row.content || "{}"); } catch (_) {}
-                    if (!info.w) return;
-
-                    ids.push(info.w);
-                    latest[dmKey(account.$id, info.w)] = row.$updatedAt;
-                    listBox.appendChild(dmItem(info.w, row.display_name, info.l || "گفت‌وگوی شخصی"));
-                });
-
-                Notifier.paintBadges(listBox);
-                Notifier.recount(Object.keys(latest), { firstTime: "all", latest })
-                    .then(() => Notifier.paintBadges(listBox));
-
-                listTitle.hidden = !ids.length;
-                hint.hidden = !!ids.length || !!searchInput.value.trim();
-
-                if (ids.length) {
-                    await loadProfiles(ids);
-                    paintAvatars(listBox);
-                }
-            } catch (error) {
-                console.warn("loadConversations failed", error && error.message);
-            }
+        // ابزارهای مدیریتی
+        if (isAdmin || isManager) {
+            chats.set("tool:reports", {
+                key: "tool:reports", kind: "tool", href: "reports.html",
+                title: "گزارش‌ها", letter: "🛡️", hint: "بررسی پیام‌های گزارش‌شده", last: null
+            });
+            chats.set("tool:admin", {
+                key: "tool:admin", kind: "tool", href: "admin.html",
+                title: "پنل مدیریت", letter: "⚙️",
+                hint: isAdmin ? "مدیریت اعضا و حلقه‌ها" : "مدیریت اعضای حلقهٔ خودت", last: null
+            });
         }
 
+        redraw();
+
+        // آخرین پیام هر گروه/کانال + شمارندهٔ خوانده‌نشده
+        const channelChats = [...chats.values()].filter(c => c.kind === "ann" || c.kind === "ring");
+        await Promise.all(channelChats.map(loadLastMessage));
+        redraw();
+
+        Notifier.recount(channelChats.map(c => c.key)).then(redraw);
+
         loadConversations();
+        setInterval(() => { if (!document.hidden) loadConversations(); }, 15000);
 
-        // تازه‌سازی دوره‌ای و لحظه‌ای
-        setInterval(() => { if (!document.hidden) loadConversations(); }, 10000);
-
+        // لحظه‌ای: هر پیام تازه، گفت‌وگو را بالا می‌آورد
         try {
             appwriteClient.subscribe([
                 `tablesdb.${APPWRITE_DATABASE_ID}.tables.${APPWRITE_TABLE_ID}.rows`,
                 `databases.${APPWRITE_DATABASE_ID}.collections.${APPWRITE_TABLE_ID}.documents`
             ], event => {
                 const row = event && event.payload;
-                if (row && row.record_type === "conv" && row.group_id === myKey) loadConversations();
+                if (!row) return;
+
+                if (row.record_type === "conv" && row.group_id === convListKey(me)) {
+                    loadConversations();
+                    return;
+                }
+
+                if (row.record_type !== "message") return;
+                if (!(event.events || []).some(name => /\.create$/.test(name))) return;
+
+                Notifier.handleRealtime(event, { viewingKey: null, onChange: () => {} });
+
+                const chat = chats.get(row.group_id);
+                if (chat) {
+                    chat.last = lastFromRow(row) || chat.last;
+                    redraw();
+                } else if (String(row.group_id).startsWith("d:")) {
+                    loadConversations();
+                } else {
+                    redraw();
+                }
             });
         } catch (_) {}
 
-        /* ---- جستجوی اکانت ---- */
-
-        let timer = null;
-        let counter = 0;
-
-        searchInput.addEventListener("input", () => {
-            clearTimeout(timer);
-            const q = searchInput.value.trim();
-
-            if (q.length < 2) {
-                resultsBox.replaceChildren();
-                searchStatus.textContent = q ? "حداقل ۲ حرف بنویس." : "";
-                hint.hidden = !!listBox.children.length || !!q;
-                return;
-            }
-
-            searchStatus.textContent = "در حال جستجو...";
-            timer = setTimeout(async () => {
-                const ticket = ++counter;
-
-                try {
-                    const data = await callServer({ action: "searchUsers", q });
-                    if (ticket !== counter) return; // نتیجهٔ قدیمی
-
-                    resultsBox.replaceChildren();
-
-                    (data.users || []).forEach(user => {
-                        resultsBox.appendChild(dmItem(user.id, user.name, "شروع پیام شخصی"));
-                    });
-
-                    searchStatus.textContent = data.users && data.users.length
-                        ? ""
-                        : "اکانتی با این اسم پیدا نشد.";
-                    hint.hidden = true;
-
-                    await loadProfiles((data.users || []).map(u => u.id));
-                    paintAvatars(resultsBox);
-                } catch (error) {
-                    if (ticket !== counter) return;
-                    searchStatus.textContent = error.message || "جستجو ناموفق بود.";
-                }
-            }, 300);
-        });
-    }
+        document.addEventListener("visibilitychange", () => { if (!document.hidden) redraw(); });
+    })();
 })();
 
 </script>
